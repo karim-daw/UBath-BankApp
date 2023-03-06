@@ -5,26 +5,31 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.Format;
 
-public class NewBankClientHandler extends Thread{
-	
+public class NewBankClientHandler extends Thread {
+
 	private NewBank bank;
 	private BufferedReader in;
 	private PrintWriter out;
-	
-	
+
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
 	}
-	
+
 	public void run() {
 		// keep getting requests from the client and processing them
 		try {
 			// ask for user name
 			out.println("Enter Username");
 			String userName = in.readLine();
+
+
+			String test = String.format("name is %s",userName)
+			out.println(test);
+			
 			// ask for password
 			out.println("Enter Password");
 			String password = in.readLine();
