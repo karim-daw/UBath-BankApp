@@ -68,11 +68,7 @@ public class ExampleClient extends Thread {
 			try {
 				while (true) {
 					String command = userInput.readLine();
-					System.out.println("hello");
-					// System.out.println(command);
 					bankServerOut.println(command);
-					System.out.println("goodbye");
-
 				}
 			} catch (IOException e) {
 				// If an exception occurs, print the stack trace
