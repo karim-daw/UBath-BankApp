@@ -22,37 +22,42 @@ public class NewBankClientHandler extends Thread {
 	public void run() {
 		// keep getting requests from the client and processing them
 		try {
-			// ask for user name
-			out.println("Enter Username");
-			String userName = in.readLine();
+			while (true) {
+				// ask for user name
+				out.println("Enter Username");
+				String userName = in.readLine();
 
+				String test = String.format("name is %s", userName);
+				System.out.println(test);
 
-			String test = String.format("name is %s",userName)
-			out.println(test);
-			
-			// ask for password
-			out.println("Enter Password");
-			String password = in.readLine();
-			out.println("Checking Details...");
-			// authenticate user and get customer ID token from bank for use in subsequent requests
-			CustomerID customer = bank.checkLogInDetails(userName, password);
-			// if the user is authenticated then get requests from the user and process them 
-			if(customer != null) {
-				out.println("Log In Successful. What do you want to do?");
-				while(true) {
-					String request = in.readLine();
-					System.out.println("Request from " + customer.getKey());
-					String responce = bank.processRequest(customer, request);
-					out.println(responce);
+				// ask for password
+				out.println("Enter Password");
+				String password = in.readLine();
+
+				String test2 = String.format("password is %s", password);
+				System.out.println(test2);
+
+				out.println("Checking Details...");
+
+				// authenticate user and get customer ID token from bank for use in subsequent
+				// requests
+				CustomerID customer = bank.checkLogInDetails(userName, password);
+				// if the user is authenticated then get requests from the user and process them
+				if (customer != null) {
+					out.println("Log In Successful. What do you want to do?");
+					while (true) {
+						String request = in.readLine();
+						System.out.println("Request from " + customer.getKey());
+						String responce = bank.processRequest(customer, request);
+						out.println(responce);
+					}
+				} else {
+					out.println("Log In Failed");
 				}
-			}
-			else {
-				out.println("Log In Failed");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			try {
 				in.close();
 				out.close();
