@@ -45,15 +45,24 @@ public class NewBankClientHandler extends Thread {
 				if (customer != null) {
 					out.println("Log In Successful.");
 					while (true) {
-						//Asking for a request and process the request
-						out.println("What do you want to do?");
+
+						// Asking for a request and process the request
+						// out.println("What do you want to do?");
+						out.println("\n");
+						out.println("Select Option...");
+						out.println("SHOWMYACCOUNTS");
+						out.println("NEWACCOUNT");
+						out.println("MOVE");
+						out.println("PAY");
+						out.println("\n");
+
 						String request = in.readLine();
 						System.out.println("Request from " + customer.getKey());
 						String responce = bank.processRequest(customer, request);
 						out.println(responce);
 					}
 				} else {
-					out.println("Log In Failed");
+					out.println("Log In Failed\n");
 				}
 			}
 		} catch (IOException e) {
