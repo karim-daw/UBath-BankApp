@@ -9,7 +9,7 @@ public class NewBank {
 	private static final NewBank bank = new NewBank();
 	private HashMap<String, Customer> customers;
 
-	private NewBank() {
+	public NewBank() {
 		customers = new HashMap<>();
 		addTestData();
 	}
@@ -81,10 +81,10 @@ public class NewBank {
 	 * @param customer
 	 * @return
 	 */
-	private String showMyAccounts(CustomerID customer) {
+	public String showMyAccounts(CustomerID customerID) {
 		// create a list that will be displayed
 		List<String> accountList = new ArrayList<String>();
-		accountList = customers.get(customer.getKey()).accountsToList();
+		accountList = customers.get(customerID.getKey()).accountsToList();
 		String s = "";
 		for (String a : accountList) {
 			s += a.toString() + "\n";
