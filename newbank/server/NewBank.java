@@ -32,7 +32,10 @@ public class NewBank {
 			out.println("Customer not found!");
 		}
 	}
-	public String selectAccountType() {
+
+	//This method will be used to return the String representation of the account type that user will select
+	//when transfering money or creating a new account
+	private String selectAccountType() {
 		out.println("Select the account type by number");
 		out.println("1. Savings account");
 		out.println("2. Checking account");
@@ -41,8 +44,6 @@ public class NewBank {
 
 		String typeOfAccount;
 		try {
-			BufferedReader in = null;
-			assert false;
 			typeOfAccount = in.readLine();
 			switch (typeOfAccount) {
 				case "1": return "Savings";
@@ -58,8 +59,6 @@ public class NewBank {
 
 	private double openingBalance() throws IOException {
 		out.println("Input the opening balance that you wish to put");
-		DataInput in = null;
-		assert false;
 		return in.readDouble();
 	}
 
