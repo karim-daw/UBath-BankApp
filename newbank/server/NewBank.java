@@ -1,5 +1,7 @@
 package newbank.server;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
 public class NewBank {
@@ -15,6 +17,7 @@ public class NewBank {
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
+		bhagy.addAccount(new Account("Savings", 200.0));
 		customers.put("Bhagy", bhagy);
 
 		Customer christina = new Customer();
@@ -39,10 +42,11 @@ public class NewBank {
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
+
 		if (customers.containsKey(customer.getKey())) {
 			switch (request) {
 				case "SHOWMYACCOUNTS":
-					return showMyAccounts(customer);
+					return showMyAccounts(customer).toString();
 				default:
 					return "FAIL\n";
 			}
@@ -51,7 +55,15 @@ public class NewBank {
 	}
 
 	private String showMyAccounts(CustomerID customer) {
-		return (customers.get(customer.getKey())).accountsToString();
+		//create a list that will be displayed
+		List<String> accountList = new ArrayList<String>();
+		accountList = customers.get(customer.getKey()).accountsToList();
+		String s = "";
+		for(String a : accountList) {
+			s += a.toString() + "\n";
+		}
+		return s;
+		
 	}
 
 }
