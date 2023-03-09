@@ -1,7 +1,5 @@
 package newbank.server;
 
-// this is karim doing a git commit test
-
 public class Account {
 
 	private String accountName;
