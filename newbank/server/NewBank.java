@@ -14,7 +14,8 @@ public class NewBank {
 		customers = new HashMap<>();
 		addTestData();
 	}
-
+	// This method is to add sub-accounts to the existing customers using customerId as the argument to find the customer
+	// if exist in the hashmap
 	private void addAccountToCustomer(String customerId) throws IOException {
 		// Check if customer exists
 		if (customers.containsKey(customerId)) {
