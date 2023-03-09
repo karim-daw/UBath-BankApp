@@ -7,6 +7,7 @@ public class Customer {
 
 	private ArrayList<Account> accounts;
 
+	// TODO: customer class should have username and password
 	public Customer() {
 		accounts = new ArrayList<>();
 	}
