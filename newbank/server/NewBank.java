@@ -3,6 +3,7 @@ package newbank.server;
 import java.io.*;
 
 import java.util.HashMap;
+import java.util.Scanner;
 
 import static java.lang.System.out;
 
@@ -10,82 +11,81 @@ public class NewBank {
 
 	private static final NewBank bank = new NewBank();
 	private HashMap<String, Customer> customers;
+	private static String main = "Main";
+	private static String savings = "Savings";
+	private static String checking = "Checking";
+	Scanner scanner = new Scanner(System.in);
 
-	NewBank() {
+	private NewBank() {
 		customers = new HashMap<>();
 		addTestData();
 	}
 
-	// This method creates a new bank account for the customer
-	// The data are stored in a nested hashmap.
-	// The outer-hashmap has KEY (customer name) that points another KEY(account
-	// number)
-	// The inner-hasmap key then points to (value amount in the account)
-	//
-	// -> Main Account -> Value amount
-	// customer name -> Savings Account -> Value amount
-	// -> Checking Account -> Value amount
-	//
+	private String createAccount(CustomerID customer, String accountType, double openingBalance) {
 
-	private void createNewAccount() {
-
-		HashMap<String, HashMap<String, Double>> customerAccounts = new HashMap<>();
-
-		// first check if the customer has their name registered in the hashmap
-		// if customer name is not in the hashmap, registered the new customer into the
-		// hashmao with put()
-		if (!customerAccounts.containsKey("guy1")) {
-			customerAccounts.put("guy1", new HashMap<>());
+		if (!accountType.equals(main) && !accountType.equals(checking) && !accountType.equals(savings)) {
+			return "Please select account type again.";
 		}
-		// if the customer is exist in the hashmap, use get method to select the key and
-		// use put method to create new account
-		customerAccounts.get("guy1").put("00000000M", 1000.0);
+		try {
+			Customer c = customers.get(customer.getKey());
+			// check if the customer already have the account
+			// account does not exist, continue to create a new account
+			if (c.getAccountName(customer) == null) {
+				c.addAccount(new Account(accountType, openingBalance));
+				return "Your " + accountType + "account has been successfully created.";
+			} else {
+				return "You already have " + accountType + ".";
+			}
+		} catch (Exception e) {
 
-		// Add saving another account for Guy1
-		customerAccounts.get("guy1").put("00000000S", 5000.0);
-
-		// Add an checking account for Guy2
-		if (!customerAccounts.containsKey("guy2")) {
-			customerAccounts.put("guy2", new HashMap<>());
 		}
-		customerAccounts.get("guy2").put("00000000C", 2000.0);
-
-		// Print the balances from all the accounts
-		HashMap<String, Double> guy1Accounts = customerAccounts.get("guy1");
-		for (String accountNumber : guy1Accounts.keySet()) {
-			double balance = guy1Accounts.get(accountNumber);
-			System.out.println("Account " + accountNumber + " balance: $" + balance);
-		}
-
+		return "Fail to create a new account.";
 	}
 
-	// This method will be used to return the String representation of the account
-	// type that user will select
-	// when transfering money or creating a new account
-	private String selectAccountType() {
-		out.println("Select the account type by number");
-		out.println("1. Savings account");
-		out.println("2. Checking account");
-		out.println("3. Main account");
-		out.println("4. Return");
+	
 
-		String typeOfAccount;
-		try {
-			typeOfAccount = in.readLine();
-			switch (typeOfAccount) {
-				case "1":
-					return "Savings";
-				case "2":
-					return "Checking";
-				case "3":
-					return "Main";
-				case "4":
-					return "Return";
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		// type that user will select
+	// when transfering money or 
+	
+	private String selectAccountType() {
+		
+		out.println("Select the account type by number");
+		out.println("1. Main account");
+		out.println("2. Savings account");
+		out.println("3. Checkings account");
+		out.println("4. Return");
+		
+		String request = scanner.nextLine();
+		String[] typeOfAccount = request.split("\\s+");
+		switch (typeOfAccount[0]){
+			case "1" :
+				return "Main";
+			case "2":
+				return "Savings";
+			case "3":
+				return "Checkings";
 		}
 		return "";
+	}
+
+	private void moveMoney(CustomerID customer, String sourceAccount, String destinationAccount, double amount){
+		Customer c = customers.get(customer.getKey());
+		
+		//Check if there is sufficient amount to transfer, otherwise ask to input new amount again
+		if (customer.get(sourceAccount).get(balance) < amount) {
+			out.println("Not enough amount in your account. Would you like to choose different amount? y/n");
+			String choice = in.readLine();
+			if choice.equalsIgnoreCase("y") {
+				out.println("Enter a new amount: ");
+				amount = in.readDouble();
+				out.println("Enter new source account: ");
+				sourceAccount = in.readString();
+				transferMoney(sourceAccount,destinationAccount,amount);
+			}
+			//if amount is sufficient, make changes to source account and destination account
+			customer.put(sourceAccount, customer.get(destinationAccount).get(balance) - amount);
+			customer.put(targetAccount, customer.get(destinationAccount).get(balance)  + amount);
+			out.println("The transaction has been completed.");
 	}
 
 	private void addTestData() {
@@ -116,9 +116,18 @@ public class NewBank {
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
 		if (customers.containsKey(customer.getKey())) {
-			switch (request) {
+			String[] requestInputs = request.split("\\s+");
+			String command = requestInputs[0];
+
+			switch (command) {
 				case "SHOWMYACCOUNTS":
 					return showMyAccounts(customer);
+				case "NEWACCOUNT":
+					selectAccountType = selectAccountType();
+					// inputBalance
+					return createAccount(customer, selectAccountType, 0);
+				case "MOVE":
+					// return moveMoney(customer);
 				default:
 					return "FAIL";
 			}
@@ -130,4 +139,4 @@ public class NewBank {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
 
-}
+	
