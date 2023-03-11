@@ -6,12 +6,27 @@ import java.util.List;
 public class Customer {
 
 	private ArrayList<Account> accounts;
+	private String password;
 
 	// TODO: customer class should have username and password
 	public Customer() {
 		accounts = new ArrayList<>();
 	}
-
+	
+	/**
+	 * @set a string as password
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	/**
+	 * @return a string of a password
+	 */
+	public String getPassword() {
+		return this.password;
+	}
+	
 	/**
 	 * @return a string of an account
 	 */
