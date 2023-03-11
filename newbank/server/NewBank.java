@@ -14,6 +14,9 @@ public class NewBank {
 		addTestData();
 	}
 
+	/**
+	 * @return
+	 */
 	public HashMap<String, Customer> getCustomers() {
 		return customers;
 	}
@@ -49,19 +52,19 @@ public class NewBank {
 	 * @return null
 	 */
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		//Check if the username input by the user exists in the bank's system
-		if(customers.containsKey(userName)) {
-			//If username exists then check their password
+		// Check if the username input by the user exists in the bank's system
+		if (customers.containsKey(userName)) {
+			// If username exists then check their password
 			Customer customer = customers.get(userName);
-			//If the password input equals the password on system then create new CustomerID
-			if(customer.getPassword().equals(password)) {
+			// If the password input equals the password on system then create new
+			// CustomerID
+			if (customer.getPassword().equals(password)) {
 				return new CustomerID(userName);
 			}
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * 
 	 * commands from the NewBank customer are processed in this method
@@ -100,24 +103,23 @@ public class NewBank {
 		return s;
 
 	}
-	
-	//TO DO:
-	
+
+	// TO DO:
+
 	/**
-	 * validates username entered during new user registration 
+	 * validates username entered during new user registration
 	 * 
 	 * @param username
 	 * @return
 	 */
 	public boolean isUserNameValid(String userName) {
 		return false;
-		
+
 	}
-	
-	
-	//TO DO
+
+	// TO DO
 	/**
-	 * validates password entered during new user registration 
+	 * validates password entered during new user registration
 	 * 
 	 * @param password
 	 * @return
@@ -125,5 +127,5 @@ public class NewBank {
 	public boolean isPasswordValid(String password) {
 		return false;
 	}
-	
+
 }
