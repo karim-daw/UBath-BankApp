@@ -30,7 +30,7 @@ public class NewBank {
 			Customer c = customers.get(customer.getKey());
 			// check if the customer already have the account
 			// account does not exist, continue to create a new account
-			if (c.getAccountName(customer) == null) {
+			if (c.checkAccount(accountType) == false) {
 				c.addAccount(new Account(accountType, openingBalance));
 				return "Your " + accountType + "account has been successfully created.";
 			} else {
@@ -67,27 +67,6 @@ public class NewBank {
 		}
 		return "";
 	}
-
-	private void moveMoney(CustomerID customer, String sourceAccount, String destinationAccount, double amount){
-		Customer c = customers.get(customer.getKey());
-		
-		//Check if there is sufficient amount to transfer, otherwise ask to input new amount again
-		if (customer.get(sourceAccount).get(balance) < amount) {
-			out.println("Not enough amount in your account. Would you like to choose different amount? y/n");
-			String choice = in.readLine();
-			if choice.equalsIgnoreCase("y") {
-				out.println("Enter a new amount: ");
-				amount = in.readDouble();
-				out.println("Enter new source account: ");
-				sourceAccount = in.readString();
-				transferMoney(sourceAccount,destinationAccount,amount);
-			}
-			//if amount is sufficient, make changes to source account and destination account
-			customer.put(sourceAccount, customer.get(destinationAccount).get(balance) - amount);
-			customer.put(targetAccount, customer.get(destinationAccount).get(balance)  + amount);
-			out.println("The transaction has been completed.");
-	}
-
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
