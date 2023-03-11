@@ -50,7 +50,6 @@ public class ExampleClient extends Thread {
 					}
 				} catch (IOException e) {
 					// If an exception occurs, print the stack trace and return
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return;
 				}
