@@ -18,26 +18,6 @@ public class NewBankClientHandler extends Thread {
 		out = new PrintWriter(s.getOutputStream(), true);
 	}
 
-	private void transferMoney(String sourceAccount, String destinationAccount, double amount){
-
-		//Check if there is sufficient amount to transfer, otherwise ask to input new amount again
-		if (customer.get(sourceAccount).get(balance) < amount) {
-			out.println("Not enough amount in your account. Would you like to choose different amount? y/n")
-			String choice = in.readLine();
-			if choice.equalsIgnoreCase("y") {
-				out.println("Enter a new amount: ");
-				amount = in.readDouble();
-				out.println("Enter new source account: ")
-				sourceAccount = in.readString();
-				transferMoney(sourceAccount,destinationAccount,amount);
-			}
-			//if amount is sufficient, make changes to source account and destination account
-			customer.put(sourceAccount, customer.get(destinationAccount).get(balance) - amount);
-			customer.put(targetAccount, customer.get(destinationAccount).get(balance)  + amount);
-			out.println("The transaction has been completed.")
-		}
-	}
-
 	public void run() {
 		// keep getting requests from the client and processing them
 		try {
