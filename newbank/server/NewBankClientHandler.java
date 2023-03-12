@@ -6,25 +6,27 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import newbank.server.Requests.Login;
+import newbank.server.Requests.LoginService;
 
 public class NewBankClientHandler extends Thread {
 
 	private NewBank bank;
 	private BufferedReader in;
 	private PrintWriter out;
+	private LoginService login;
 
 	public NewBankClientHandler(Socket socket) throws IOException {
 		bank = NewBank.getBank();
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(socket.getOutputStream(), true);
+		login = new LoginService();
 	}
 
 	public void run() {
 		// keep getting requests from the client and processing them
 		try {
 			while (true)
-				loginSequence();
+				NewBankService();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -46,7 +48,7 @@ public class NewBankClientHandler extends Thread {
 	 * 
 	 * @throws IOException
 	 */
-	private void loginSequence() throws IOException {
+	private void NewBankService() throws IOException {
 
 		// Welcome
 		Display.WelcomeMessage(out);
@@ -55,33 +57,47 @@ public class NewBankClientHandler extends Thread {
 		CustomerID customer = null;
 
 		// Handle input from user, either LOGIN or REGISTRATION
-		Login login = new Login();
-		String request = login.handleRequest();
+		String request = login.handleLoginOrRegister();
 
 		// Process the user's response: LOGIN or REGISTER
 		while (true) {
 			if (request.equals("LOGIN")) {
-				customer = userLogIn();
-			} else {
-				// TODO: add new user registration method or code
+				customer = login.verifyCustomer();
+				processCustomerRequest(customer, request);
+
+			} else if (request.equals("REGISTER")) {
+				// TODO: #19 add new user registration method or code
 				// userRegistration()
 			}
 
-			// if user succesfully logged-in, get requests from user and process them
-			if (customer != null) {
+		}
+	}
 
-				// Asking for a request and process the request
-				while (true) {
+	/**
+	 * Given a valid customerID, system Displays the main menu to the logged in
+	 * customer and continuesly processes transactions with bank in while loop
+	 * 
+	 * and prompts user to
+	 * 
+	 * @param customerID
+	 * @param request
+	 * @throws IOException
+	 */
+	private void processCustomerRequest(CustomerID customerID, String request) throws IOException {
+		// if user succesfully logged-in, get requests from user and process them
+		if (customerID != null) {
 
-					// show main menu to user
-					Display.MainMenu(out);
+			// Asking for a request and process the request
+			while (true) {
 
-					// get user input as request
-					request = in.readLine();
+				// show main menu to user and prompt for an input
+				Display.MainMenu(out);
 
-					// handle response from bank given request, for now just print
-					handleBankResponse(request, customer);
-				}
+				// get user input as request
+				request = in.readLine();
+
+				// handle response from bank given request, for now just print
+				handleBankResponse(request, customerID);
 			}
 		}
 	}
@@ -95,40 +111,4 @@ public class NewBankClientHandler extends Thread {
 		out.println(responce);
 	}
 
-	/**
-	 * Login sequence for an existing customer, returns the customerID if login was
-	 * succesfull
-	 * 
-	 * @return customerID if login was successful, else null
-	 * @throws IOException
-	 */
-	public CustomerID userLogIn() throws IOException {
-		// Not a customer yet
-		CustomerID customer = null;
-
-		// Ask for existing username
-		out.println("Enter Username");
-		String userName = in.readLine();
-
-		// ask for existing password
-		out.println("Enter Password");
-		String password = in.readLine();
-
-		out.println("Please wait while we check your details");
-		customer = bank.checkLogInDetails(userName, password);
-
-		// Validate login details
-		if (customer == null) {
-			out.println("Log In Failed. Invalid Credentials, please try again.");
-		} else {
-			out.println("Log In Successful. What do you want to do?");
-		}
-		return customer;
-	}
-
-	// TO DO
-	// Registration for new customers
-	public void userRegistration() throws IOException {
-
-	}
 }
