@@ -1,10 +1,14 @@
 .vscode/
 
+
 *.xml
 *.class
+
+*.xml/
+
 
 .project
 .classpath
 .settings
- 
+
 
