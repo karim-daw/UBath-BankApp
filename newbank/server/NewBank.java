@@ -48,20 +48,20 @@ public class NewBank {
 	 * @param password
 	 * @return null
 	 */
-	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		//Check if the username input by the user exists in the bank's system
-		if(customers.containsKey(userName)) {
-			//If username exists then check their password
-			Customer customer = customers.get(userName);
-			//If the password input equals the password on system then create new CustomerID
-			if(customer.getPassword().equals(password)) {
-				return new CustomerID(userName);
+	public synchronized CustomerID checkLogInDetails(String username, String password) {
+		// Check if the username input by the user exists in the bank's system
+		if (customers.containsKey(username)) {
+			// If username exists then check their password
+			Customer customer = customers.get(username);
+			// If the password input equals the password on system then create new
+			// CustomerID
+			if (customer.getPassword().equals(password)) {
+				return new CustomerID(username);
 			}
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * 
 	 * commands from the NewBank customer are processed in this method
@@ -98,26 +98,38 @@ public class NewBank {
 			s += a.toString() + "\n";
 		}
 		return s;
+	}
+
+	// TO DO:
+
+	/**
+	 * Registers a new customer to hashmap, performs validaiton to see if customer
+	 * key is already in the hashmap
+	 * 
+	 * @param customerName
+	 * @param password
+	 * @return true is user successfull registered, false if username already exists
+	 */
+	public synchronized CustomerID registerCustomer(String customerName, String password) {
+
+		Customer newCustomer = null;
+
+		if (customers.containsKey(customerName)) {
+			newCustomer = new Customer();
+			newCustomer.addAccount(new Account("Main", 0.0));
+			newCustomer.addAccount(new Account("Savings", 0.0));
+			newCustomer.setPassword(password);
+			getCustomers().put(customerName, newCustomer);
+			CustomerID customerID = new CustomerID(customerName);
+			return customerID;
+		}
+		return null;
 
 	}
-	
-	//TO DO:
-	
+
+	// TO DO
 	/**
-	 * validates username entered during new user registration 
-	 * 
-	 * @param username
-	 * @return
-	 */
-	public boolean isUserNameValid(String userName) {
-		return false;
-		
-	}
-	
-	
-	//TO DO
-	/**
-	 * validates password entered during new user registration 
+	 * validates password entered during new user registration
 	 * 
 	 * @param password
 	 * @return
@@ -125,5 +137,5 @@ public class NewBank {
 	public boolean isPasswordValid(String password) {
 		return false;
 	}
-	
+
 }
