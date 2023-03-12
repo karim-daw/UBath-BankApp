@@ -1,2 +1,8 @@
 .vscode/
+
 *.xml/
+
+.project
+.classpath
+.settings
+
