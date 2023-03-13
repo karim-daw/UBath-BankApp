@@ -106,21 +106,21 @@ public class NewBank {
 	 * Registers a new customer to hashmap, performs validaiton to see if customer
 	 * key is already in the hashmap
 	 * 
-	 * @param customerName
+	 * @param username
 	 * @param password
 	 * @return true is user successfull registered, false if username already exists
 	 */
-	public synchronized CustomerID registerCustomer(String customerName, String password) {
+	public synchronized CustomerID registerCustomer(String username, String password) {
 
 		Customer newCustomer = null;
 
-		if (customers.containsKey(customerName)) {
+		if (!customers.containsKey(username)) {
 			newCustomer = new Customer();
 			newCustomer.addAccount(new Account("Main", 0.0));
 			newCustomer.addAccount(new Account("Savings", 0.0));
 			newCustomer.setPassword(password);
-			getCustomers().put(customerName, newCustomer);
-			CustomerID customerID = new CustomerID(customerName);
+			getCustomers().put(username, newCustomer);
+			CustomerID customerID = new CustomerID(username);
 			return customerID;
 		}
 		return null;
