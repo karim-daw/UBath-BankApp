@@ -6,7 +6,9 @@ import java.util.List;
 public class Customer {
 
 	private ArrayList<Account> accounts;
+
 	private String password;
+
 
 	public Customer() {
 		accounts = new ArrayList<>();
@@ -29,6 +31,7 @@ public class Customer {
 	/**
 	 * @return a string of an account
 	 */
+
 	public String accountsToString() {
 		String s = "";
 		for (Account a : accounts) {
@@ -57,5 +60,16 @@ public class Customer {
 	 */
 	public void addAccount(Account account) {
 		accounts.add(account);
+
+	}
+
+	public boolean checkAccount(String accountName) {
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(accountName)) {
+				return true;
+			}
+		}
+		return false;
+
 	}
 }
