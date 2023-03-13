@@ -1,6 +1,5 @@
 package server;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class NewBank {
 	private static String savings = "Savings";
 	private static String checking = "Checking";
 	Scanner scanner = new Scanner(System.in);
-	
+
 	public HashMap<String, Customer> getCustomers() {
 		return customers;
 	}
@@ -28,7 +27,6 @@ public class NewBank {
 		addTestData();
 	}
 
-	
 	/**
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
@@ -43,7 +41,6 @@ public class NewBank {
 		christina.addAccount(new Account("Savings", 1500.0));
 		christina.setPassword("1234");
 		getCustomers().put("Christina", christina);
-
 
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
@@ -93,9 +90,9 @@ public class NewBank {
 				case "SHOWMYACCOUNTS":
 					return showMyAccounts(customer);
 				case "NEWACCOUNT":
-					//String selectAccountType = selectAccountType();
+					// String selectAccountType = selectAccountType();
 					// inputBalance
-					return createAccount(customer,requestInputs, 0);
+					return createAccount(customer, requestInputs, 0);
 				case "MOVE":
 					// return moveMoney(customer);
 				default:
@@ -105,7 +102,6 @@ public class NewBank {
 		}
 		return "FAIL\n";
 	}
-
 
 	/**
 	 * displays accounts as a list
@@ -124,19 +120,18 @@ public class NewBank {
 		}
 		return s;
 	}
-	
+
 	private String createAccount(CustomerID customer, String[] requestInputs, double openingBalance) {
-		
+
 		int inputLength = requestInputs.length;
-		if (inputLength <2) {
+		if (inputLength < 2) {
 			return "FAIL: Account type not specified";
 		}
-		
+
 		String accountType = requestInputs[1];
 		if (!accountType.equals(main) && !accountType.equals(checking) && !accountType.equals(savings)) {
 			return "FAIL: Account type not recognised";
-		}
-		else {
+		} else {
 			Customer c = customers.get(customer.getKey());
 			// check if the customer already have the account
 			// account does not exist, continue to create a new account
@@ -149,40 +144,35 @@ public class NewBank {
 		}
 	}
 
-	
-	
-	//Enhancement
+	// Enhancement
 	/*
-	// type that user will select
-	// when transferring money or 
-	
-	private String selectAccountType() {
-		
-		out.println("Select the account type by number");
-		out.println("1. Main account");
-		out.println("2. Savings account");
-		out.println("3. Checking account");
-		out.println("4. Return");
-		
-		String request = scanner.nextLine();
-		String[] typeOfAccount = request.split("\\s+");
-		switch (typeOfAccount[0]){
-			case "1" :
-				return "Main";
-			case "2":
-				return "Savings";
-			case "3":
-				return "Checking";
-			//case 4. Return not coded yet
-		}
-		return "";
-	}
-	*/
-	
-	//TO DO:
-	
+	 * // type that user will select
+	 * // when transferring money or
+	 * 
+	 * private String selectAccountType() {
+	 * 
+	 * out.println("Select the account type by number");
+	 * out.println("1. Main account");
+	 * out.println("2. Savings account");
+	 * out.println("3. Checking account");
+	 * out.println("4. Return");
+	 * 
+	 * String request = scanner.nextLine();
+	 * String[] typeOfAccount = request.split("\\s+");
+	 * switch (typeOfAccount[0]){
+	 * case "1" :
+	 * return "Main";
+	 * case "2":
+	 * return "Savings";
+	 * case "3":
+	 * return "Checking";
+	 * //case 4. Return not coded yet
+	 * }
+	 * return "";
+	 * }
+	 */
 
-
+	// TO DO:
 
 	/**
 	 * Registers a new customer to hashmap, performs validaiton to see if customer
@@ -221,4 +211,3 @@ public class NewBank {
 	}
 
 }
-
