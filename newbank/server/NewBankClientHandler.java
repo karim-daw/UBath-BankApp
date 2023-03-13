@@ -97,11 +97,10 @@ public class NewBankClientHandler extends Thread {
 	// Login for existing customers
 	public CustomerID userLogIn() throws IOException {
 		// Not a customer yet
-		out.println("THIS IS A TEST___________");
 
 		CustomerID customer = null;
 		// Ask for existing username
-		out.println("Enter Usernamaae");
+		out.println("Enter Username");
 		String userName = in.readLine();
 		// ask for existing password
 		out.println("Enter Password");
