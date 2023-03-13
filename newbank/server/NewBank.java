@@ -197,7 +197,6 @@ public class NewBank {
 		if (!customers.containsKey(username)) {
 			newCustomer = new Customer();
 			newCustomer.addAccount(new Account("Main", 0.0));
-			newCustomer.addAccount(new Account("Savings", 0.0));
 			newCustomer.setPassword(password);
 			getCustomers().put(username, newCustomer);
 			CustomerID customerID = new CustomerID(username);
