@@ -85,17 +85,17 @@ public class NewBank {
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
 		if(customers.containsKey(customer.getKey())) {
-			switch(request) {
 
 			String[] requestInputs = request.split("\\s+");
 			String command = requestInputs[0];
-
+			
+			switch(command) {
 			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
 			case "MOVE": 
 				double inputAmount = inputAmount()
 			return moveMoney(customer, "main", "savings", inputAmount);
 			default : return "FAIL";
-			
+				
 			}
 		}
 		return "FAIL";
