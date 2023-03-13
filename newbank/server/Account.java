@@ -3,7 +3,7 @@ package server;
 public class Account {
 
 	private String accountName;
-	private double openingBalance=0; //default
+	private double openingBalance = 0; // default
 
 	public Account(String accountName, double openingBalance) {
 		this.accountName = accountName;
