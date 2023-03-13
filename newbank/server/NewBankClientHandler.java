@@ -1,4 +1,4 @@
-package newbank.server;
+package server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -124,7 +124,7 @@ public class NewBankClientHandler extends Thread {
 		CustomerID customerID = null;
 
 		// Ask for existing username
-		out.println("Enter Usernasasame");
+		out.println("Enter Username");
 		String userName = in.readLine();
 
 		// ask password
