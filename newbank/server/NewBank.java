@@ -121,6 +121,14 @@ public class NewBank {
 		return s;
 	}
 
+	/**
+	 * Creates a new account for a given customer
+	 * 
+	 * @param customer
+	 * @param requestInputs
+	 * @param openingBalance
+	 * @return string regarding success or failure of createtAccount request
+	 */
 	private String createAccount(CustomerID customer, String[] requestInputs, double openingBalance) {
 
 		int inputLength = requestInputs.length;
