@@ -3,7 +3,7 @@
 *.xml/
 
 .project
-
+.classpath
 .settings
-*.class
+
 /bin/

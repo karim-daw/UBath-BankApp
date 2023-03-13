@@ -1,4 +1,4 @@
-package newbank.server;
+package server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -80,8 +80,8 @@ public class NewBankClientHandler extends Thread {
 		out.println("##############################\n");
 		out.println("**** Welcome to New Bank ****\n");
 		out.println("##############################\n\n");
-		out.println("If you're an existing customer type LOGIN\n");
-		out.println("If you're a new customer type REGISTER\n");
+		out.println("If you're an existing customer type: LOGIN\n");
+		out.println("If you're a new customer type: REGISTER\n");
 		String request = in.readLine();
 		boolean requestValid = false;
 		do {

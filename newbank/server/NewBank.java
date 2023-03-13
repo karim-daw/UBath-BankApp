@@ -1,4 +1,4 @@
-package newbank.server;
+package server;
 
 
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 public class NewBank {
 
@@ -18,65 +18,17 @@ public class NewBank {
 	private static String savings = "Savings";
 	private static String checking = "Checking";
 	Scanner scanner = new Scanner(System.in);
-
+	
+	public HashMap<String, Customer> getCustomers() {
+		return customers;
+	}
 
 	private NewBank() {
 		customers = new HashMap<>();
 		addTestData();
 	}
 
-	private String createAccount(CustomerID customer, String accountType, double openingBalance) {
-
-		if (!accountType.equals(main) && !accountType.equals(checking) && !accountType.equals(savings)) {
-			return "Please select account type again.";
-		}
-		try {
-			Customer c = customers.get(customer.getKey());
-			// check if the customer already have the account
-			// account does not exist, continue to create a new account
-			if (c.checkAccount(accountType) == false) {
-				c.addAccount(new Account(accountType, openingBalance));
-				return "Your " + accountType + "account has been successfully created.";
-			} else {
-				return "You already have " + accountType + ".";
-			}
-		} catch (Exception e) {
-
-		}
-		return "Fail to create a new account.";
-	}
-
-
-
-		// type that user will select
-	// when transfering money or 
 	
-	private String selectAccountType() {
-		
-		out.println("Select the account type by number");
-		out.println("1. Main account");
-		out.println("2. Savings account");
-		out.println("3. Checkings account");
-		out.println("4. Return");
-		
-		String request = scanner.nextLine();
-		String[] typeOfAccount = request.split("\\s+");
-		switch (typeOfAccount[0]){
-			case "1" :
-				return "Main";
-			case "2":
-				return "Savings";
-			case "3":
-				return "Checkings";
-		}
-		return "";
-	}
-
-
-	public HashMap<String, Customer> getCustomers() {
-		return customers;
-	}
-
 	/**
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
@@ -102,11 +54,6 @@ public class NewBank {
 	public static NewBank getBank() {
 		return bank;
 	}
-
-
-	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		if (customers.containsKey(userName)) {
-			return new CustomerID(userName);
 
 	/**
 	 * @param userName
@@ -146,9 +93,9 @@ public class NewBank {
 				case "SHOWMYACCOUNTS":
 					return showMyAccounts(customer);
 				case "NEWACCOUNT":
-					selectAccountType = selectAccountType();
+					//String selectAccountType = selectAccountType();
 					// inputBalance
-					return createAccount(customer, selectAccountType, 0);
+					return createAccount(customer,requestInputs, 0);
 				case "MOVE":
 					// return moveMoney(customer);
 				default:
@@ -177,8 +124,61 @@ public class NewBank {
 		}
 		return s;
 
-
 	}
+	
+	private String createAccount(CustomerID customer, String[] requestInputs, double openingBalance) {
+		
+		int inputLength = requestInputs.length;
+		if (inputLength <2) {
+			return "FAIL: Account type not specified";
+		}
+		
+		String accountType = requestInputs[1];
+		if (!accountType.equals(main) && !accountType.equals(checking) && !accountType.equals(savings)) {
+			return "FAIL: Account type not recognised";
+		}
+		else {
+			Customer c = customers.get(customer.getKey());
+			// check if the customer already have the account
+			// account does not exist, continue to create a new account
+			if (c.checkAccount(accountType) == false) {
+				c.addAccount(new Account(accountType, openingBalance));
+				return "SUCCESS: Your " + accountType + " account has been created.";
+			} else {
+				return "FAIL: You already have a " + accountType + " account.";
+			}
+		}
+	}
+
+	
+	
+	//Enhancement
+	/*
+	// type that user will select
+	// when transferring money or 
+	
+	private String selectAccountType() {
+		
+		out.println("Select the account type by number");
+		out.println("1. Main account");
+		out.println("2. Savings account");
+		out.println("3. Checking account");
+		out.println("4. Return");
+		
+		String request = scanner.nextLine();
+		String[] typeOfAccount = request.split("\\s+");
+		switch (typeOfAccount[0]){
+			case "1" :
+				return "Main";
+			case "2":
+				return "Savings";
+			case "3":
+				return "Checking";
+			//case 4. Return not coded yet
+		}
+		return "";
+	}
+	*/
 	
 	//TO DO:
 	
