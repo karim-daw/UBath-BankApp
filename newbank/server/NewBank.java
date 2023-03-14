@@ -152,36 +152,6 @@ public class NewBank {
 		}
 	}
 
-	// Enhancement
-	/*
-	 * // type that user will select
-	 * // when transferring money or
-	 * 
-	 * private String selectAccountType() {
-	 * 
-	 * out.println("Select the account type by number");
-	 * out.println("1. Main account");
-	 * out.println("2. Savings account");
-	 * out.println("3. Checking account");
-	 * out.println("4. Return");
-	 * 
-	 * String request = scanner.nextLine();
-	 * String[] typeOfAccount = request.split("\\s+");
-	 * switch (typeOfAccount[0]){
-	 * case "1" :
-	 * return "Main";
-	 * case "2":
-	 * return "Savings";
-	 * case "3":
-	 * return "Checking";
-	 * //case 4. Return not coded yet
-	 * }
-	 * return "";
-	 * }
-	 */
-
-	// TO DO:
-
 	/**
 	 * Registers a new customer to hashmap, performs validaiton to see if customer
 	 * key is already in the hashmap
