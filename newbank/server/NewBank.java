@@ -195,13 +195,21 @@ public class NewBank {
 		Customer newCustomer = null;
 
 		if (!customers.containsKey(username)) {
+
+			// create a new sucomter with given username and password
 			newCustomer = new Customer();
 			newCustomer.addAccount(new Account("Main", 0.0));
 			newCustomer.setPassword(password);
+
+			// put customer into hash map
 			getCustomers().put(username, newCustomer);
 			CustomerID customerID = new CustomerID(username);
+
+			// return added new customer id
 			return customerID;
 		}
+
+		// returns null if user exists in hashmap already
 		return null;
 
 	}
