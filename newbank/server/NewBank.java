@@ -1,5 +1,6 @@
 package server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,8 +80,9 @@ public class NewBank {
 	 * @param customer
 	 * @param request
 	 * @return
+	 * @throws IOException
 	 */
-	public synchronized String processRequest(CustomerID customer, String request) {
+	public synchronized String processRequest(CustomerID customer, String request) throws IOException {
 
 		if (customers.containsKey(customer.getKey())) {
 			String[] requestInputs = request.split("\\s+");
@@ -95,6 +97,9 @@ public class NewBank {
 					return createAccount(customer, requestInputs, 0);
 				case "MOVE":
 					// return moveMoney(customer);
+				case "LOGOUT":
+				 // return to the main menu	userwelcome
+				 	return logOut();
 				default:
 					return "FAIL";
 
@@ -152,6 +157,28 @@ public class NewBank {
 		}
 	}
 
+	/**
+	* Logs out the current customer
+	* 
+	* @param customer
+	* @param requestInputs
+	 * @throws IOException
+	*/
+
+	private String logOut() throws IOException{
+		//asking to confirm
+		//System.out.print("Do you really want to log out ? yes/no.");
+		//retrieve/collect the user answer
+		//if (request != "yes" || request != "no"){
+		//	return "FAIL: Please answer yes or no";
+		//}
+
+		//else {
+			String request = NewBankClientHandler.userWelcome();
+			return ("LOGOUT SUCCESSFUL" + request); 
+
+		//}
+	}
 	// Enhancement
 	/*
 	 * // type that user will select
