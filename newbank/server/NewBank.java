@@ -157,13 +157,16 @@ public class NewBank {
 
 	/**
 	 * 
+	 * this method takes care of the PAY feature indicated below, gven and customer
+	 * (payer) and a requested payee, this will transfer money from these accounts
+	 * and update balances accordingly
 	 * PAY <Person/Company> <Ammount>
 	 * e.g. PAY John 100
 	 * Returns SUCCESS or FAIL
 	 * 
 	 * @param customer
 	 * @param requestArray
-	 * @return
+	 * @return string that is SUCCESS or FAIL if transfer succeeded
 	 */
 	private String transferMoney(CustomerID customerID, String[] requestArray) {
 
