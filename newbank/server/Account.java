@@ -18,23 +18,15 @@ public class Account {
 		return this.openingBalance;
 	}
 
-	public void changeBalance(Double transaction) {
-		this.openingBalance += transaction;
-	}
-
 	public String toString() {
 		return (accountName + ": " + openingBalance);
 	}
-	
-	public String getAccount() {
-		return this.accountName;
+
+	public double getBalance() {
+		return openingBalance;
 	}
 
-    public double getBalance() {
-        return openingBalance;
-    }
-    
-	public void updateBalance(double amount){
+	public void updateBalance(double amount) {
 		this.openingBalance += amount;
 	}
 }
