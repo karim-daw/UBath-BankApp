@@ -46,7 +46,6 @@ public class NewBankClientHandler extends Thread {
 					if (customer != null) {
 						while (true) {
 							// Asking for a request and process the request
-							// TODO: #10 add a display class that takes car of all the string work
 							out.println("\n");
 							out.println("Select Option...");
 							out.println("SHOWMYACCOUNTS");
