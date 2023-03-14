@@ -95,6 +95,11 @@ public class NewBank {
 					return createAccount(customer, requestInputs, 0);
 				case "MOVE":
 					// return moveMoney(customer);
+				case "PAY":
+				String payeeName = requestInputs[1];
+				double amount = Double.parseDouble(requestInputs[2]);
+				return transferMoney(customer, requestInputs);
+
 				default:
 					return "FAIL";
 
@@ -151,7 +156,34 @@ public class NewBank {
 			}
 		}
 	}
+	
+	private String transferMoney(CustomerID customer, String[] requestArray) {
+		
+		 //Check if the customer exists in the hashmap.
+		 Customer c = customers.get(customer.getKey());
+		 String payeeName = requestArray[1];
 
+		 double transferAmount;
+		 try {
+			 transferAmount = Double.parseDouble(requestArray[2]);
+		    } catch (NumberFormatException e) {
+		        return "FAIL"; //return fail if input is not figures instead of an error
+		    }
+		 
+		 if (transferAmount < 0) {
+		        return "FAIL";
+		    }
+
+		 ArrayList<Account> accounts = c.getAccounts();
+		 for (Account account : accounts) {
+			 if (account.getAccountName().equals(payeeName)) {
+		            account.updateBalance(transferAmount);
+		            return "SUCCESS";
+		        }
+		    }
+
+		    return "FAIL";
+		}
 	// Enhancement
 	/*
 	 * // type that user will select
