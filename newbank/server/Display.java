@@ -8,6 +8,10 @@ public class Display {
     private PrintWriter out;
 
     // contructor
+    public Display() {
+    }
+
+    // contructor
     public Display(PrintWriter out) {
         this.out = out;
     }
