@@ -33,7 +33,7 @@ public class NewBankClientHandler extends Thread {
 				 */
 
 				// Welcome
-				String request = userWelcome();
+				String request = userWelcomeAndCheckin();
 
 				// The User is not logged into the system yet so CustomerID is null
 				CustomerID customer = null;
@@ -90,7 +90,7 @@ public class NewBankClientHandler extends Thread {
 		return request;
 	}
 
-	public String userWelcome() throws IOException {
+	public String userWelcomeAndCheckin() throws IOException {
 
 		// display welcome screen
 		display.displayWelcome();
@@ -147,8 +147,12 @@ public class NewBankClientHandler extends Thread {
 		return customer;
 	}
 
-	// TO DO
-	// Registration for new customers
+	/**
+	 * Registration for new customers
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public CustomerID userRegistration() throws IOException {
 
 		// flag for registrationed success
