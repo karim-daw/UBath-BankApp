@@ -171,16 +171,24 @@ public class NewBank {
 	private String transferMoney(CustomerID customerID, String[] requestArray) {
 
 		// Check if the customer exists in the hashmap.
-		Customer customer = customers.get(customerID.getKey());
+		String customerName = customerID.getKey();
 		String payeeName = requestArray[1];
+
+		Customer customer = customers.get(customerName);
 		System.out.println(payeeName);
+
+		if (payeeName.equals(customerName)) {
+			return "FAIL, you are trying to pay yourself";
+		}
+
+		if (!customers.containsKey(payeeName)) {
+			return "FAIL, payee not a member of NewBank";
+		}
 
 		double transferAmount;
 		try {
 			transferAmount = Double.parseDouble(requestArray[2]);
-			System.out.println(transferAmount);
 		} catch (NumberFormatException e) {
-			System.out.println("hello 1");
 			return "FAIL"; // return fail if input is not figures instead of an error
 		}
 
@@ -189,27 +197,39 @@ public class NewBank {
 		}
 
 		ArrayList<Account> payerAccounts = customer.getAccounts(); // payers accounts
-		if (customers.containsKey(payeeName)) {
 
-			// first account in accounts list will be default for now for payer
-			Account payerFirstAccount = payerAccounts.get(0);
-			payerFirstAccount.updateBalance(-transferAmount);
+		// first account in accounts list will be default for now for payer
+		Account payerFirstAccount = payerAccounts.get(0);
 
-			// handle update on payee account
-			CustomerID payeeCustomerID = new CustomerID(payeeName);
-			Customer payeeCustomer = customers.get(payeeCustomerID.getKey());
-
-			// get payee account as customer
-			ArrayList<Account> payeeAccounts = payeeCustomer.getAccounts();
-			Account payeeFirstAccount = payeeAccounts.get(0); // first account
-
-			// update balance
-			payeeFirstAccount.updateBalance(transferAmount);
-
-			return "SUCCESS";
+		if (isOverDraft(payerFirstAccount, transferAmount)) {
+			return "FAIL, insufficient funds for PAY amount";
 		}
-		return "FAIL";
+		payerFirstAccount.updateBalance(-transferAmount);
+
+		// handle update on payee account
+		CustomerID payeeCustomerID = new CustomerID(payeeName);
+		Customer payeeCustomer = customers.get(payeeCustomerID.getKey());
+
+		// get payee account as customer
+		ArrayList<Account> payeeAccounts = payeeCustomer.getAccounts();
+		Account payeeFirstAccount = payeeAccounts.get(0); // first account
+
+		// update balance
+		payeeFirstAccount.updateBalance(transferAmount);
+
+		return "SUCCESS";
+
 	}
+
+	private boolean isOverDraft(Account account, double deduction) {
+
+		double balance = account.getBalance();
+		if (deduction > balance) {
+			return true;
+		}
+		return false;
+	}
+
 	// Enhancement
 	/*
 	 * // type that user will select
