@@ -11,55 +11,46 @@ public class NewBankClientHandler extends Thread {
 	private NewBank bank;
 	private BufferedReader in;
 	private PrintWriter out;
+	private Display display;
 
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
+		display = new Display(out);
 	}
 
 	public void run() {
 		// keep getting requests from the client and processing them
 		try {
 			while (true) {
+
 				/*
 				 * Initial Welcome Screen:
 				 * Existing users must login before accessing system
 				 * New Users must register a unique username and password before allowed to
 				 * login
 				 */
+
+				// Welcome
 				String request = userWelcome();
+
 				// The User is not logged into the system yet so CustomerID is null
 				CustomerID customer = null;
-				// Pricesses the user's response: LOGIN or REGISTER
+
+				// Process the user's response: LOGIN or REGISTER
 				while (true) {
+					// lOGIN
 					if (request.equals("LOGIN")) {
 						customer = userLogIn();
+						// REGISTER
 					} else if (request.equals("REGISTER")) {
 						customer = userRegistration();
 					} else {
-
 					}
 
-					// if the user has succesfully logged-in, get requests from the user and process
-					// them
-					if (customer != null) {
-						while (true) {
-							// Asking for a request and process the request
-							// TODO: #10 add a display class that takes car of all the string work
-							out.println("\n");
-							out.println("Select Option...");
-							out.println("SHOWMYACCOUNTS");
-							out.println("NEWACCOUNT");
-							out.println("MOVE");
-							out.println("PAY");
-							out.println("\n");
-							request = in.readLine();
-							System.out.println("Request from " + customer.getKey());
-							String responce = bank.processRequest(customer, request);
-							out.println(responce);
-						}
-					}
+					// if the user has logged-in, get requests from the user and process them
+					request = processCustomerRequest(request, customer);
 				}
 			}
 		} catch (IOException e) {
@@ -75,13 +66,53 @@ public class NewBankClientHandler extends Thread {
 		}
 	}
 
+	/**
+	 * @param request
+	 * @param customer
+	 * @return
+	 * @throws IOException
+	 */
+	private String processCustomerRequest(String request, CustomerID customer) throws IOException {
+		if (customer != null) {
+			while (true) {
+				// Asking for a request and process the request
+				display.displayMainMenu();
+
+				// get request from user
+				request = in.readLine();
+				System.out.println("Request from " + customer.getKey());
+
+				// get responce from bank and display responce
+				String responce = bank.processRequest(customer, request);
+				out.println(responce);
+			}
+		}
+		return request;
+	}
+
 	public String userWelcome() throws IOException {
-		out.println("##############################\n");
-		out.println("**** Welcome to New Bank ****\n");
-		out.println("##############################\n\n");
-		out.println("If you're an existing customer type: LOGIN\n");
-		out.println("If you're a new customer type: REGISTER\n");
+
+		// display welcome screen
+		display.displayWelcome();
+
+		// read input from user
 		String request = in.readLine();
+
+		// check if user logged in or registereed
+		request = checkLoginOrRegister(request);
+		return request;
+	}
+
+	/**
+	 * This method will take a request and check if it is LOGIN or REGISTER, if they
+	 * are, thhe valid request will get returned. If not, it will continuely ask for
+	 * LOGIN or REGISTER
+	 * 
+	 * @param request
+	 * @return request string of the valid request i.e LOGIN or REGISTER
+	 * @throws IOException
+	 */
+	private String checkLoginOrRegister(String request) throws IOException {
 		boolean requestValid = false;
 		do {
 			if (request.equals("LOGIN") || request.equals("REGISTER")) {
