@@ -96,9 +96,7 @@ public class NewBank {
 				case "MOVE":
 					// return moveMoney(customer);
 				case "PAY":
-				String payeeName = requestInputs[1];
-				double amount = Double.parseDouble(requestInputs[2]);
-				return transferMoney(customer, requestInputs);
+					return transferMoney(customer, requestInputs);
 
 				default:
 					return "FAIL";
@@ -156,34 +154,59 @@ public class NewBank {
 			}
 		}
 	}
-	
-	private String transferMoney(CustomerID customer, String[] requestArray) {
-		
-		 //Check if the customer exists in the hashmap.
-		 Customer c = customers.get(customer.getKey());
-		 String payeeName = requestArray[1];
 
-		 double transferAmount;
-		 try {
-			 transferAmount = Double.parseDouble(requestArray[2]);
-		    } catch (NumberFormatException e) {
-		        return "FAIL"; //return fail if input is not figures instead of an error
-		    }
-		 
-		 if (transferAmount < 0) {
-		        return "FAIL";
-		    }
+	/**
+	 * 
+	 * PAY <Person/Company> <Ammount>
+	 * e.g. PAY John 100
+	 * Returns SUCCESS or FAIL
+	 * 
+	 * @param customer
+	 * @param requestArray
+	 * @return
+	 */
+	private String transferMoney(CustomerID customerID, String[] requestArray) {
 
-		 ArrayList<Account> accounts = c.getAccounts();
-		 for (Account account : accounts) {
-			 if (account.getAccountName().equals(payeeName)) {
-		            account.updateBalance(transferAmount);
-		            return "SUCCESS";
-		        }
-		    }
+		// Check if the customer exists in the hashmap.
+		Customer customer = customers.get(customerID.getKey());
+		String payeeName = requestArray[1];
+		System.out.println(payeeName);
 
-		    return "FAIL";
+		double transferAmount;
+		try {
+			transferAmount = Double.parseDouble(requestArray[2]);
+			System.out.println(transferAmount);
+		} catch (NumberFormatException e) {
+			System.out.println("hello 1");
+			return "FAIL"; // return fail if input is not figures instead of an error
 		}
+
+		if (transferAmount < 0) {
+			return "FAIL";
+		}
+
+		ArrayList<Account> payerAccounts = customer.getAccounts(); // payers accounts
+		if (customers.containsKey(payeeName)) {
+
+			// first account in accounts list will be default for now for payer
+			Account payerFirstAccount = payerAccounts.get(0);
+			payerFirstAccount.updateBalance(-transferAmount);
+
+			// handle update on payee account
+			CustomerID payeeCustomerID = new CustomerID(payeeName);
+			Customer payeeCustomer = customers.get(payeeCustomerID.getKey());
+
+			// get payee account as customer
+			ArrayList<Account> payeeAccounts = payeeCustomer.getAccounts();
+			Account payeeFirstAccount = payeeAccounts.get(0); // first account
+
+			// update balance
+			payeeFirstAccount.updateBalance(transferAmount);
+
+			return "SUCCESS";
+		}
+		return "FAIL";
+	}
 	// Enhancement
 	/*
 	 * // type that user will select
