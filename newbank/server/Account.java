@@ -1,9 +1,9 @@
-package newbank.server;
+package server;
 
 public class Account {
 
 	private String accountName;
-	private double openingBalance;
+	private double openingBalance = 0; // default
 
 	public Account(String accountName, double openingBalance) {
 		this.accountName = accountName;
@@ -18,12 +18,15 @@ public class Account {
 		return this.openingBalance;
 	}
 
-	public void changeBalance(Double transaction) {
-		this.openingBalance += transaction;
-	}
-
 	public String toString() {
 		return (accountName + ": " + openingBalance);
 	}
 
+	public double getBalance() {
+		return openingBalance;
+	}
+
+	public void updateBalance(double amount) {
+		this.openingBalance += amount;
+	}
 }
