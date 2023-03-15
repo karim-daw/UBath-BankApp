@@ -60,17 +60,25 @@ public class NewBank {
 	 */
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
+		
 		if (customers.containsKey(username)) {
 			// If username exists then check their password
 			Customer customer = customers.get(username);
 			// If the password input equals the password on system then create new
 			// CustomerID
 			if (customer.getPassword().equals(password)) {
+				customer.setloggedInStatus(true);
 				return new CustomerID(username);
 			}
-
+			else {
+				customer.setloggedInStatus(false);
+				return null;
+			}
 		}
-		return null;
+		else {
+			return null;
+		}
+		
 	}
 
 	/**
@@ -82,7 +90,7 @@ public class NewBank {
 	 * @return
 	 * @throws IOException
 	 */
-	public synchronized String processRequest(CustomerID customer, String request) throws IOException {
+	public synchronized String processRequest(CustomerID customer, String request) {
 
 		if (customers.containsKey(customer.getKey())) {
 			String[] requestInputs = request.split("\\s+");
@@ -99,7 +107,8 @@ public class NewBank {
 					// return moveMoney(customer);
 				case "LOGOUT":
 				 // return to the main menu	userwelcome
-				 	return logOut();
+					customer = logOut(customer);
+					return "LOGGED OUT";
 				default:
 					return "FAIL";
 
@@ -164,21 +173,13 @@ public class NewBank {
 	* @param requestInputs
 	 * @throws IOException
 	*/
-
-	private String logOut() throws IOException{
-		//asking to confirm
-		//System.out.print("Do you really want to log out ? yes/no.");
-		//retrieve/collect the user answer
-		//if (request != "yes" || request != "no"){
-		//	return "FAIL: Please answer yes or no";
-		//}
-
-		//else {
-			String request = NewBankClientHandler.userWelcome();
-			return ("LOGOUT SUCCESSFUL" + request); 
-
-		//}
+	
+	private CustomerID logOut(CustomerID customer){
+		customers.get(customer.getKey()).setloggedInStatus(false);
+		return null;
+		
 	}
+	
 	// Enhancement
 	/*
 	 * // type that user will select
