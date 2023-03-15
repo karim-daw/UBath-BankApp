@@ -76,6 +76,10 @@ public class Customer {
 		accounts.add(account);
 
 	}
+	
+	public ArrayList<Account> getAccounts(){
+		return accounts;
+	}
 
 	public boolean checkAccount(String accountName) {
 		for (Account account : accounts) {

@@ -44,6 +44,7 @@ public class NewBankClientHandler extends Thread {
 					
 					// if the user has succesfully logged-in, get requests from the user and process
 					// them
+<<<<<<< HEAD
 					// Asking for a request and process the request
 					// TODO: #10 add a display class that takes car of all the string work
 					out.println("\n");
@@ -59,6 +60,23 @@ public class NewBankClientHandler extends Thread {
 					String responce = bank.processRequest(customer, request);
 					if (bank.getCustomers().get(customer.getKey()).getloggedInStatus()==false) {
 						customer = null;
+=======
+					if (customer != null) {
+						while (true) {
+							// Asking for a request and process the request
+							out.println("\n");
+							out.println("Select Option...");
+							out.println("SHOWMYACCOUNTS");
+							out.println("NEWACCOUNT");
+							out.println("MOVE");
+							out.println("PAY");
+							out.println("\n");
+							request = in.readLine();
+							System.out.println("Request from " + customer.getKey());
+							String responce = bank.processRequest(customer, request);
+							out.println(responce);
+						}
+>>>>>>> refs/remotes/origin/main
 					}
 					out.println(responce);
 				}
