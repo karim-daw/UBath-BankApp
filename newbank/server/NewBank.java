@@ -105,16 +105,12 @@ public class NewBank {
 					return createAccount(customer, requestInputs, 0);
 				case "MOVE":
 					// return moveMoney(customer);
-<<<<<<< HEAD
 				case "LOGOUT":
 				 // return to the main menu	userwelcome
 					customer = logOut(customer);
-					return "LOGGED OUT";
-=======
+					return "SUCCESS: LOGGED OUT";
 				case "PAY":
 					return transferMoney(customer, requestInputs);
-
->>>>>>> refs/remotes/origin/main
 				default:
 					return "FAIL";
 
@@ -173,12 +169,9 @@ public class NewBank {
 	}
 
 	/**
-<<<<<<< HEAD
 	* Logs out the current customer
 	* 
 	* @param customer
-	* @param requestInputs
-	 * @throws IOException
 	*/
 	
 	private CustomerID logOut(CustomerID customer){
@@ -187,8 +180,7 @@ public class NewBank {
 		
 	}
 	
-=======
-	 * 
+	 /* 
 	 * this method takes care of the PAY feature indicated below, gven and customer
 	 * (payer) and a requested payee, this will transfer money from these accounts
 	 * and update balances accordingly
@@ -262,7 +254,6 @@ public class NewBank {
 		return false;
 	}
 
->>>>>>> refs/remotes/origin/main
 	// Enhancement
 	/*
 	 * // type that user will select
