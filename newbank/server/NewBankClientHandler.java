@@ -9,8 +9,8 @@ import java.net.Socket;
 public class NewBankClientHandler extends Thread {
 
 	private NewBank bank;
-	private BufferedReader in;
-	private PrintWriter out;
+	private static BufferedReader in;
+	private static PrintWriter out;
 
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
@@ -20,6 +20,9 @@ public class NewBankClientHandler extends Thread {
 
 	public void run() {
 		// keep getting requests from the client and processing them
+		// The User is not logged into the system yet so CustomerID is null
+		CustomerID customer = null;
+		
 		try {
 			while (true) {
 				/*
@@ -28,37 +31,33 @@ public class NewBankClientHandler extends Thread {
 				 * New Users must register a unique username and password before allowed to
 				 * login
 				 */
-				String request = userWelcome();
-				// The User is not logged into the system yet so CustomerID is null
-				CustomerID customer = null;
-				// Pricesses the user's response: LOGIN or REGISTER
-				while (true) {
+				// Processes the user's response: LOGIN or REGISTER
+				if (customer == null){
+					String request = userWelcome();
 					if (request.equals("LOGIN")) {
 						customer = userLogIn();
-					} else if (request.equals("REGISTER")) {
-						customer = userRegistration();
 					} else {
-
+						customer = userRegistration();
+					} 
+				}
+				else {
+					// Asking for a request and process the request
+					// TODO: #10 add a display class that takes car of all the string work
+					out.println("\n");
+					out.println("Select Option...");
+					out.println("SHOWMYACCOUNTS");
+					out.println("NEWACCOUNT");
+					out.println("MOVE");
+					out.println("PAY");
+					out.println("LOGOUT");
+					out.println("\n");
+					String request = in.readLine();
+					System.out.println("Request from " + customer.getKey());
+					String responce = bank.processRequest(customer, request);
+					if (bank.getCustomers().get(customer.getKey()).getloggedInStatus()==false) {
+						customer = null;
 					}
-
-					// if the user has succesfully logged-in, get requests from the user and process
-					// them
-					if (customer != null) {
-						while (true) {
-							// Asking for a request and process the request
-							out.println("\n");
-							out.println("Select Option...");
-							out.println("SHOWMYACCOUNTS");
-							out.println("NEWACCOUNT");
-							out.println("MOVE");
-							out.println("PAY");
-							out.println("\n");
-							request = in.readLine();
-							System.out.println("Request from " + customer.getKey());
-							String responce = bank.processRequest(customer, request);
-							out.println(responce);
-						}
-					}
+					out.println(responce);
 				}
 			}
 		} catch (IOException e) {
@@ -74,7 +73,7 @@ public class NewBankClientHandler extends Thread {
 		}
 	}
 
-	public String userWelcome() throws IOException {
+	public static String userWelcome() throws IOException {
 		out.println("##############################\n");
 		out.println("**** Welcome to New Bank ****\n");
 		out.println("##############################\n\n");

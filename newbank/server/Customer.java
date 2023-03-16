@@ -6,8 +6,8 @@ import java.util.List;
 public class Customer {
 
 	private ArrayList<Account> accounts;
-
 	private String password;
+	private boolean loggedInStatus;
 
 	public Customer() {
 		accounts = new ArrayList<>();
@@ -26,7 +26,21 @@ public class Customer {
 	public String getPassword() {
 		return this.password;
 	}
+	
+	/**
+	 * @set a boolean as logged-in-status
+	 */
+	public void setloggedInStatus(boolean status) {
+		this.loggedInStatus = status;
+	}
 
+	/**
+	 * @return a Boolean of a loggedInStatus
+	 */
+	public boolean getloggedInStatus() {
+		return this.loggedInStatus;
+	}
+	
 	/**
 	 * @return a string of an account
 	 */
@@ -91,4 +105,5 @@ public class Customer {
 		return false;
 
 	}
+	
 }
