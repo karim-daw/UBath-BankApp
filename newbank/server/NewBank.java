@@ -105,10 +105,10 @@ public class NewBank {
 					return createAccount(customer, requestInputs, 0);
 				case "MOVE":
 					// return moveMoney(customer);
+					return "MOVE NOT IMPLEMENNTED YET";
 				case "LOGOUT":
 				 // return to the main menu	userwelcome
-					customer = logOut(customer);
-					return "SUCCESS: LOGGED OUT";
+					return logOut(customer);
 				case "PAY":
 					return transferMoney(customer, requestInputs);
 				default:
@@ -174,11 +174,13 @@ public class NewBank {
 	* @param customer
 	*/
 	
-	private CustomerID logOut(CustomerID customer){
+	
+	private String logOut(CustomerID customer) {
 		customers.get(customer.getKey()).setloggedInStatus(false);
-		return null;
+		return "LOG OUT SUCCESSFUL";
 		
 	}
+	
 	
 	 /* 
 	 * this method takes care of the PAY feature indicated below, gven and customer
