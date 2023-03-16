@@ -64,7 +64,7 @@ public class NewBank {
 
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
-		
+
 		if (customers.containsKey(username)) {
 			// If username exists then check their password
 			Customer customer = customers.get(username);
@@ -73,16 +73,14 @@ public class NewBank {
 			if (customer.getPassword().equals(password)) {
 				customer.setloggedInStatus(true);
 				return new CustomerID(username);
-			}
-			else {
+			} else {
 				customer.setloggedInStatus(false);
 				return null;
 			}
-		}
-		else {
+		} else {
 			return null;
 		}
-		
+
 	}
 
 	/**
@@ -96,7 +94,6 @@ public class NewBank {
 	 */
 	public synchronized String processRequest(CustomerID customer, String request) {
 
-
 		if (customers.containsKey(customer.getKey())) {
 			String[] requestInputs = request.split("\\s+");
 			String command = requestInputs[0];
@@ -109,16 +106,17 @@ public class NewBank {
 					// inputBalance
 					return createAccount(customer, requestInputs, 0);
 				case "MOVE":
-          return moveMoney(customer, requestInputs);
+					return moveMoney(customer, requestInputs);
 				case "LOGOUT":
-				 // return to the main menu	userwelcome
+					// return to the main menu userwelcome
 					return logOut(customer);
 				case "PAY":
 					return transferMoney(customer, requestInputs);
 				default:
 					return "FAIL";
-
+			}
 		}
+		return "FAIL";
 	}
 
 	/**
@@ -175,20 +173,18 @@ public class NewBank {
 	}
 
 	/**
-	* Logs out the current customer
-	* 
-	* @param customer
-	*/
-	
-	
+	 * Logs out the current customer
+	 * 
+	 * @param customer
+	 */
+
 	private String logOut(CustomerID customer) {
 		customers.get(customer.getKey()).setloggedInStatus(false);
 		return "LOG OUT SUCCESSFUL";
-		
+
 	}
-	
-	
-	 /* 
+
+	/*
 	 * this method takes care of the PAY feature indicated below, gven and customer
 	 * (pay2er) and a requested payee, this will transfer money from these accounts
 	 * and update balances accordingly
@@ -197,7 +193,9 @@ public class NewBank {
 	 * Returns SUCCESS or FAIL
 	 * 
 	 * @param customer
+	 * 
 	 * @param requestArray
+	 * 
 	 * @return string that is SUCCESS or FAIL if transfer succeeded
 	 */
 	private String transferMoney(CustomerID customerID, String[] requestArray) {
@@ -365,5 +363,3 @@ public class NewBank {
 		return false;
 	}
 }
-
-
