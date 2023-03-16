@@ -9,7 +9,6 @@ public class Customer {
 
 	private String password;
 
-
 	public Customer() {
 		accounts = new ArrayList<>();
 	}
@@ -62,9 +61,25 @@ public class Customer {
 		accounts.add(account);
 
 	}
-	
-	public ArrayList<Account> getAccounts(){
+
+	/**
+	 * @return list of accounts
+	 */
+	public ArrayList<Account> getAccounts() {
 		return accounts;
+	}
+
+	/**
+	 * @param accountName
+	 * @return
+	 */
+	public Account getAccountByName(String accountName) {
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(accountName)) {
+				return account;
+			}
+		}
+		return null;
 	}
 
 	public boolean checkAccount(String accountName) {
