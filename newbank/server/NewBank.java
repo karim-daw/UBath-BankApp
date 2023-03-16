@@ -2,12 +2,9 @@ package server;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
-
-//import static java.lang.System.out;
 
 public class NewBank {
 
@@ -31,10 +28,10 @@ public class NewBank {
 	/**
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
+
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
-		bhagy.addAccount(new Account("Savings", 200.0));
 		bhagy.setPassword("password");
 		getCustomers().put("Bhagy", bhagy);
 
@@ -45,22 +42,29 @@ public class NewBank {
 
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
-		john.setPassword("1111");
 		getCustomers().put("John", john);
+		christina.setPassword("4321");
 	}
 
 	public static NewBank getBank() {
 		return bank;
 	}
 
-	/**
-	 * @param userName
-	 * @param password
-	 * @return null
-	 */
+	// private double inputAmount() {
+	// Scanner scanner = new Scanner(System.in);
+	// System.out.println("Please input the amount.");
+	// try {
+	// double amount = scanner.nextDouble();
+	// return amount;
+	// } catch (InputMismatchException e) {
+	// System.out.println("Please re-enter with numbers only.");
+	// return inputAmount(); // call the method recursively to get a valid input
+	// }
+	// }
+
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
-		
+
 		if (customers.containsKey(username)) {
 			// If username exists then check their password
 			Customer customer = customers.get(username);
@@ -69,16 +73,14 @@ public class NewBank {
 			if (customer.getPassword().equals(password)) {
 				customer.setloggedInStatus(true);
 				return new CustomerID(username);
-			}
-			else {
+			} else {
 				customer.setloggedInStatus(false);
 				return null;
 			}
-		}
-		else {
+		} else {
 			return null;
 		}
-		
+
 	}
 
 	/**
@@ -104,19 +106,17 @@ public class NewBank {
 					// inputBalance
 					return createAccount(customer, requestInputs, 0);
 				case "MOVE":
-					// return moveMoney(customer);
-					return "MOVE NOT IMPLEMENNTED YET";
+					return moveMoney(customer, requestInputs);
 				case "LOGOUT":
-				 // return to the main menu	userwelcome
+					// return to the main menu userwelcome
 					return logOut(customer);
 				case "PAY":
 					return transferMoney(customer, requestInputs);
 				default:
 					return "FAIL";
-
 			}
 		}
-		return "FAIL\n";
+		return "FAIL";
 	}
 
 	/**
@@ -139,6 +139,10 @@ public class NewBank {
 
 	/**
 	 * Creates a new account for a given customer
+	 * 
+	 * NEWACCOUNT <Name>
+	 * e.g. NEWACCOUNT Savings
+	 * Returns SUCCESS or FAIL
 	 * 
 	 * @param customer
 	 * @param requestInputs
@@ -169,20 +173,18 @@ public class NewBank {
 	}
 
 	/**
-	* Logs out the current customer
-	* 
-	* @param customer
-	*/
-	
-	
+	 * Logs out the current customer
+	 * 
+	 * @param customer
+	 */
+
 	private String logOut(CustomerID customer) {
 		customers.get(customer.getKey()).setloggedInStatus(false);
 		return "LOG OUT SUCCESSFUL";
-		
+
 	}
-	
-	
-	 /* 
+
+	/*
 	 * this method takes care of the PAY feature indicated below, gven and customer
 	 * (pay2er) and a requested payee, this will transfer money from these accounts
 	 * and update balances accordingly
@@ -191,7 +193,9 @@ public class NewBank {
 	 * Returns SUCCESS or FAIL
 	 * 
 	 * @param customer
+	 * 
 	 * @param requestArray
+	 * 
 	 * @return string that is SUCCESS or FAIL if transfer succeeded
 	 */
 	private String transferMoney(CustomerID customerID, String[] requestArray) {
@@ -260,35 +264,69 @@ public class NewBank {
 		return false;
 	}
 
-	// Enhancement
-	/*
-	 * // type that user will select
-	 * // when transferring money or
+	/**
+	 * method takes care of the MOVE protocol
 	 * 
-	 * private String selectAccountType() {
+	 * MOVE <Amount> <From> <To>
+	 * e.g. MOVE 100 Main Savings
+	 * Returns SUCCESS or FAIL
 	 * 
-	 * out.println("Select the account type by number");
-	 * out.println("1. Main account");
-	 * out.println("2. Savings account");
-	 * out.println("3. Checking account");
-	 * out.println("4. Return");
-	 * 
-	 * String request = scanner.nextLine();
-	 * String[] typeOfAccount = request.split("\\s+");
-	 * switch (typeOfAccount[0]){
-	 * case "1" :
-	 * return "Main";
-	 * case "2":
-	 * return "Savings";
-	 * case "3":
-	 * return "Checking";
-	 * //case 4. Return not coded yet
-	 * }
-	 * return "";
-	 * }
+	 * @param customerID
+	 * @param requestArray
+	 * @return SUCCESS string or FAIL string
 	 */
+	private String moveMoney(CustomerID customerID, String[] requestInputs) {
 
-	// TO DO:
+		// Check if request is incomplete
+		int inputLength = requestInputs.length;
+		if (inputLength < 4) {
+			return "FAIL: Invalid MOVE request";
+		}
+
+		// Check if the customer exists in the hashmap.
+		String customerName = customerID.getKey();
+		Customer customer = customers.get(customerName);
+
+		// Check if transfer amount is a number
+		double transferAmount;
+		try {
+			transferAmount = Double.parseDouble(requestInputs[1]);
+		} catch (NumberFormatException e) {
+			return "FAIL"; // return fail if input is not figures instead of an error
+		}
+
+		// Check if transfer amount is negative
+		if (transferAmount < 0) {
+			return "FAIL";
+		}
+
+		// Get the accounts from the customer
+		System.out.println("Select source account.");
+		Account sourceAccount = customer.getAccountByName(requestInputs[2]);
+		if (sourceAccount.equals(null)) {
+			return "FAIL, source account does not exist";
+		}
+
+		// check if account has overdraft
+		if (isOverDraft(sourceAccount, transferAmount)) {
+			return "FAIL, insufficient funds in the source account.";
+		}
+
+		// update balance of source account
+		sourceAccount.updateBalance(-transferAmount);
+
+		// get destination account
+		System.out.println("Select destination account.");
+		Account destinationAccount = customer.getAccountByName(requestInputs[3]);
+		if (destinationAccount == null) {
+			return "FAIL, destination account does not exist";
+		}
+
+		// update balance of destination account
+		destinationAccount.updateBalance(transferAmount);
+		return "SUCCESS";
+
+	}
 
 	/**
 	 * Registers a new customer to hashmap, performs validaiton to see if customer
@@ -324,5 +362,4 @@ public class NewBank {
 	public boolean isPasswordValid(String password) {
 		return false;
 	}
-
 }

@@ -1,4 +1,8 @@
 .vscode/
+<<<<<<< HEAD
+*.xml
+*.class
+=======
 
 *.xml/
 
@@ -10,3 +14,4 @@
 
 
 
+>>>>>>> 2d9f9c8cd69067afb9d6d5a50929c1e97b01a0ab
