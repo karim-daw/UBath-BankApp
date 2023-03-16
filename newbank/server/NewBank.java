@@ -1,16 +1,13 @@
-package newbank.server;
 package server;
 
 import java.util.ArrayList;
-import java.util.List;
-
-
 import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
-
 public class NewBank {
-	
+
 	private static final NewBank bank = new NewBank();
 	private HashMap<String, Customer> customers;
 
@@ -28,9 +25,6 @@ public class NewBank {
 		addTestData();
 	}
 
-	
-
-
 	/**
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
@@ -39,44 +33,32 @@ public class NewBank {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
 		customers.put("Bhagy", bhagy);
-		
+
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		christina.setPassword("1234");
 		getCustomers().put("Christina", christina);
 
-
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);
 	}
-	
+
 	public static NewBank getBank() {
 		return bank;
 	}
 
-	
-	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		if(customers.containsKey(userName)) {
-			return new CustomerID(userName);
-		}
-		return null;
-	}
-	
-
-	private double inputAmount(){
+	private double inputAmount() {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Please input the amount.");
 		try {
-			Scanner amount = new Scanner(System.in);
-			System.out.println("Please input the ammount."); 
-			double amount = new Scanner(System.in);
+			double amount = scanner.nextDouble();
+			return amount;
+		} catch (InputMismatchException e) {
+			System.out.println("Please re-enter with numbers only.");
+			return inputAmount(); // call the method recursively to get a valid input
 		}
-		catch (NumberFormatException e) { 
-			return "Please re-enter with numbers only.";
-		}
-
-		return amount;
 	}
-
 
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
@@ -103,29 +85,26 @@ public class NewBank {
 	 */
 	public synchronized String processRequest(CustomerID customer, String request) {
 
-			String[] requestInputs = request.split("\\s+");
-			String command = requestInputs[0];
+		String[] requestInputs = request.split("\\s+");
+		String command = requestInputs[0];
 
-			switch (command) {
-				case "SHOWMYACCOUNTS":
-					return showMyAccounts(customer);
-				case "NEWACCOUNT":
-					// String selectAccountType = selectAccountType();
-					// inputBalance
-					return createAccount(customer, requestInputs, 0);
-				case "MOVE":
-					return moveMoney(customer);
-				case "PAY":
-					return transferMoney(customer, requestInputs);
+		switch (command) {
+			case "SHOWMYACCOUNTS":
+				return showMyAccounts(customer);
+			case "NEWACCOUNT":
+				// String selectAccountType = selectAccountType();
+				// inputBalance
+				return createAccount(customer, requestInputs, 0);
+			case "MOVE":
+				return moveMoney(customer);
+			case "PAY":
+				return transferMoney(customer, requestInputs);
 
-				default:
-					return "FAIL";
+			default:
+				return "FAIL";
 
-			}
 		}
-		return "FAIL";
 	}
-
 
 	/**
 	 * displays accounts as a list
@@ -251,15 +230,32 @@ public class NewBank {
 		return false;
 	}
 
-	private String moveMoney(CustomerID customerID,String[] requestArray) {
+	/**
+	 * this method takes care of the protocol below
+	 * 
+	 * MOVE <Amount> <From> <To>
+	 * e.g. MOVE 100 Main Savings
+	 * Returns SUCCESS or FAIL
+	 * 
+	 * @param customerID
+	 * @param requestArray
+	 * @return
+	 */
+	private String moveMoney(CustomerID customerID, String[] requestInputs) {
+
+		int inputLength = requestInputs.length;
+		if (inputLength < 4) {
+			return "FAIL: Invalid MOVE request";
+		}
 
 		// Check if the customer exists in the hashmap.
 		String customerName = customerID.getKey();
 		Customer customer = customers.get(customerName);
 
+		// check if transfer amount is a number
 		double transferAmount;
 		try {
-			transferAmount = Double.parseDouble(requestArray[1]);
+			transferAmount = Double.parseDouble(requestInputs[1]);
 		} catch (NumberFormatException e) {
 			return "FAIL"; // return fail if input is not figures instead of an error
 		}
@@ -268,26 +264,24 @@ public class NewBank {
 			return "FAIL";
 		}
 		// Get the accounts from the customer
-		ArrayList<Account> accounts = customer.getAccounts(); 
+		System.out.println("Select source account.");
 
-		System.out.println("Select source account.")
-		// This part is hard code. Perhaps we can utilize the selectAccountType method ? 
-		Account sourceAccount = accounts.get(main);
+		// This part is hard code. Perhaps we can utilize the selectAccountType method ?
+		Account sourceAccount = customer.getAccountByName(requestInputs[2]);
 
 		if (isOverDraft(sourceAccount, transferAmount)) {
 			return "FAIL, insufficient funds in the source account.";
 		}
 		sourceAccount.updateBalance(-transferAmount);
 
-		System.out.println("Select destination account.")
-		Account destinationAccount = accounts.get(savings);
+		System.out.println("Select destination account.");
+		Account destinationAccount = customer.getAccountByName(requestInputs[3]);
 		// update balance
 		destinationAccount.updateBalance(transferAmount);
 
 		return "SUCCESS";
 
 	}
-
 
 	// Enhancement
 	/*
@@ -353,6 +347,4 @@ public class NewBank {
 	public boolean isPasswordValid(String password) {
 		return false;
 	}
-	
-
-
+}
