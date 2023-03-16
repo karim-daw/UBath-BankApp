@@ -1,5 +1,6 @@
 package server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,17 +60,25 @@ public class NewBank {
 	 */
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
+		
 		if (customers.containsKey(username)) {
 			// If username exists then check their password
 			Customer customer = customers.get(username);
 			// If the password input equals the password on system then create new
 			// CustomerID
 			if (customer.getPassword().equals(password)) {
+				customer.setloggedInStatus(true);
 				return new CustomerID(username);
 			}
-
+			else {
+				customer.setloggedInStatus(false);
+				return null;
+			}
 		}
-		return null;
+		else {
+			return null;
+		}
+		
 	}
 
 	/**
@@ -79,6 +88,7 @@ public class NewBank {
 	 * @param customer
 	 * @param request
 	 * @return
+	 * @throws IOException
 	 */
 	public synchronized String processRequest(CustomerID customer, String request) {
 
@@ -95,9 +105,12 @@ public class NewBank {
 					return createAccount(customer, requestInputs, 0);
 				case "MOVE":
 					// return moveMoney(customer);
+					return "MOVE NOT IMPLEMENNTED YET";
+				case "LOGOUT":
+				 // return to the main menu	userwelcome
+					return logOut(customer);
 				case "PAY":
 					return transferMoney(customer, requestInputs);
-
 				default:
 					return "FAIL";
 
@@ -156,7 +169,20 @@ public class NewBank {
 	}
 
 	/**
-	 * 
+	* Logs out the current customer
+	* 
+	* @param customer
+	*/
+	
+	
+	private String logOut(CustomerID customer) {
+		customers.get(customer.getKey()).setloggedInStatus(false);
+		return "LOG OUT SUCCESSFUL";
+		
+	}
+	
+	
+	 /* 
 	 * this method takes care of the PAY feature indicated below, gven and customer
 	 * (pay2er) and a requested payee, this will transfer money from these accounts
 	 * and update balances accordingly
