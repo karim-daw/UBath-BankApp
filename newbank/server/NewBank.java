@@ -158,7 +158,7 @@ public class NewBank {
 	/**
 	 * 
 	 * this method takes care of the PAY feature indicated below, gven and customer
-	 * (payer) and a requested payee, this will transfer money from these accounts
+	 * (pay2er) and a requested payee, this will transfer money from these accounts
 	 * and update balances accordingly
 	 * PAY <Person/Company> <Ammount>
 	 * e.g. PAY John 100
@@ -169,6 +169,10 @@ public class NewBank {
 	 * @return string that is SUCCESS or FAIL if transfer succeeded
 	 */
 	private String transferMoney(CustomerID customerID, String[] requestArray) {
+
+		if (requestArray.length < 3) {
+			return "FAIL, incomplete PAY Request";
+		}
 
 		// Check if the customer exists in the hashmap.
 		String customerName = customerID.getKey();
