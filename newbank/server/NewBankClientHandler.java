@@ -49,6 +49,7 @@ public class NewBankClientHandler extends Thread {
 					out.println("NEWACCOUNT");
 					out.println("MOVE");
 					out.println("PAY");
+					out.println("CHANGEMYPASSWORD");
 					out.println("LOGOUT");
 					out.println("\n");
 					String request = in.readLine();
