@@ -1,10 +1,15 @@
 package server;
 
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Collections;
+import java.util.Arrays;
+
 
 public class NewBank {
 
@@ -14,12 +19,14 @@ public class NewBank {
 	private static String main = "Main";
 	private static String savings = "Savings";
 	private static String checking = "Checking";
-	Scanner scanner = new Scanner(System.in);
-
+	private static final List<String> validAcctList = 
+		    Collections.unmodifiableList(Arrays.asList(main, savings,checking));
+	
 	public HashMap<String, Customer> getCustomers() {
 		return customers;
 	}
-
+	
+	//Constructor
 	private NewBank() {
 		customers = new HashMap<>();
 		addTestData();
@@ -50,18 +57,72 @@ public class NewBank {
 		return bank;
 	}
 
-	// private double inputAmount() {
-	// Scanner scanner = new Scanner(System.in);
-	// System.out.println("Please input the amount.");
-	// try {
-	// double amount = scanner.nextDouble();
-	// return amount;
-	// } catch (InputMismatchException e) {
-	// System.out.println("Please re-enter with numbers only.");
-	// return inputAmount(); // call the method recursively to get a valid input
-	// }
-	// }
+	/**
+	 * 
+	 * commands from the NewBank customer are processed in this method
+	 * 
+	 * @param customer
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	public synchronized String processRequest(CustomerID customer, String request) throws IOException{
 
+		if (getCustomers().containsKey(customer.getKey())) {
+			String[] requestInputs = request.split("\\s+");
+			String command = requestInputs[0];
+
+			switch (command) {
+				case "SHOWMYACCOUNTS":
+					return showMyAccounts(customer);
+				case "NEWACCOUNT":
+					// inputBalance
+					//return createAccount(customer, requestInputs, 0);
+					return createAccountEnhancement(customer,NewBankClientHandler.in, NewBankClientHandler.out);
+				case "MOVE":
+					return moveMoney(customer, requestInputs);
+				case "LOGOUT":
+					// return to the main menu userwelcome
+					return logOut(customer);
+				case "PAY":
+					return transferMoney(customer, requestInputs);
+				case "CHANGEMYPASSWORD":
+					return changePassword(customer,requestInputs);
+				case "END":
+					return "END";
+				default:
+					return "FAIL";
+			}
+		}
+		return "FAIL";
+	}
+	
+	public int getNumberFromUser(BufferedReader in,PrintWriter out) throws IOException{
+	    while (true) {
+	        try {
+	            String valueString = in.readLine();
+	            return convertStringToInt(valueString);
+	        } catch (IOException e) {
+	            out.println("Could not acquire next line from system input: " + e.getMessage());
+	        } catch (NumberFormatException ex) {
+	            out.println("Could not convert input string: " + ex.getMessage());
+	        }
+	    }
+	}
+	
+	
+	public int convertStringToInt(String userInput) {
+		
+		try {
+	        int inputAsInt = Integer.parseInt(userInput);
+	        return inputAsInt;
+	    }
+	    catch (NumberFormatException e) {
+	        System.out.println("Input isn't a number.");
+	        return 0;
+	    }
+	}
+	
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
 
@@ -83,47 +144,6 @@ public class NewBank {
 
 	}
 
-	/**
-	 * 
-	 * commands from the NewBank customer are processed in this method
-	 * 
-	 * @param customer
-	 * @param request
-	 * @return
-	 * @throws IOException
-	 */
-	public synchronized String processRequest(CustomerID customer, String request) {
-
-		if (customers.containsKey(customer.getKey())) {
-			String[] requestInputs = request.split("\\s+");
-			String command = requestInputs[0];
-
-			switch (command) {
-				case "SHOWMYACCOUNTS":
-					return showMyAccounts(customer);
-				case "NEWACCOUNT":
-					// String selectAccountType = selectAccountType();
-					// inputBalance
-					return createAccount(customer, requestInputs, 0);
-				case "MOVE":
-					return moveMoney(customer, requestInputs);
-				case "LOGOUT":
-					// return to the main menu userwelcome
-					return logOut(customer);
-				case "PAY":
-					return transferMoney(customer, requestInputs);
-				
-				case "CHANGEMYPASSWORD":
-					return changePassword(customer,requestInputs);
-
-
-
-				default:
-					return "FAIL";
-			}
-		}
-		return "FAIL";
-	}
 
 	/**
 	 * displays accounts as a list
@@ -132,7 +152,7 @@ public class NewBank {
 	 * @return
 	 */
 
-	private String showMyAccounts(CustomerID customer) {
+	public String showMyAccounts(CustomerID customer) {
 		// create a list that will be displayed
 		List<String> accountList = new ArrayList<String>();
 		accountList = customers.get(customer.getKey()).accountsToList();
@@ -142,7 +162,8 @@ public class NewBank {
 		}
 		return s;
 	}
-
+	
+					
 	/**
 	 * Creates a new account for a given customer
 	 * 
@@ -155,6 +176,8 @@ public class NewBank {
 	 * @param openingBalance
 	 * @return string regarding success or failure of createtAccount request
 	 */
+	
+	/*
 	private String createAccount(CustomerID customer, String[] requestInputs, double openingBalance) {
 
 		int inputLength = requestInputs.length;
@@ -177,14 +200,64 @@ public class NewBank {
 			}
 		}
 	}
-
+	*/
+	
+	public String createAccountEnhancement(CustomerID customerID,BufferedReader in,PrintWriter out) throws IOException {
+		
+		String response=""; //the system response to the user's request
+		Customer customer = customers.get(customerID.getKey()); //the current customer
+		HashMap<String,String> acctOptions = new HashMap<>(); //list of available new accounts for the customer 
+		List<String> existingAcctList = customer.acctTypesToList(); // list of existing accounts for the customer
+		int i=0;
+		for (String a : validAcctList) {
+			if (!existingAcctList.contains(a)) {
+				i++;
+				String key=Integer.toString(i);
+				acctOptions.put(key, a); //HashMap of number and account type for non-existing customer accounts
+			}
+		}
+		
+		if (!acctOptions.isEmpty()) { //if there are available account types for creation
+			out.println("Choose from: ");
+			acctOptions.entrySet().forEach(NewBankClientHandler.out::println);
+			out.println("Enter your option number: ");
+			String userInput = in.readLine();
+			String accountType = acctOptions.get(userInput);
+			
+			out.println("Enter an opening balance: ");
+			int openingBalance = getNumberFromUser(in,out);
+			
+			
+			out.println("Open a new " + accountType + " account with an opening balance of " + openingBalance+ "?");
+			out.println("Enter 'y' for Yes or 'n' for No: ");
+			userInput = in.readLine();
+			
+			if ((userInput.charAt(0)=='y') || (userInput.charAt(0)=='Y')) {
+				customer.addAccount(new Account(accountType, openingBalance));
+				response = "SUCCESS: Your " + accountType + " account has been created.";
+			}
+			else {
+				response = "Account creation was cancelled. Returning you to the Main Menu.";
+			}
+			
+			
+		}
+		else {
+			response = "You cannot create a new account type. You have all possible account types.";
+			NewBankClientHandler.startup();
+		}
+		
+		return response;
+	}
+	
+	
 	/**
 	 * Logs out the current customer
 	 * 
 	 * @param customer
 	 */
 
-	private String logOut(CustomerID customer) {
+	public String logOut(CustomerID customer) {
 		customers.get(customer.getKey()).setloggedInStatus(false);
 		return "LOG OUT SUCCESSFUL";
 
@@ -204,7 +277,7 @@ public class NewBank {
 	 * 
 	 * @return string that is SUCCESS or FAIL if transfer succeeded
 	 */
-	private String transferMoney(CustomerID customerID, String[] requestArray) {
+	public String transferMoney(CustomerID customerID, String[] requestArray) {
 
 		if (requestArray.length < 3) {
 			return "FAIL, incomplete PAY Request";
@@ -261,7 +334,7 @@ public class NewBank {
 
 	}
 
-	private boolean isOverDraft(Account account, double deduction) {
+	public boolean isOverDraft(Account account, double deduction) {
 
 		double balance = account.getBalance();
 		if (deduction > balance) {
@@ -281,7 +354,7 @@ public class NewBank {
 	 * @param requestArray
 	 * @return SUCCESS string or FAIL string
 	 */
-	private String moveMoney(CustomerID customerID, String[] requestInputs) {
+	public String moveMoney(CustomerID customerID, String[] requestInputs) {
 
 		// Check if request is incomplete
 		int inputLength = requestInputs.length;

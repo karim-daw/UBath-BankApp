@@ -8,9 +8,9 @@ import java.net.Socket;
 
 public class NewBankClientHandler extends Thread {
 
-	private NewBank bank;
-	private static BufferedReader in;
-	private static PrintWriter out;
+	private static NewBank bank;
+	public static BufferedReader in;
+	public static PrintWriter out;
 
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
@@ -19,21 +19,20 @@ public class NewBankClientHandler extends Thread {
 	}
 
 	public void run() {
+		startup();
+	}
+	
+	public static void startup() {
 		// keep getting requests from the client and processing them
 		// The User is not logged into the system yet so CustomerID is null
 		CustomerID customer = null;
-		
+		String request = "";
+		String responce = "";
 		try {
-			while (true) {
-				/*
-				 * Initial Welcome Screen:
-				 * Existing users must login before accessing system
-				 * New Users must register a unique username and password before allowed to
-				 * login
-				 */
+			do {
 				// Processes the user's response: LOGIN or REGISTER
 				if (customer == null){
-					String request = userWelcome();
+					request = userWelcome();
 					if (request.equals("LOGIN")) {
 						customer = userLogIn();
 					} else {
@@ -41,30 +40,21 @@ public class NewBankClientHandler extends Thread {
 					} 
 				}
 				else {
-					// Asking for a request and process the request
-					// TODO: #10 add a display class that takes car of all the string work
-					out.println("\n");
-					out.println("Select Option...");
-					out.println("SHOWMYACCOUNTS");
-					out.println("NEWACCOUNT");
-					out.println("MOVE");
-					out.println("PAY");
-					out.println("CHANGEMYPASSWORD");
-					out.println("LOGOUT");
-					out.println("\n");
-					String request = in.readLine();
+					mainMenu();
+					request = in.readLine();
 					System.out.println("Request from " + customer.getKey());
-					String responce = bank.processRequest(customer, request);
+					responce = bank.processRequest(customer, request);
 					if (bank.getCustomers().get(customer.getKey()).getloggedInStatus()==false) {
 						customer = null;
 					}
 					out.println(responce);
 				}
-			}
+			}while (!(responce == "END"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			try {
+				System.out.println("Ending connection...");
 				in.close();
 				out.close();
 			} catch (IOException e) {
@@ -73,13 +63,10 @@ public class NewBankClientHandler extends Thread {
 			}
 		}
 	}
-
+	
+	
 	public static String userWelcome() throws IOException {
-		out.println("##############################\n");
-		out.println("**** Welcome to New Bank ****\n");
-		out.println("##############################\n\n");
-		out.println("If you're an existing customer type: LOGIN\n");
-		out.println("If you're a new customer type: REGISTER\n");
+		welcomeMenu();
 		String request = in.readLine();
 		boolean requestValid = false;
 		do {
@@ -92,9 +79,9 @@ public class NewBankClientHandler extends Thread {
 		} while (!requestValid);
 		return request;
 	}
-
+	
 	// Login for existing customers
-	public CustomerID userLogIn() throws IOException {
+	public static CustomerID userLogIn() throws IOException {
 		// Not a customer yet
 
 		CustomerID customer = null;
@@ -117,7 +104,7 @@ public class NewBankClientHandler extends Thread {
 
 	// TO DO
 	// Registration for new customers
-	public CustomerID userRegistration() throws IOException {
+	public static CustomerID userRegistration() throws IOException {
 
 		// flag for registrationed success
 		CustomerID customerID = null;
@@ -149,4 +136,54 @@ public class NewBankClientHandler extends Thread {
 		return customerID;
 
 	}
+	
+	public static void welcomeMenu() {
+		// TODO: #10 add a display class that takes car of all the string work
+		out.println("####################################\n");
+		out.println("**** Welcome to New Bank ****\n");
+		out.println("Existing customers enter: LOGIN\n");
+		out.println("New customers enter: REGISTER\n");
+		out.println("####################################\n\n");
+		out.println("Enter LOGIN or REGISTER\n");
+		
+	}
+	
+	public static void mainMenu() {
+		// TODO: #10 add a display class that takes car of all the string work
+		out.println("\n");
+		out.println("Select Option...");
+		out.println("SHOWMYACCOUNTS");
+		out.println("NEWACCOUNT");
+		out.println("MOVE");
+		out.println("PAY");
+		out.println("CHANGEMYPASSWORD");
+		out.println("LOGOUT");
+		out.println("END");
+		out.println("\n");
+	}
+	
+	public void startup(CustomerID customer) throws IOException {
+		while (true) {
+			// Processes the user's response: LOGIN or REGISTER
+			if (customer == null){
+				String request = userWelcome();
+				if (request.equals("LOGIN")) {
+					customer = userLogIn();
+				} else {
+					customer = userRegistration();
+				} 
+			}
+			else {
+				mainMenu();
+				String request = in.readLine();
+				System.out.println("Request from " + customer.getKey());
+				String responce = bank.processRequest(customer, request);
+				if (bank.getCustomers().get(customer.getKey()).getloggedInStatus()==false) {
+					customer = null;
+				}
+				out.println(responce);
+			}
+		}
+	}
+	
 }

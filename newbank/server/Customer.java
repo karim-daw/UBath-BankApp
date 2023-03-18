@@ -65,7 +65,15 @@ public class Customer {
 		}
 		return l;
 	}
-
+	
+	public List<String> acctTypesToList() {
+		ArrayList<String> l = new ArrayList<String>();
+		for (Account a : accounts) {
+			l.add(a.getAccountName());
+		}
+		return l;
+	}
+	
 	/**
 	 * adds account to list of accounts
 	 * 
