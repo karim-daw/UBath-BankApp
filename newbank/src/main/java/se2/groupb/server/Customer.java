@@ -1,4 +1,4 @@
-package server;
+package se2.groupb.server;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class Customer {
 	public String getPassword() {
 		return this.password;
 	}
-	
+
 	/**
 	 * @set a boolean as logged-in-status
 	 */
@@ -40,7 +40,7 @@ public class Customer {
 	public boolean getloggedInStatus() {
 		return this.loggedInStatus;
 	}
-	
+
 	/**
 	 * @return a string of an account
 	 */
@@ -105,5 +105,5 @@ public class Customer {
 		return false;
 
 	}
-	
+
 }

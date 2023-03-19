@@ -1,4 +1,4 @@
-package server;
+package se2.groupb.server;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -112,11 +112,9 @@ public class NewBank {
 					return logOut(customer);
 				case "PAY":
 					return transferMoney(customer, requestInputs);
-				
+
 				case "CHANGEMYPASSWORD":
-					return changePassword(customer,requestInputs);
-
-
+					return changePassword(customer, requestInputs);
 
 				default:
 					return "FAIL";
@@ -334,7 +332,6 @@ public class NewBank {
 
 	}
 
-
 	/**
 	 * method that changes the password
 	 * old password need to be enter
@@ -345,9 +342,9 @@ public class NewBank {
 	 * @return
 	 */
 
-	 public String changePassword(CustomerID customer, String[] requestInputs){
-		//check if the command is correct
-		//return infinite loop of null, why ? 
+	public String changePassword(CustomerID customer, String[] requestInputs) {
+		// check if the command is correct
+		// return infinite loop of null, why ?
 		int inputLength = requestInputs.length;
 		if (inputLength < 4) {
 			return "FAIL. Please enter your old password and twice your new password after the command.";
@@ -358,22 +355,21 @@ public class NewBank {
 		String confirmNewPassword = requestInputs[3];
 		Customer c = customers.get(customer.getKey());
 
-		//check if the old password is correct
-		if (!c.getPassword().equals(oldPassword)){
-			return "FAIL. The old password is incorrect.";			
+		// check if the old password is correct
+		if (!c.getPassword().equals(oldPassword)) {
+			return "FAIL. The old password is incorrect.";
 		}
 
-		//check if the two new password inputs match. 
-		if (!newPassword.equals(confirmNewPassword)){
+		// check if the two new password inputs match.
+		if (!newPassword.equals(confirmNewPassword)) {
 			return "FAIL. Password confirmation does not match.";
 		}
 
 		else {
 			c.setPassword(newPassword);
 			return "SUCCESS new password is: " + c.getPassword();
-		}	
-	 }
-
+		}
+	}
 
 	/**
 	 * Registers a new customer to hashmap, performs validaiton to see if customer
