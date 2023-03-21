@@ -1,9 +1,7 @@
 package server;
 
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,30 +10,25 @@ import java.util.Arrays;
 
 
 public class NewBank {
-
-	private static final NewBank bank = new NewBank();
-	private HashMap<String, Customer> customers;
-
-	private static String main = "Main";
-	private static String savings = "Savings";
-	private static String checking = "Checking";
-	private static final List<String> validAcctList = 
-		    Collections.unmodifiableList(Arrays.asList(main, savings,checking));
 	
-	public HashMap<String, Customer> getCustomers() {
-		return customers;
-	}
+	private static final NewBank bank = new NewBank(); //every instance of NewBank has the same bank info
+	private HashMap<String, Customer> customers;
+	public static final List<String> validAcctList = 
+		    Collections.unmodifiableList(Arrays.asList("Main","Savings","Checking"));
 	
 	//Constructor
 	private NewBank() {
 		customers = new HashMap<>();
 		addTestData();
 	}
-
+		
+	public HashMap<String, Customer> getCustomers() {
+		return customers;
+	}
+	
 	/**
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
-
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
@@ -66,6 +59,8 @@ public class NewBank {
 	 * @return
 	 * @throws IOException
 	 */
+	
+	/*
 	public synchronized String processRequest(CustomerID customer, String request) throws IOException{
 
 		if (getCustomers().containsKey(customer.getKey())) {
@@ -78,50 +73,23 @@ public class NewBank {
 				case "NEWACCOUNT":
 					// inputBalance
 					//return createAccount(customer, requestInputs, 0);
-					return createAccountEnhancement(customer,NewBankClientHandler.in, NewBankClientHandler.out);
+					return createAccountEnhancement(customer);
 				case "MOVE":
 					return moveMoney(customer, requestInputs);
+				case "PAY":
+					return transferMoney(customer, requestInputs);
 				case "LOGOUT":
 					// return to the main menu userwelcome
 					return logOut(customer);
-				case "PAY":
-					return transferMoney(customer, requestInputs);
 				case "CHANGEMYPASSWORD":
 					return changePassword(customer,requestInputs);
-				case "END":
-					return "END";
 				default:
 					return "FAIL";
 			}
 		}
 		return "FAIL";
 	}
-	
-	public int getNumberFromUser(BufferedReader in,PrintWriter out) throws IOException{
-	    while (true) {
-	        try {
-	            String valueString = in.readLine();
-	            return convertStringToInt(valueString);
-	        } catch (IOException e) {
-	            out.println("Could not acquire next line from system input: " + e.getMessage());
-	        } catch (NumberFormatException ex) {
-	            out.println("Could not convert input string: " + ex.getMessage());
-	        }
-	    }
-	}
-	
-	
-	public int convertStringToInt(String userInput) {
-		
-		try {
-	        int inputAsInt = Integer.parseInt(userInput);
-	        return inputAsInt;
-	    }
-	    catch (NumberFormatException e) {
-	        System.out.println("Input isn't a number.");
-	        return 0;
-	    }
-	}
+	*/
 	
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
@@ -177,78 +145,11 @@ public class NewBank {
 	 * @return string regarding success or failure of createtAccount request
 	 */
 	
-	/*
-	private String createAccount(CustomerID customer, String[] requestInputs, double openingBalance) {
-
-		int inputLength = requestInputs.length;
-		if (inputLength < 2) {
-			return "FAIL: Account type not specified";
-		}
-
-		String accountType = requestInputs[1];
-		if (!accountType.equals(main) && !accountType.equals(checking) && !accountType.equals(savings)) {
-			return "FAIL: Account type not recognised";
-		} else {
-			Customer c = customers.get(customer.getKey());
-			// check if the customer already have the account
-			// account does not exist, continue to create a new account
-			if (c.checkAccount(accountType) == false) {
-				c.addAccount(new Account(accountType, openingBalance));
-				return "SUCCESS: Your " + accountType + " account has been created.";
-			} else {
-				return "FAIL: You already have a " + accountType + " account.";
-			}
-		}
+	private String createAccount(Customer customer, String accountType, double openingBalance) {
+		//adds account to bank's data store
+		return "SUCCESS"; //or FAIL
 	}
-	*/
 	
-	public String createAccountEnhancement(CustomerID customerID,BufferedReader in,PrintWriter out) throws IOException {
-		
-		String response=""; //the system response to the user's request
-		Customer customer = customers.get(customerID.getKey()); //the current customer
-		HashMap<String,String> acctOptions = new HashMap<>(); //list of available new accounts for the customer 
-		List<String> existingAcctList = customer.acctTypesToList(); // list of existing accounts for the customer
-		int i=0;
-		for (String a : validAcctList) {
-			if (!existingAcctList.contains(a)) {
-				i++;
-				String key=Integer.toString(i);
-				acctOptions.put(key, a); //HashMap of number and account type for non-existing customer accounts
-			}
-		}
-		
-		if (!acctOptions.isEmpty()) { //if there are available account types for creation
-			out.println("Choose from: ");
-			acctOptions.entrySet().forEach(NewBankClientHandler.out::println);
-			out.println("Enter your option number: ");
-			String userInput = in.readLine();
-			String accountType = acctOptions.get(userInput);
-			
-			out.println("Enter an opening balance: ");
-			int openingBalance = getNumberFromUser(in,out);
-			
-			
-			out.println("Open a new " + accountType + " account with an opening balance of " + openingBalance+ "?");
-			out.println("Enter 'y' for Yes or 'n' for No: ");
-			userInput = in.readLine();
-			
-			if ((userInput.charAt(0)=='y') || (userInput.charAt(0)=='Y')) {
-				customer.addAccount(new Account(accountType, openingBalance));
-				response = "SUCCESS: Your " + accountType + " account has been created.";
-			}
-			else {
-				response = "Account creation was cancelled. Returning you to the Main Menu.";
-			}
-			
-			
-		}
-		else {
-			response = "You cannot create a new account type. You have all possible account types.";
-			NewBankClientHandler.startup();
-		}
-		
-		return response;
-	}
 	
 	
 	/**

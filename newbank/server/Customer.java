@@ -1,10 +1,13 @@
 package server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 public class Customer {
-
+	
+	
 	private ArrayList<Account> accounts;
 	private String password;
 	private boolean loggedInStatus;
@@ -54,7 +57,7 @@ public class Customer {
 	}
 
 	/**
-	 * display the accounts content into a list
+	 * display the account names & balances into a list
 	 * 
 	 * @return a list containing Accounts
 	 */
@@ -66,6 +69,11 @@ public class Customer {
 		return l;
 	}
 	
+	/**
+	 * display the account names only into a list
+	 * 
+	 * @return a list containing Account Names
+	 */
 	public List<String> acctTypesToList() {
 		ArrayList<String> l = new ArrayList<String>();
 		for (Account a : accounts) {
@@ -113,5 +121,34 @@ public class Customer {
 		return false;
 
 	}
+	
+	/**
+	 * map of options for new account names
+	 * 
+	 * @return a map containing numbered Account Names 
+	 */
+	public HashMap<String,String> newAcctTypes(){
+		HashMap<String,String> map = new HashMap<String,String>();
+		int i=0;
+		for (String a : NewBank.validAcctList) {
+			if (!acctTypesToList().contains(a)) {
+				i++;
+				String key=Integer.toString(i);
+				map.put(key, a); //HashMap showing the available account types for new account creation
+			}
+		}
+		return map;
+	}
+	
+	/**
+	 * @return a string of the new account options map
+	 */
+	public String newAcctTypesToString() {
+		String s = "";
+		for (HashMap.Entry<String,String> newAcct: newAcctTypes().entrySet()){
+	        s += newAcct.getKey()+ " = "+ newAcct.getValue()+"\n";
+	    }
+		return s;
+	} 
 	
 }

@@ -7,54 +7,83 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class NewBankClientHandler extends Thread {
-
-	private static NewBank bank;
-	public static BufferedReader in;
-	public static PrintWriter out;
+	
+	public static final String welcomeMessage =
+		"\n" +
+		"====================================================\n" +
+		"||           *** WELCOME TO NEWBANK ***           ||\n" +
+		"====================================================\n" +
+		"|| Please select one of the following options:    ||\n" +
+		"||      1. LOGIN                                  ||\n" +
+		"||      2. REGISTER                               ||\n" +
+		"|| Enter the number corresponding to your choice  ||\n" +
+		"|| and press enter                                ||\n" +
+		"====================================================\n" +
+		"\nEnter Selection:";
+	public static final int welcomeChoices = 2;
+	
+	public static final String requestMenu = "\n" +
+		"====================================================\n" +
+		"||           *** NEWBANK MAIN MENU ***            ||\n" +
+		"====================================================\n" +
+		"|| Please select one of the following options:    ||\n" +
+		"||      1. View Accounts                          ||\n" +
+		"||      2. Create New Account                     ||\n" +
+		"||      3. Move Money                             ||\n" +
+		"||      4. Pay Person/Company                     ||\n" +
+		"||      5. Change Password                        ||\n" +
+		"||      5. Logout                                 ||\n" +
+		"|| Enter the number corresponding to your choice  ||\n" +
+		"|| and press enter                                ||\n" +
+		"====================================================\n" +
+		"\nEnter Selection:";
+	public static final int mainMenuChoices = 5;
+	private NewBank bank;
+	public BufferedReader in;
+	public PrintWriter out;
+	//private Socket socket;
+	public UserInterface comms;
 
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
+		//socket=s;
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
-	}
-
-	public void run() {
-		startup();
+		comms = new UserInterface(in,out);
 	}
 	
-	public static void startup() {
+	public void run() {
 		// keep getting requests from the client and processing them
 		// The User is not logged into the system yet so CustomerID is null
-		CustomerID customer = null;
+		CustomerID customerID = null;
 		String request = "";
-		String responce = "";
+		String response = "";
 		try {
-			do {
-				// Processes the user's response: LOGIN or REGISTER
-				if (customer == null){
-					request = userWelcome();
-					if (request.equals("LOGIN")) {
-						customer = userLogIn();
+			while (true) {
+				if (customerID == null){
+					request = comms.getUserMenuChoice(welcomeMessage,welcomeChoices);
+					// Processes the user's response: 1=LOGIN or 2=REGISTER
+					if (request.equals("1")) {
+						customerID = userLogIn();
 					} else {
-						customer = userRegistration();
+						customerID = userRegistration();
 					} 
 				}
 				else {
-					mainMenu();
-					request = in.readLine();
-					System.out.println("Request from " + customer.getKey());
-					responce = bank.processRequest(customer, request);
-					if (bank.getCustomers().get(customer.getKey()).getloggedInStatus()==false) {
-						customer = null;
+					request = comms.getUserMenuChoice(requestMenu,mainMenuChoices);
+					out.println("Request from " + customerID.getKey());
+					response = processRequest(customerID, request);
+					if (bank.getCustomers().get(customerID.getKey()).getloggedInStatus()==false) {
+						customerID = null;
 					}
-					out.println(responce);
+					out.println(response);
 				}
-			}while (!(responce == "END"));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			try {
-				System.out.println("Ending connection...");
 				in.close();
 				out.close();
 			} catch (IOException e) {
@@ -65,66 +94,37 @@ public class NewBankClientHandler extends Thread {
 	}
 	
 	
-	public static String userWelcome() throws IOException {
-		welcomeMenu();
-		String request = in.readLine();
-		boolean requestValid = false;
-		do {
-			if (request.equals("LOGIN") || request.equals("REGISTER")) {
-				requestValid = true;
-			} else {
-				out.println("Invalid request: Please enter LOGIN or REGISTER");
-				request = in.readLine();
-			}
-		} while (!requestValid);
-		return request;
-	}
-	
 	// Login for existing customers
-	public static CustomerID userLogIn() throws IOException {
-		// Not a customer yet
-
-		CustomerID customer = null;
-		// Ask for existing username
-		out.println("Enter Username");
-		String userName = in.readLine();
-		// ask for existing password
-		out.println("Enter Password");
-		String password = in.readLine();
-		out.println("Please wait while we check your details");
-		customer = bank.checkLogInDetails(userName, password);
+	public CustomerID userLogIn() throws IOException {
+		String userName = comms.getUserString("Enter Username");
+		String password = comms.getUserString("Enter Password");
+		comms.printSystemMessage("Please wait while we check your details");
+		
+		CustomerID customerID = bank.checkLogInDetails(userName, password);
 		// Validate login details
-		if (customer == null) {
+		if (customerID == null) {
 			out.println("Log In Failed. Invalid Credentials, please try again.");
 		} else {
 			out.println("Log In Successful. What do you want to do?");
 		}
-		return customer;
+		return customerID;
 	}
 
-	// TO DO
 	// Registration for new customers
-	public static CustomerID userRegistration() throws IOException {
-
-		// flag for registrationed success
-		CustomerID customerID = null;
+	public CustomerID userRegistration() throws IOException {
 
 		// Ask for existing username
-		out.println("Enter Username");
-		String userName = in.readLine();
-
+		String userName = comms.getUserString("Choose Username");
 		// ask password
-		out.println("Choose Password");
-		String passwordAttempt1 = in.readLine();
-		out.println("Re-Enter Password");
-		String passwordAttempt2 = in.readLine();
+		String passwordAttempt1 = comms.getUserString("Choose Password");
+		String passwordAttempt2 = comms.getUserString("Re-Enter Password");
 
 		if (!passwordAttempt2.equals(passwordAttempt1)) {
 			out.println("Passwords do not match");
 			return null;
 		}
 		// check if userName already exists, if yesm is registers gets changed to true
-		customerID = bank.registerCustomer(userName, passwordAttempt2);
+		CustomerID customerID = bank.registerCustomer(userName, passwordAttempt2);
 		if (customerID != null) {
 			String str = String.format("Registration succesfull. New Customer %s", userName);
 			out.println(str);
@@ -134,56 +134,73 @@ public class NewBankClientHandler extends Thread {
 			out.println(str);
 		}
 		return customerID;
+	}
+	
+	public synchronized String processRequest(CustomerID customerID, String request) throws IOException{
 
-	}
-	
-	public static void welcomeMenu() {
-		// TODO: #10 add a display class that takes car of all the string work
-		out.println("####################################\n");
-		out.println("**** Welcome to New Bank ****\n");
-		out.println("Existing customers enter: LOGIN\n");
-		out.println("New customers enter: REGISTER\n");
-		out.println("####################################\n\n");
-		out.println("Enter LOGIN or REGISTER\n");
-		
-	}
-	
-	public static void mainMenu() {
-		// TODO: #10 add a display class that takes car of all the string work
-		out.println("\n");
-		out.println("Select Option...");
-		out.println("SHOWMYACCOUNTS");
-		out.println("NEWACCOUNT");
-		out.println("MOVE");
-		out.println("PAY");
-		out.println("CHANGEMYPASSWORD");
-		out.println("LOGOUT");
-		out.println("END");
-		out.println("\n");
-	}
-	
-	public void startup(CustomerID customer) throws IOException {
-		while (true) {
-			// Processes the user's response: LOGIN or REGISTER
-			if (customer == null){
-				String request = userWelcome();
-				if (request.equals("LOGIN")) {
-					customer = userLogIn();
-				} else {
-					customer = userRegistration();
-				} 
-			}
-			else {
-				mainMenu();
-				String request = in.readLine();
-				System.out.println("Request from " + customer.getKey());
-				String responce = bank.processRequest(customer, request);
-				if (bank.getCustomers().get(customer.getKey()).getloggedInStatus()==false) {
-					customer = null;
-				}
-				out.println(responce);
+		if (bank.getCustomers().containsKey(customerID.getKey())) {
+			//String[] requestInputs = request.split("\\s+");
+			//String command = requestInputs[0];
+
+			switch (request) {
+				case "1":
+					return bank.showMyAccounts(customerID);
+				case "2":
+					// inputBalance
+					//return createAccount(customer, requestInputs, 0);
+					return createAccountEnhancement(customerID);
+				/*
+				case "MOVE":
+					return moveMoney(customerID, requestInputs);
+				case "PAY":
+					return transferMoney(customerID, requestInputs);
+				case "LOGOUT":
+					// return to the main menu userwelcome
+					return logOut(customerID);
+				case "CHANGEMYPASSWORD":
+					return changePassword(customerID,requestInputs);
+				*/
+				default:
+					return "FAIL";
 			}
 		}
+		return "FAIL";
 	}
+	
+	public String createAccountEnhancement(CustomerID customerID) {
+		
+		String response=""; //the system response to the user's request
+		Customer customer = bank.getCustomers().get(customerID.getKey()); //the current customer
+		int noOfChoices =customer.newAcctTypes().size();
+		if (noOfChoices>0) { //if there are available account types for creation
+			String systemPrompt = "Choose from: \n" + customer.newAcctTypesToString() +"\nEnter your option number: \n";
+			String userInput = comms.getUserMenuChoice(systemPrompt,noOfChoices);
+			//out.println(userInput);
+			String accountType = customer.newAcctTypes().get(userInput); //gets the new account type
+			//out.println(accountType);
+			
+			systemPrompt = "Enter an opening balance: \n";
+			double openingBalance = comms.getAmount(systemPrompt);
+			
+			systemPrompt="Open a new " + accountType + " account with an opening balance of " + openingBalance+ "?\nEnter 'y' for Yes or 'n' for No: \n";
+			boolean userConfirm = comms.confirm(systemPrompt);
+			
+			if (userConfirm) {
+				customer.addAccount(new Account(accountType, openingBalance)); //adds new account to customer
+				//Call NewBank method to add new customer account to bank's data store
+				response = "SUCCESS: Your " + accountType + " account has been created.\nReturning to Main Menu.";
+			}
+			else {
+				response = "Account creation was cancelled.\nReturning to the Main Menu.";
+			}		
+		}
+		else {
+			response = "All possible account types have been created.\nReturning to Main Menu.";
+			//newBankClientHandler.startup();
+		}
+		return response;
+	}
+	
+	
 	
 }
