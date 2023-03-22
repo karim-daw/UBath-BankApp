@@ -138,24 +138,17 @@ public class NewBankClientHandler extends Thread {
 	}
 	
 	public synchronized String processRequest(CustomerID customerID, String request) throws IOException{
-
 		if (bank.getCustomers().containsKey(customerID.getKey())) {
-			//String[] requestInputs = request.split("\\s+");
-			//String command = requestInputs[0];
-
 			switch (request) {
 				case "1":
 				case "SHOWMYACCOUNTS":
 					return showMyAccounts(customerID);
 				case "2":
 				case "NEWACCOUNT":
-					// inputBalance
-					//return createAccount(customer, requestInputs, 0);
 					return createAccountEnhancement(customerID);
-				
 				case "3":
 				case "MOVE":
-					return moveMoney(customerID);
+					return moveMoneyEnhancement(customerID);
 				/*
 				case "4":
 				case "PAY":
@@ -180,7 +173,6 @@ public class NewBankClientHandler extends Thread {
 	}
 	
 	public String createAccountEnhancement(CustomerID customerID) {
-		
 		String response=""; //the system response to the user's request
 		Customer customer = bank.getCustomers().get(customerID.getKey()); //the current customer
 		int noOfChoices =customer.newAcctTypes().size();
@@ -213,7 +205,7 @@ public class NewBankClientHandler extends Thread {
 		return response;
 	}
 	
-	public String moveMoney(CustomerID customerID) {
+	public String moveMoneyEnhancement(CustomerID customerID) {
 		//MOVE <Amount> <From> <To>
 		Customer customer = bank.getCustomers().get(customerID.getKey());
 		String response = null;
