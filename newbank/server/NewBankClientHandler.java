@@ -234,13 +234,13 @@ public class NewBankClientHandler extends Thread {
 			int noOfDestAccts = customer.destinationAcctsMap(sourceAcctBalance).size();
 			userInput = comms.getUserMenuChoice(prompt,noOfDestAccts);
 			String destinationAcctBalance = customer.destinationAcctsMap(sourceAcctBalance).get(userInput);
+			String destinationAcct = destinationAcctBalance.split("\\:")[0];
 			
 			//Enter a positive amount
 			prompt = "Transfer amount must be positive and not exceed the Source Account's balance.\nEnter an amount: ";
-			String destinationAcct = destinationAcctBalance.split("\\:")[0];
-			double limit= customer.getAccountByName(destinationAcct).getBalance();
-			double transferAmount = comms.getAmount(prompt,limit);
 			
+			double limit= customer.getAccountByName(sourceAcct).getBalance();
+			double transferAmount = comms.getAmount(prompt,limit);
 			prompt="Move " + transferAmount + " from " + sourceAcct + " to " + destinationAcct + "?\nEnter 'y' for Yes or 'n' for No: \n";
 			boolean userConfirm = comms.confirm(prompt);
 			
