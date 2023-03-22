@@ -230,10 +230,10 @@ public class NewBankClientHandler extends Thread {
 					
 			//Select a destination account (excludes source account)
 			//out.println(customer.destinationAcctsMap(sourceAcct));
-			prompt = "Select destination account: \n" + customer.mapToString(customer.destinationAcctsMap(sourceAcctBalance))+"\nEnter your option number: \n";
-			int noOfDestAccts = customer.destinationAcctsMap(sourceAcctBalance).size();
+			prompt = "Select destination account: \n" + customer.mapToString(customer.destinationAcctsMap(sourceAcct))+"\nEnter your option number: \n";
+			int noOfDestAccts = customer.destinationAcctsMap(sourceAcct).size();
 			userInput = comms.getUserMenuChoice(prompt,noOfDestAccts);
-			String destinationAcctBalance = customer.destinationAcctsMap(sourceAcctBalance).get(userInput);
+			String destinationAcctBalance = customer.destinationAcctsMap(sourceAcct).get(userInput);
 			String destinationAcct = destinationAcctBalance.split("\\:")[0];
 			
 			//Enter a positive amount

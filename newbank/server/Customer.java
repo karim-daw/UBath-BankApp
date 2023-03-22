@@ -108,7 +108,7 @@ public class Customer {
 		HashMap<String,String> map = new HashMap<String,String>();
 		int i=0;
 		for (Account a : accounts) {
-			if (!(a.toString()== sourceAcct)) {
+			if (!(a.getAccountName().equals(sourceAcct))) {
 				i++;
 				String key=Integer.toString(i);
 				map.put(key, a.toString());
