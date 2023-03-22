@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewBankClientHandler extends Thread {
 	
@@ -32,7 +34,7 @@ public class NewBankClientHandler extends Thread {
 		"||      3. Move Money                             ||\n" +
 		"||      4. Pay Person/Company                     ||\n" +
 		"||      5. Change Password                        ||\n" +
-		"||      5. Logout                                 ||\n" +
+		"||      6. Logout                                 ||\n" +
 		"|| Enter the number corresponding to your choice  ||\n" +
 		"|| and press enter                                ||\n" +
 		"====================================================\n" +
@@ -123,7 +125,7 @@ public class NewBankClientHandler extends Thread {
 			out.println("Passwords do not match");
 			return null;
 		}
-		// check if userName already exists, if yesm is registers gets changed to true
+		// check if userName already exists, if yes is registers gets changed to true
 		CustomerID customerID = bank.registerCustomer(userName, passwordAttempt2);
 		if (customerID != null) {
 			String str = String.format("Registration succesfull. New Customer %s", userName);
@@ -144,27 +146,38 @@ public class NewBankClientHandler extends Thread {
 
 			switch (request) {
 				case "1":
-					return bank.showMyAccounts(customerID);
+				case "SHOWMYACCOUNTS":
+					return showMyAccounts(customerID);
 				case "2":
+				case "NEWACCOUNT":
 					// inputBalance
 					//return createAccount(customer, requestInputs, 0);
 					return createAccountEnhancement(customerID);
-				/*
+				
+				case "3":
 				case "MOVE":
-					return moveMoney(customerID, requestInputs);
+					return moveMoney(customerID);
+				/*
+				case "4":
 				case "PAY":
 					return transferMoney(customerID, requestInputs);
-				case "LOGOUT":
-					// return to the main menu userwelcome
-					return logOut(customerID);
+				case "5":
 				case "CHANGEMYPASSWORD":
 					return changePassword(customerID,requestInputs);
 				*/
+				case "6":
+				case "LOGOUT":
+					return logOut(customerID);
 				default:
 					return "FAIL";
 			}
 		}
 		return "FAIL";
+	}
+	
+	public String showMyAccounts(CustomerID customerID) {
+		Customer customer = bank.getCustomers().get(customerID.getKey());
+		return customer.accountsToString();
 	}
 	
 	public String createAccountEnhancement(CustomerID customerID) {
@@ -173,14 +186,14 @@ public class NewBankClientHandler extends Thread {
 		Customer customer = bank.getCustomers().get(customerID.getKey()); //the current customer
 		int noOfChoices =customer.newAcctTypes().size();
 		if (noOfChoices>0) { //if there are available account types for creation
-			String systemPrompt = "Choose from: \n" + customer.newAcctTypesToString() +"\nEnter your option number: \n";
+			String systemPrompt = "Choose from: \n" + customer.mapToString(customer.newAcctTypes()) +"\nEnter your option number: \n";
 			String userInput = comms.getUserMenuChoice(systemPrompt,noOfChoices);
 			//out.println(userInput);
 			String accountType = customer.newAcctTypes().get(userInput); //gets the new account type
 			//out.println(accountType);
 			
-			systemPrompt = "Enter an opening balance: \n";
-			double openingBalance = comms.getAmount(systemPrompt);
+			systemPrompt = "Enter an opening balance (must be positive): \n";
+			double openingBalance = comms.getOpeningBalance(systemPrompt);
 			
 			systemPrompt="Open a new " + accountType + " account with an opening balance of " + openingBalance+ "?\nEnter 'y' for Yes or 'n' for No: \n";
 			boolean userConfirm = comms.confirm(systemPrompt);
@@ -201,6 +214,60 @@ public class NewBankClientHandler extends Thread {
 		return response;
 	}
 	
+	public String moveMoney(CustomerID customerID) {
+		//MOVE <Amount> <From> <To>
+		Customer customer = bank.getCustomers().get(customerID.getKey());
+		String response = null;
+		
+		// Get the customer's existing accounts list
+		int noOfSourceAccts =customer.sourceAcctsMap().size();
+		int noOfAccts = customer.accountsToList().size();
+		
+		if ((noOfSourceAccts>=1)&&(noOfAccts>=2)) {
+			//Select a source account (excludes overdrawn accounts)
+			String prompt = "Select source account: \n" + customer.mapToString(customer.sourceAcctsMap()) +"\nEnter your option number: \n";
+			String userInput = comms.getUserMenuChoice(prompt,noOfSourceAccts);
+			String sourceAcctBalance = customer.sourceAcctsMap().get(userInput);
+			String sourceAcct = sourceAcctBalance.split("\\:")[0];
+					
+			//Select a destination account (excludes source account)
+			//out.println(customer.destinationAcctsMap(sourceAcct));
+			prompt = "Select destination account: \n" + customer.mapToString(customer.destinationAcctsMap(sourceAcctBalance))+"\nEnter your option number: \n";
+			int noOfDestAccts = customer.destinationAcctsMap(sourceAcctBalance).size();
+			userInput = comms.getUserMenuChoice(prompt,noOfDestAccts);
+			String destinationAcctBalance = customer.destinationAcctsMap(sourceAcctBalance).get(userInput);
+			
+			//Enter a positive amount
+			prompt = "Transfer amount must be positive and not exceed the Source Account's balance.\nEnter an amount: ";
+			String destinationAcct = destinationAcctBalance.split("\\:")[0];
+			double limit= customer.getAccountByName(destinationAcct).getBalance();
+			double transferAmount = comms.getAmount(prompt,limit);
+			
+			prompt="Move " + transferAmount + " from " + sourceAcct + " to " + destinationAcct + "?\nEnter 'y' for Yes or 'n' for No: \n";
+			boolean userConfirm = comms.confirm(prompt);
+			
+			if (userConfirm) {
+				// update balance of source account
+				customer.getAccountByName(sourceAcct).updateBalance(-transferAmount);
+				// update balance of destination account
+				customer.getAccountByName(destinationAcct).updateBalance(transferAmount);
+				response = "Move transaction was successful.";
+			}
+			else {
+				response = "Move transaction was cancelled.\nReturning to the Main Menu.";
+			}		
+		}
+		else {
+			response = "You need two or more accounts.\nRequest denied.\nReturning to Main Menu.";
+			//newBankClientHandler.startup();
+		}
+		return response;
+	}
 	
+	public String logOut(CustomerID customerID) {
+		bank.getCustomers().get(customerID.getKey()).setloggedInStatus(false);
+		return "LOG OUT SUCCESSFUL";
+
+	}
 	
 }

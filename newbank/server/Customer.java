@@ -2,7 +2,6 @@ package server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 
 public class Customer {
@@ -45,13 +44,13 @@ public class Customer {
 	}
 	
 	/**
-	 * @return a string of an account
+	 * @return a string of all the customer's accounts and their balances
 	 */
 
 	public String accountsToString() {
 		String s = "";
 		for (Account a : accounts) {
-			s += a.toString();
+			s += a.toString()+"\n";
 		}
 		return s;
 	}
@@ -81,6 +80,54 @@ public class Customer {
 		}
 		return l;
 	}
+	
+	/**
+	 * map of source accounts: non-overdrawn accounts & their balances
+	 * 
+	 * @return a map containing numbered Accounts & Balances
+	 */
+	public HashMap<String,String> sourceAcctsMap(){
+		HashMap<String,String> map = new HashMap<String,String>();
+		int i=0;
+		for (Account a : accounts) {
+			if (!(a.isOverDrawn())) {
+				i++;
+				String key=Integer.toString(i);
+				map.put(key, a.toString());
+			}
+		}
+		return map;
+	}
+	
+	/**
+	 * map of options for new account names
+	 * 
+	 * @return a map containing numbered Account Names 
+	 */
+	public HashMap<String,String> destinationAcctsMap(String sourceAcct){
+		HashMap<String,String> map = new HashMap<String,String>();
+		int i=0;
+		for (Account a : accounts) {
+			if (!(a.toString()== sourceAcct)) {
+				i++;
+				String key=Integer.toString(i);
+				map.put(key, a.toString());
+			}
+		}
+		return map;
+	}
+	
+	/**
+	 * @return a string of the new account options map
+	 */
+	public String mapToString(HashMap<String, String> map) {
+		String s = "";
+		for (HashMap.Entry<String,String> item: map.entrySet()){
+	        s += item.getKey()+ " = "+ item.getValue()+"\n";
+	    }
+		return s;
+	} 
+	
 	
 	/**
 	 * adds account to list of accounts
@@ -140,15 +187,5 @@ public class Customer {
 		return map;
 	}
 	
-	/**
-	 * @return a string of the new account options map
-	 */
-	public String newAcctTypesToString() {
-		String s = "";
-		for (HashMap.Entry<String,String> newAcct: newAcctTypes().entrySet()){
-	        s += newAcct.getKey()+ " = "+ newAcct.getValue()+"\n";
-	    }
-		return s;
-	} 
 	
 }

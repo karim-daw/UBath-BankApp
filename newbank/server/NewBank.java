@@ -1,7 +1,6 @@
 package server;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,46 +49,6 @@ public class NewBank {
 		return bank;
 	}
 
-	/**
-	 * 
-	 * commands from the NewBank customer are processed in this method
-	 * 
-	 * @param customer
-	 * @param request
-	 * @return
-	 * @throws IOException
-	 */
-	
-	/*
-	public synchronized String processRequest(CustomerID customer, String request) throws IOException{
-
-		if (getCustomers().containsKey(customer.getKey())) {
-			String[] requestInputs = request.split("\\s+");
-			String command = requestInputs[0];
-
-			switch (command) {
-				case "SHOWMYACCOUNTS":
-					return showMyAccounts(customer);
-				case "NEWACCOUNT":
-					// inputBalance
-					//return createAccount(customer, requestInputs, 0);
-					return createAccountEnhancement(customer);
-				case "MOVE":
-					return moveMoney(customer, requestInputs);
-				case "PAY":
-					return transferMoney(customer, requestInputs);
-				case "LOGOUT":
-					// return to the main menu userwelcome
-					return logOut(customer);
-				case "CHANGEMYPASSWORD":
-					return changePassword(customer,requestInputs);
-				default:
-					return "FAIL";
-			}
-		}
-		return "FAIL";
-	}
-	*/
 	
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
@@ -110,27 +69,7 @@ public class NewBank {
 			return null;
 		}
 
-	}
-
-
-	/**
-	 * displays accounts as a list
-	 * 
-	 * @param customer
-	 * @return
-	 */
-
-	public String showMyAccounts(CustomerID customer) {
-		// create a list that will be displayed
-		List<String> accountList = new ArrayList<String>();
-		accountList = customers.get(customer.getKey()).accountsToList();
-		String s = "";
-		for (String a : accountList) {
-			s += a.toString() + "\n";
-		}
-		return s;
-	}
-	
+	}	
 					
 	/**
 	 * Creates a new account for a given customer
@@ -145,12 +84,13 @@ public class NewBank {
 	 * @return string regarding success or failure of createtAccount request
 	 */
 	
+	/*
 	private String createAccount(Customer customer, String accountType, double openingBalance) {
 		//adds account to bank's data store
 		return "SUCCESS"; //or FAIL
 	}
 	
-	
+	*/
 	
 	/**
 	 * Logs out the current customer
@@ -255,6 +195,7 @@ public class NewBank {
 	 * @param requestArray
 	 * @return SUCCESS string or FAIL string
 	 */
+	/*
 	public String moveMoney(CustomerID customerID, String[] requestInputs) {
 
 		// Check if request is incomplete
@@ -307,7 +248,7 @@ public class NewBank {
 		return "SUCCESS";
 
 	}
-
+	*/
 
 	/**
 	 * method that changes the password

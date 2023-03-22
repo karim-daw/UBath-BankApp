@@ -79,24 +79,28 @@ public class UserInterface {
 		return selection;
 	}
 	
-	// Gets user's input amount
-	public double getAmount(String prompt){
-		String userAmount = null;
-		double amount=-1;
-		boolean valid = false;
-		while (!valid) {
-			userAmount = getUserString(prompt); //non-null string
+	// Gets user's input amount for transfers
+	public double getAmount(String prompt, double limit){
+		while (true) {
+			String userAmount = getUserString(prompt); //non-null string
 			if (!(userAmount=="error")) {
-				amount = convertStringToDouble(userAmount);
-				if (amount>=0) {
-					valid = true;
+				double amount = convertStringToDouble(userAmount);
+				if ((amount>=0) && (amount<=limit)) {
+					return amount;
 				}
 			}
+			else {
+				return -1;
+			}
 		}
-		return amount;
 	}
 	
-	
+	// Gets user's input amount for new account balance
+		public double getOpeningBalance(String prompt){	
+			return getAmount(prompt,Double.MAX_VALUE);
+		}
+		
+		
 	//gets user's confirmation: 'y' or cancels by entering 'n'
 	public boolean confirm(String prompt) {
 		String userInput = null;
