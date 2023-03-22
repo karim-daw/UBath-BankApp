@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 public class NewBankClientHandler extends Thread {
 	
@@ -186,7 +184,7 @@ public class NewBankClientHandler extends Thread {
 		Customer customer = bank.getCustomers().get(customerID.getKey()); //the current customer
 		int noOfChoices =customer.newAcctTypes().size();
 		if (noOfChoices>0) { //if there are available account types for creation
-			String systemPrompt = "Choose from: \n" + customer.mapToString(customer.newAcctTypes()) +"\nEnter your option number: \n";
+			String systemPrompt = "Create a new account.\nChoose from: \n" + customer.mapToString(customer.newAcctTypes()) +"\nEnter your option number: \n";
 			String userInput = comms.getUserMenuChoice(systemPrompt,noOfChoices);
 			//out.println(userInput);
 			String accountType = customer.newAcctTypes().get(userInput); //gets the new account type
@@ -225,7 +223,7 @@ public class NewBankClientHandler extends Thread {
 		
 		if ((noOfSourceAccts>=1)&&(noOfAccts>=2)) {
 			//Select a source account (excludes overdrawn accounts)
-			String prompt = "Select source account: \n" + customer.mapToString(customer.sourceAcctsMap()) +"\nEnter your option number: \n";
+			String prompt = "Move Money.\nSelect source account: \n" + customer.mapToString(customer.sourceAcctsMap()) +"Enter your option number: \n";
 			String userInput = comms.getUserMenuChoice(prompt,noOfSourceAccts);
 			String sourceAcctBalance = customer.sourceAcctsMap().get(userInput);
 			String sourceAcct = sourceAcctBalance.split("\\:")[0];
