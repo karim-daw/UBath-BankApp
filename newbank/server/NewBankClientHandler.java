@@ -37,7 +37,7 @@ public class NewBankClientHandler extends Thread {
 		"|| and press enter                                ||\n" +
 		"====================================================\n" +
 		"\nEnter Selection:";
-	public static final int mainMenuChoices = 5;
+	public static final int mainMenuChoices = 6;
 	private NewBank bank;
 	public BufferedReader in;
 	public PrintWriter out;
@@ -73,10 +73,11 @@ public class NewBankClientHandler extends Thread {
 					request = comms.getUserMenuChoice(requestMenu,mainMenuChoices);
 					out.println("Request from " + customerID.getKey());
 					response = processRequest(customerID, request);
+					out.println(response);
 					if (bank.getCustomers().get(customerID.getKey()).getloggedInStatus()==false) {
 						customerID = null;
 					}
-					out.println(response);
+					
 				}
 			}
 		} catch (IOException e) {
