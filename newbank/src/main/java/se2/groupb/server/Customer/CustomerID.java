@@ -1,4 +1,4 @@
-package se2.groupb.server;
+package se2.groupb.server.Customer;
 
 public class CustomerID {
 	private String key;

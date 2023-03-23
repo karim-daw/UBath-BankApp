@@ -1,11 +1,14 @@
-package se2.groupb.server;
+package se2.groupb.server.Customer;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import se2.groupb.server.Account.Account;
+
 public class Customer {
 
 	private ArrayList<Account> accounts;
+	private String username;
 	private String password;
 	private boolean loggedInStatus;
 
@@ -104,6 +107,63 @@ public class Customer {
 		}
 		return false;
 
+	}
+
+	/**
+	 * displays accounts as a list
+	 * 
+	 * @param customer
+	 * @return
+	 */
+
+	private String showMyAccounts(CustomerID customer) {
+		// create a list that will be displayed
+		List<String> accountList = new ArrayList<String>();
+		accountList = customers.get(customer.getKey()).accountsToList();
+		String s = "";
+		for (String a : accountList) {
+			s += a.toString() + "\n";
+		}
+		return s;
+	}
+
+	/**
+	 * method that changes the password
+	 * old password need to be enter
+	 * then a new password, twice
+	 * 
+	 * @param customer
+	 * @param requestInputs
+	 * @return
+	 */
+
+	public String changePassword(CustomerID customer, String[] requestInputs) {
+		// check if the command is correct
+		// return infinite loop of null, why ?
+		int inputLength = requestInputs.length;
+		if (inputLength < 4) {
+			return "FAIL. Please enter your old password and twice your new password after the command.";
+		}
+
+		String oldPassword = requestInputs[1];
+		String newPassword = requestInputs[2];
+		String confirmNewPassword = requestInputs[3];
+		Customer c = customers.get(customer.getKey());
+
+		// check if the old password is correct
+		if (!c.getPassword().equals(oldPassword)) {
+			return "FAIL. The old password is incorrect.";
+		}
+
+		// check if the two new password inputs match.
+		if (!newPassword.equals(confirmNewPassword)) {
+			return "FAIL. Password confirmation does not match.";
+		}
+
+		else {
+			c.setPassword(newPassword);
+			return "SUCCESS new password is: " + c.getPassword();
+		}
 	}
 
 }

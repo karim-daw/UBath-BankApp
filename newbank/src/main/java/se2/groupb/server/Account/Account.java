@@ -1,4 +1,4 @@
-package se2.groupb.server;
+package se2.groupb.server.Account;
 
 public class Account {
 
@@ -28,5 +28,21 @@ public class Account {
 
 	public void updateBalance(double amount) {
 		this.openingBalance += amount;
+	}
+
+	/**
+	 * checks if a deduction would result in teh account going overdraft
+	 * 
+	 * @param account
+	 * @param deduction
+	 * @return true or false if overdraftt
+	 */
+	private boolean isOverDraft(double deduction) {
+
+		double balance = this.getBalance();
+		if (deduction > balance) {
+			return true;
+		}
+		return false;
 	}
 }

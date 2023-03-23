@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import se2.groupb.server.Customer.CustomerID;
+
 public class NewBankClientHandler extends Thread {
 
 	private NewBank bank;
@@ -41,7 +43,6 @@ public class NewBankClientHandler extends Thread {
 					}
 				} else {
 					// Asking for a request and process the request
-					// TODO: #10 add a display class that takes car of all the string work
 					out.println("\n");
 					out.println("Select Option...");
 					out.println("SHOWMYACCOUNTS");
