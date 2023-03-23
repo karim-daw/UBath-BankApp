@@ -1,4 +1,4 @@
-package server;
+package se2.groupb.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;

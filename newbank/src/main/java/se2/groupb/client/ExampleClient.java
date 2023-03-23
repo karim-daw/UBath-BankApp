@@ -1,4 +1,4 @@
-package client;
+package se2.groupb.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package server;
+package se2.groupb.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class NewBankClientHandler extends Thread {
 		// keep getting requests from the client and processing them
 		// The User is not logged into the system yet so CustomerID is null
 		CustomerID customer = null;
-		
+
 		try {
 			while (true) {
 				/*
@@ -32,15 +32,14 @@ public class NewBankClientHandler extends Thread {
 				 * login
 				 */
 				// Processes the user's response: LOGIN or REGISTER
-				if (customer == null){
+				if (customer == null) {
 					String request = userWelcome();
 					if (request.equals("LOGIN")) {
 						customer = userLogIn();
 					} else {
 						customer = userRegistration();
-					} 
-				}
-				else {
+					}
+				} else {
 					// Asking for a request and process the request
 					// TODO: #10 add a display class that takes car of all the string work
 					out.println("\n");
@@ -55,7 +54,7 @@ public class NewBankClientHandler extends Thread {
 					String request = in.readLine();
 					System.out.println("Request from " + customer.getKey());
 					String responce = bank.processRequest(customer, request);
-					if (bank.getCustomers().get(customer.getKey()).getloggedInStatus()==false) {
+					if (bank.getCustomers().get(customer.getKey()).getloggedInStatus() == false) {
 						customer = null;
 					}
 					out.println(responce);
