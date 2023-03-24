@@ -1,19 +1,28 @@
-package se2.groupb.server.Customer;
+package se2.groupb.server.customer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import se2.groupb.server.Account.Account;
+import se2.groupb.server.account.Account;
 
 public class Customer {
 
 	private ArrayList<Account> accounts;
 	private String username;
+
 	private String password;
 	private boolean loggedInStatus;
 
 	public Customer() {
 		accounts = new ArrayList<>();
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**
@@ -99,6 +108,13 @@ public class Customer {
 		return null;
 	}
 
+	/**
+	 * checks if the desired accoutn name already exists in the customers list of
+	 * accounts
+	 * 
+	 * @param accountName
+	 * @return true false if account name exists in customers accounts
+	 */
 	public boolean checkAccount(String accountName) {
 		for (Account account : accounts) {
 			if (account.getAccountName().equals(accountName)) {
@@ -109,23 +125,6 @@ public class Customer {
 
 	}
 
-	/**
-	 * displays accounts as a list
-	 * 
-	 * @param customer
-	 * @return
-	 */
-
-	private String showMyAccounts(CustomerID customer) {
-		// create a list that will be displayed
-		List<String> accountList = new ArrayList<String>();
-		accountList = customers.get(customer.getKey()).accountsToList();
-		String s = "";
-		for (String a : accountList) {
-			s += a.toString() + "\n";
-		}
-		return s;
-	}
 
 	/**
 	 * method that changes the password
