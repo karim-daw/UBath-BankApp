@@ -3,7 +3,7 @@ package se2.groupb.server.Account;
 public class Account {
 
 	private String accountName;
-	private double openingBalance = 0; // default
+	private double openingBalance; // default
 
 	public Account(String accountName, double openingBalance) {
 		this.accountName = accountName;
@@ -14,7 +14,7 @@ public class Account {
 		return this.accountName;
 	}
 
-	public Double getAccountValue() {
+	public double getAccountValue() {
 		return this.openingBalance;
 	}
 
@@ -26,8 +26,16 @@ public class Account {
 		return openingBalance;
 	}
 
-	public void updateBalance(double amount) {
-		this.openingBalance += amount;
+	// public void updateBalance(BigDecimal amount) {
+	// this.openingBalance += amount;
+	// }
+
+	public void deposit(double amount) {
+		openingBalance += amount;
+	}
+
+	public void withdraw(double amount) {
+		openingBalance -= amount;
 	}
 
 	/**
@@ -37,7 +45,7 @@ public class Account {
 	 * @param deduction
 	 * @return true or false if overdraftt
 	 */
-	private boolean isOverDraft(double deduction) {
+	public boolean isOverDraft(double deduction) {
 
 		double balance = this.getBalance();
 		if (deduction > balance) {
