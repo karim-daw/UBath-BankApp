@@ -1,4 +1,7 @@
-package se2.groupb.server.Account;
+package se2.groupb.server.account;
+
+import se2.groupb.server.customer.Customer;
+import se2.groupb.server.customer.CustomerID;
 
 public class AccountService {
 
@@ -26,10 +29,15 @@ public class AccountService {
             return "FAIL: Account type not recognised";
         } else {
             Customer c = customers.get(customer.getKey());
-            // check if the customer already have the account
-            // account does not exist, continue to create a new account
+
+            // check if accounts exists if not, create a new account
             if (c.checkAccount(accountType) == false) {
-                c.addAccount(new Account(accountType, openingBalance));
+
+                // create new account with open balance and add it
+                Account newAccount = new Account(accountType, openingBalance);
+                c.addAccount(newAccount);
+
+                // print success message
                 return "SUCCESS: Your " + accountType + " account has been created.";
             } else {
                 return "FAIL: You already have a " + accountType + " account.";
