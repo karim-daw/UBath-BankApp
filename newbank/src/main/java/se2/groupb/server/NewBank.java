@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-import se2.groupb.server.Account.Account;
-import se2.groupb.server.Customer.Customer;
-import se2.groupb.server.Customer.CustomerID;
+import se2.groupb.server.account.Account;
+import se2.groupb.server.customer.Customer;
+import se2.groupb.server.customer.CustomerID;
 
 public class NewBank {
 

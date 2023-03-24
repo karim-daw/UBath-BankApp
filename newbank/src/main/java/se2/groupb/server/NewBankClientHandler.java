@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import se2.groupb.server.Customer.CustomerID;
+import se2.groupb.server.customer.CustomerID;
 
 public class NewBankClientHandler extends Thread {
 
