@@ -14,30 +14,32 @@ public class AccountController {
 
     // In a traditional REST API, this could be considered as POST request where the
     // AccountController handles the function that creates a new Account
-    public addUser(){
-        accountService.createAccount()
-    }
+
+    // public addUser(){
+    // accountService.createAccount()
+    // }
 
     /**
      * @param accountId
      */
-    public void displayAccountDetails(Long accountId) {
-        AccountDTO accountDto = accountService.getAccountById(accountId);
-        if (accountDto != null) {
+    public void displayAccountDetails(AccountDTO accountDTO) {
+        if (accountDTO != null) {
             // display account details to user
             System.out.println("Account details:");
-            System.out.println("ID: " + accountDto.getId());
-            System.out.println("Account number: " + accountDto.getAccountNumber());
-            System.out.println("Balance: " + accountDto.getBalance());
-            System.out.println("Account type: " + accountDto.getAccountType());
+            System.out.println("ID: " + accountDTO.getId());
+            System.out.println("Account number: " + accountDTO.getAccountNumber());
+            System.out.println("Balance: " + accountDTO.getBalance());
+            System.out.println("Account type: " + accountDTO.getAccountType());
         } else {
             // display error message to user
             System.out.println("Account not found");
         }
     }
 
-    public void deposit(Long accountId, double amount) {
-        boolean success = accountService.deposit(accountId, amount);
+    public void depositAmount(AccountDTO accountDTO, double amount) {
+
+        Long accountID = accountDTO.getId();
+        boolean success = accountService.deposit(accountID, amount);
         if (success) {
             // display success message to user
             System.out.println("Deposit successful");
@@ -47,7 +49,7 @@ public class AccountController {
         }
     }
 
-    public void withdraw(Long accountId, double amount) {
+    public void withdrawAmount(Long accountId, double amount) {
         boolean success = accountService.withdraw(accountId, amount);
         if (success) {
             // display success message to user
@@ -59,6 +61,4 @@ public class AccountController {
     }
 
     // other methods for displaying customer details, transaction history, etc.
-}
-
 }
