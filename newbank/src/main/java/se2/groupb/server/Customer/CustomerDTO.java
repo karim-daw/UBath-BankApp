@@ -13,8 +13,4 @@ public class CustomerDTO {
         return customerID;
     }
 
-    public void setCustomerID(Long id) {
-        this.customerID = id;
-    }
-
 }
