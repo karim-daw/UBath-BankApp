@@ -7,16 +7,41 @@ import se2.groupb.server.account.Account;
 
 public class Customer {
 
-	private ArrayList<Account> accounts;
-	private String username;
+	// members
 
+	private int customerID;
+	private String username;
 	private String password;
+	private ArrayList<Account> accounts;
 	private boolean loggedInStatus;
+
+	// constructur
 
 	public Customer() {
 		accounts = new ArrayList<>();
 	}
 
+	// methods
+
+	// customer id
+	public int getCustomerID() {
+		return customerID;
+	}
+
+	public void setCustomerID(int customerID) {
+		this.customerID = customerID;
+	}
+
+	// accounts list
+	public void setAccounts(ArrayList<Account> accounts) {
+		this.accounts = accounts;
+	}
+
+	public ArrayList<Account> getAccounts() {
+		return accounts;
+	}
+
+	// username
 	public String getUsername() {
 		return username;
 	}
@@ -89,13 +114,6 @@ public class Customer {
 	}
 
 	/**
-	 * @return list of accounts
-	 */
-	public ArrayList<Account> getAccounts() {
-		return accounts;
-	}
-
-	/**
 	 * @param accountName
 	 * @return
 	 */
@@ -124,7 +142,6 @@ public class Customer {
 		return false;
 
 	}
-
 
 	/**
 	 * method that changes the password
