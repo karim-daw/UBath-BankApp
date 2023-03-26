@@ -19,32 +19,16 @@ public class AccountDTO {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public int getAccountNumber() {
         return accountNumber;
-    }
-
-    public void setAccountNumber(int accountNumber) {
-        this.accountNumber = accountNumber;
     }
 
     public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
     public String getAccountType() {
         return accountType;
-    }
-
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
     }
 
 }
