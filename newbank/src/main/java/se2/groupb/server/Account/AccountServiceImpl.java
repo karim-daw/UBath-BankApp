@@ -3,33 +3,35 @@ package se2.groupb.server.account;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerDTO;
 import se2.groupb.server.repository.AccountRepository;
+import se2.groupb.server.repository.CustomerRepository;
 
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+    private final CustomerRepository customerRepository;
     private static final String main = "main";
     private static final String checking = "checking";
     private static final String savings = "savings";
 
-    public AccountServiceImpl(AccountRepository accountRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, CustomerRepository customerRepository) {
         this.accountRepository = accountRepository;
+        this.customerRepository = customerRepository;
     }
 
     /**
      * Creates a new account for a given customer
-     * 
      * NEWACCOUNT <Name>
      * e.g. NEWACCOUNT Savings
-     * Returns SUCCESS or FAIL
      * 
      * @param customer
      * @param requestInputs
      * @param openingBalance
-     * @return string regarding success or failure of createtAccount request
+     * @return Returns SUCCESS or FAIL
      */
     @Override
     public String createAccount(CustomerDTO customerDTO, String[] requestInputs, double openingBalance) {
 
+        // validate inputs
         int inputLength = requestInputs.length;
         if (inputLength < 2) {
             return "FAIL: Account type not specified";
@@ -39,14 +41,12 @@ public class AccountServiceImpl implements AccountService {
         if (!accountType.equals(main) && !accountType.equals(checking) && !accountType.equals(savings)) {
             return "FAIL: Account type not recognised";
         } else {
-            Customer c = customers.get(customer.getKey());
+            Customer customer = customerRepository.findByCustomerID(customerDTO.getCustomerID());
 
             // check if accounts exists if not, create a new account
-            if (c.checkAccount(accountType) == false) {
-
-                // create new account with open balance and add it
+            if (customer.checkAccount(accountType) == false) {
                 Account newAccount = new Account(accountType, openingBalance);
-                c.addAccount(newAccount);
+                customer.addAccount(newAccount);
 
                 // print success message
                 return "SUCCESS: Your " + accountType + " account has been created.";
@@ -68,6 +68,35 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public boolean withdraw(Long accountID, double amount) {
         return false;
+    }
+
+    @Override
+    public String createAccount(CustomerDTO customerDTO, String[] requestInputs) {
+
+        double openingBalance = 0.0;
+        // validate inputs
+        int inputLength = requestInputs.length;
+        if (inputLength < 2) {
+            return "FAIL: Account type not specified";
+        }
+
+        String accountType = requestInputs[1];
+        if (!accountType.equals(main) && !accountType.equals(checking) && !accountType.equals(savings)) {
+            return "FAIL: Account type not recognised";
+        } else {
+            Customer customer = customerRepository.findByCustomerID(customerDTO.getCustomerID());
+
+            // check if accounts exists if not, create a new account
+            if (customer.checkAccount(accountType) == false) {
+                Account newAccount = new Account(accountType, openingBalance);
+                customer.addAccount(newAccount);
+
+                // print success message
+                return "SUCCESS: Your " + accountType + " account has been created.";
+            } else {
+                return "FAIL: You already have a " + accountType + " account.";
+            }
+        }
     }
 
 }
