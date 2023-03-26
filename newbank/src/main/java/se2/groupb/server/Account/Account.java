@@ -10,6 +10,7 @@ public class Account {
 		this.openingBalance = openingBalance;
 	}
 
+	// TODO: #28 add customer id as attribute for account class
 	public String getAccountName() {
 		return this.accountName;
 	}

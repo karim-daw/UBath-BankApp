@@ -1,9 +1,8 @@
 package se2.groupb.server.account;
 
-import se2.groupb.server.customer.Customer;
-import se2.groupb.server.customer.CustomerID;
+import se2.groupb.server.customer.CustomerDTO;
 
-public class AccountService {
+public interface AccountService {
 
     /**
      * Creates a new account for a given customer
@@ -12,48 +11,29 @@ public class AccountService {
      * e.g. NEWACCOUNT Savings
      * Returns SUCCESS or FAIL
      * 
-     * @param customer
+     * @param customerDTO
      * @param requestInputs
      * @param openingBalance
      * @return string regarding success or failure of createtAccount request
      */
-    public String createAccount(CustomerID customer, String[] requestInputs, double openingBalance) {
+    String createAccount(CustomerDTO customerDTO, String[] requestInputs, double openingBalance);
 
-        int inputLength = requestInputs.length;
-        if (inputLength < 2) {
-            return "FAIL: Account type not specified";
-        }
+    /**
+     * adds money to account
+     * 
+     * @param accountID
+     * @param amount
+     * @return
+     */
+    boolean deposit(Long accountID, double amount);
 
-        String accountType = requestInputs[1];
-        if (!accountType.equals(main) && !accountType.equals(checking) && !accountType.equals(savings)) {
-            return "FAIL: Account type not recognised";
-        } else {
-            Customer c = customers.get(customer.getKey());
+    /**
+     * substracts money from account
+     * 
+     * @param accountID
+     * @param amount
+     * @return
+     */
+    boolean withdraw(Long accountID, double amount);
 
-            // check if accounts exists if not, create a new account
-            if (c.checkAccount(accountType) == false) {
-
-                // create new account with open balance and add it
-                Account newAccount = new Account(accountType, openingBalance);
-                c.addAccount(newAccount);
-
-                // print success message
-                return "SUCCESS: Your " + accountType + " account has been created.";
-            } else {
-                return "FAIL: You already have a " + accountType + " account.";
-            }
-        }
-    }
-
-    public boolean deposit(Long accountID, double amount) {
-
-        // get the Account from db using id
-        // create new transaction with amount
-        //
-        return false;
-    }
-
-    public boolean withdraw(Long accountID, double amount) {
-        return false;
-    }
 }

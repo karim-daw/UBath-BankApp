@@ -8,8 +8,12 @@ public class AccountDTO {
     private BigDecimal balance;
     private String accountType;
 
-    // getters and setters
-    // ...
+    public AccountDTO(Long id, int accountNumber, BigDecimal balance, String accountType) {
+        this.id = id;
+        this.accountNumber = accountNumber;
+        this.balance = balance;
+        this.accountType = accountType;
+    }
 
     public Long getId() {
         return id;
@@ -43,10 +47,4 @@ public class AccountDTO {
         this.accountType = accountType;
     }
 
-    public AccountDTO(Long id, int accountNumber, BigDecimal balance, String accountType) {
-        this.id = id;
-        this.accountNumber = accountNumber;
-        this.balance = balance;
-        this.accountType = accountType;
-    }
 }
