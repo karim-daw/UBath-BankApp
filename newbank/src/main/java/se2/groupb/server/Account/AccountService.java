@@ -5,6 +5,21 @@ import se2.groupb.server.customer.CustomerDTO;
 public interface AccountService {
 
     /**
+     * Creates new account for a given customer with a default account balance of
+     * 0.0
+     * 
+     * NEWACCOUNT <Name>
+     * e.g. NEWACCOUNT Savings
+     * Returns SUCCESS or FAIL
+     * 
+     * @param customerDTO
+     * @param requestInputs
+     * @param openingBalance
+     * @return string regarding success or failure of createtAccount request
+     */
+    String createAccount(CustomerDTO customerDTO, String[] requestInputs);
+
+    /**
      * Creates a new account for a given customer
      * 
      * NEWACCOUNT <Name>
