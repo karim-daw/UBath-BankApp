@@ -17,7 +17,7 @@ public class AccountService {
      * @param openingBalance
      * @return string regarding success or failure of createtAccount request
      */
-    private String createAccount(CustomerID customer, String[] requestInputs, double openingBalance) {
+    public String createAccount(CustomerID customer, String[] requestInputs, double openingBalance) {
 
         int inputLength = requestInputs.length;
         if (inputLength < 2) {
@@ -43,5 +43,17 @@ public class AccountService {
                 return "FAIL: You already have a " + accountType + " account.";
             }
         }
+    }
+
+    public boolean deposit(Long accountID, double amount) {
+
+        // get the Account from db using id
+        // create new transaction with amount
+        //
+        return false;
+    }
+
+    public boolean withdraw(Long accountID, double amount) {
+        return false;
     }
 }
