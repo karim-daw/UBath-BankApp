@@ -1,6 +1,5 @@
 .vscode/
 
-*.xml/
 
 .project
 .classpath
