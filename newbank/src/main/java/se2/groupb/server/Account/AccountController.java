@@ -1,23 +1,32 @@
 package se2.groupb.server.account;
 
+import se2.groupb.server.customer.CustomerDTO;
+
 public class AccountController {
 
     // fields
+
     private final AccountService accountService;
 
     // constructor
+
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
     // methods
 
-    // In a traditional REST API, this could be considered as POST request where the
-    // AccountController handles the function that creates a new Account
-
-    // public addUser(){
-    // accountService.createAccount()
-    // }
+    /**
+     * creates a new account in the users sets of accounts
+     * 
+     * @param customerDTO
+     * @param requestInputs
+     * @param openingBalance
+     * @return string message of success of failusre
+     */
+    public String createNewAccount(CustomerDTO customerDTO, String[] requestInputs, double openingBalance) {
+        return accountService.createAccount(customerDTO, requestInputs, openingBalance);
+    }
 
     /**
      * @param accountId
@@ -25,6 +34,7 @@ public class AccountController {
     public void displayAccountDetails(AccountDTO accountDTO) {
         if (accountDTO != null) {
             // display account details to user
+            // TODO: i think thihs might need to be returned and not printed?
             System.out.println("Account details:");
             System.out.println("ID: " + accountDTO.getId());
             System.out.println("Account number: " + accountDTO.getAccountNumber());
@@ -59,6 +69,8 @@ public class AccountController {
             System.out.println("Withdrawal failed");
         }
     }
+
+    // add create account
 
     // other methods for displaying customer details, transaction history, etc.
 }
