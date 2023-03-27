@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import se2.groupb.server.customer.CustomerID;
+import se2.groupb.server.customer.CustomerDTO;
 
 public class NewBankClientHandler extends Thread {
 
@@ -23,7 +23,7 @@ public class NewBankClientHandler extends Thread {
 	public void run() {
 		// keep getting requests from the client and processing them
 		// The User is not logged into the system yet so CustomerID is null
-		CustomerID customer = null;
+		CustomerDTO customerDto = null;
 
 		try {
 			while (true) {
