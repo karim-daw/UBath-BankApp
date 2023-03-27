@@ -1,5 +1,7 @@
 package se2.groupb.server.customer;
 
+import java.util.List;
+
 public interface CustomerService {
 
     /**
@@ -13,5 +15,14 @@ public interface CustomerService {
      */
 
     String changePassword(CustomerDTO customerDTO, String[] requestInputs);
+
+    /**
+     * returns a string representation in the form of a list of accounts and prints
+     * them
+     * 
+     * @param customerDTO
+     * @return
+     */
+    String showMyAccounts(CustomerDTO customerDTO);
 
 }
