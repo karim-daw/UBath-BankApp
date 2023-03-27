@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
-import se2.groupb.server.customer.CustomerID;
+import se2.groupb.server.customer.CustomerDTO;
 
 public class NewBank {
 
@@ -33,8 +33,9 @@ public class NewBank {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
 		bhagy.setPassword("password");
-		getCustomers().put("Bhagy", bhagy);
+		getCustomers().put("Bhagy", bhagy); // TODO: #29 Hashmap key should be unique number
 
+		// TODO: #30 Helper service that generates some standard IDnumber
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		christina.setPassword("1234");
@@ -55,7 +56,7 @@ public class NewBank {
 	 * @return
 	 * @throws IOException
 	 */
-	public synchronized String processRequest(CustomerID customer, String request) {
+	public synchronized String processRequest(CustomerDTO customerDto, String request) {
 
 		if (customers.containsKey(customer.getKey())) {
 			String[] requestInputs = request.split("\\s+");
