@@ -7,13 +7,21 @@ import java.util.List;
 import java.util.Scanner;
 
 import se2.groupb.server.account.Account;
+import se2.groupb.server.account.AccountController;
+import se2.groupb.server.account.AccountService;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerDTO;
+import se2.groupb.server.customer.CustomerController;
+import se2.groupb.server.customer.CustomerService;
 
 public class NewBank {
 
 	private static final NewBank bank = new NewBank();
 	private HashMap<String, Customer> customers;
+	private CustomerController customerController;
+	private CustomerService customerService;
+	private AccountController accountController;
+	private AccountService accountService;
 
 	private static String main = "Main";
 	private static String savings = "Savings";
@@ -21,7 +29,15 @@ public class NewBank {
 	Scanner scanner = new Scanner(System.in);
 
 	private NewBank() {
+
+		// create temp data store
 		customers = new HashMap<>();
+
+		// init constorllers
+		customerController = new CustomerController(customerService);
+		accountController = new AccountController(accountService);
+
+		// adding data for debugging
 		addTestData();
 	}
 
@@ -58,27 +74,25 @@ public class NewBank {
 	 */
 	public synchronized String processRequest(CustomerDTO customerDto, String request) {
 
-		if (customers.containsKey(customer.getKey())) {
+		if (customers.containsKey(customerDto.getCustomerName())) {
 			String[] requestInputs = request.split("\\s+");
 			String command = requestInputs[0];
 
 			switch (command) {
 				case "SHOWMYACCOUNTS":
-					return showMyAccounts(customer);
+					return customerController.displayAccounts(customerDto);
 				case "NEWACCOUNT":
-					// String selectAccountType = selectAccountType();
-					// inputBalance
-					return createAccount(customer, requestInputs, 0);
+					return accountController.createNewAccount(customerDto, requestInputs, 0);
 				case "MOVE":
-					return moveMoney(customer, requestInputs);
+					return moveMoney(customerDto, requestInputs);
 				case "LOGOUT":
 					// return to the main menu userwelcome
-					return logOut(customer);
+					return logOut(customerDto);
 				case "PAY":
-					return transferMoney(customer, requestInputs);
+					return transferMoney(customerDto, requestInputs);
 
 				case "CHANGEMYPASSWORD":
-					return changePassword(customer, requestInputs);
+					return changePassword(customerDto, requestInputs);
 
 				default:
 					return "FAIL";
@@ -95,7 +109,7 @@ public class NewBank {
 	 * @param password
 	 * @return
 	 */
-	public synchronized CustomerID checkLogInDetails(String username, String password) {
+	public synchronized CustomerDTO checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
 
 		if (customers.containsKey(username)) {
@@ -105,7 +119,8 @@ public class NewBank {
 			// CustomerID
 			if (customer.getPassword().equals(password)) {
 				customer.setloggedInStatus(true);
-				return new CustomerID(username);
+				Long customerID = customer.getCustomerID();
+				return new CustomerDTO(customerID, username);
 			} else {
 				customer.setloggedInStatus(false);
 				return null;
@@ -113,7 +128,6 @@ public class NewBank {
 		} else {
 			return null;
 		}
-
 	}
 
 	/**
