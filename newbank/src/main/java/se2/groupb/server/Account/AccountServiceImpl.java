@@ -87,7 +87,7 @@ public class AccountServiceImpl implements AccountService {
             Customer customer = customerRepository.findByCustomerID(customerDTO.getCustomerID());
 
             // check if accounts exists if not, create a new account
-            if (customer.checkAccount(accountType) == false) {
+            if (customer.hasAccount(accountType) == false) {
                 Account newAccount = new Account(accountType, openingBalance);
                 customer.addAccount(newAccount);
 

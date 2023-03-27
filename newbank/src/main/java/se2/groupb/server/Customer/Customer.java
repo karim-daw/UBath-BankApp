@@ -127,13 +127,14 @@ public class Customer {
 	}
 
 	/**
-	 * checks if the desired accoutn name already exists in the customers list of
+	 * checks if the desired account name already exists in the customers list of
 	 * accounts
 	 * 
 	 * @param accountName
 	 * @return true false if account name exists in customers accounts
 	 */
-	public boolean checkAccount(String accountName) {
+	// TODO: #31 going to change the name of this method
+	public boolean hasAccount(String accountName) {
 		for (Account account : accounts) {
 			if (account.getAccountName().equals(accountName)) {
 				return true;
