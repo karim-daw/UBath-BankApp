@@ -9,7 +9,7 @@ public class Customer {
 
 	// members
 
-	private int customerID;
+	private Long customerID;
 	private String username;
 	private String password;
 	private ArrayList<Account> accounts;
@@ -24,11 +24,11 @@ public class Customer {
 	// methods
 
 	// customer id
-	public int getCustomerID() {
+	public Long getCustomerID() {
 		return customerID;
 	}
 
-	public void setCustomerID(int customerID) {
+	public void setCustomerID(Long customerID) {
 		this.customerID = customerID;
 	}
 
