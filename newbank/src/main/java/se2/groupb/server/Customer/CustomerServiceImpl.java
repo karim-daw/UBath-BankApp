@@ -1,5 +1,8 @@
 package se2.groupb.server.customer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import se2.groupb.server.repository.CustomerRepository;
 
 public class CustomerServiceImpl implements CustomerService {
@@ -48,6 +51,31 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setPassword(newPassword);
             return "SUCCESS new password is: " + customer.getPassword();
         }
+    }
+
+    /**
+     * displays accounts as a list
+     * 
+     * @param customer
+     * @return
+     */
+
+    @Override
+    public String showMyAccounts(CustomerDTO customerDTO) {
+
+        Long customerID = customerDTO.getCustomerID();
+
+        // create a list that will be displayed
+        List<String> accountList = new ArrayList<String>();
+        Customer customer = this.customerRepository.findByCustomerID(customerID);
+
+        accountList = customer.accountsToList();
+        String s = "";
+        for (String a : accountList) {
+            s += a.toString() + "\n";
+        }
+        return s;
+
     }
 
 }
