@@ -1,4 +1,4 @@
-package server;
+package se2.groupb.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,14 +42,14 @@ public class NewBankClientHandler extends Thread {
 	public BufferedReader in;
 	public PrintWriter out;
 	//private Socket socket;
-	public UserInterface comms;
+	public UserInput comms;
 
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
 		//socket=s;
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
-		comms = new UserInterface(in,out);
+		comms = new UserInput(in,out);
 	}
 	
 	public void run() {

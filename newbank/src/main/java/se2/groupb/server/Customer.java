@@ -1,4 +1,4 @@
-package server;
+package se2.groupb.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;

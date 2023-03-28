@@ -1,16 +1,16 @@
-package server;
+package se2.groupb.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class UserInterface {
+public class UserInput {
 	
 	private BufferedReader in;
 	private PrintWriter out;
 	
 	//constructor
-	public UserInterface(BufferedReader in,PrintWriter out) throws IOException{
+	public UserInput(BufferedReader in,PrintWriter out) throws IOException{
 		this.in = in;
 		this.out = out;
 	}
