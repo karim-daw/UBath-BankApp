@@ -1,7 +1,5 @@
 package se2.groupb.server.customer;
 
-import java.util.List;
-
 public interface CustomerService {
 
     /**
