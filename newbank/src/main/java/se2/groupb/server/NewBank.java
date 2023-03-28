@@ -84,7 +84,7 @@ public class NewBank {
 				case "NEWACCOUNT":
 					return accountController.createNewAccount(customerDto, requestInputs, 0);
 				case "MOVE":
-					return moveMoney(customerDto, requestInputs);
+					return transactionController(customerDto, requestInputs);
 				case "LOGOUT":
 					// return to the main menu userwelcome
 					return logOut(customerDto);
