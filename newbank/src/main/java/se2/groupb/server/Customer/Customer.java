@@ -1,18 +1,60 @@
-package se2.groupb.server;
+package se2.groupb.server.Customer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
+
+import se2.groupb.server.NewBank;
+import se2.groupb.server.Account.Account;
 
 public class Customer {
-	
-	
-	private ArrayList<Account> accounts;
+
+	// members
+	private UUID customerID;
+	private String username;
 	private String password;
+	private ArrayList<Account> accounts;
+	//private ArrayList<Payee> payees;
 	private boolean loggedInStatus;
 
+	//constructor
 	public Customer() {
+		this.customerID = UUID.randomUUID();
 		accounts = new ArrayList<>();
+		//payees = new ArrayList<>();
+	}
+
+	// methods
+
+	// customer id
+	public UUID getCustomerID() {
+		return customerID;
+	}
+	
+	/*
+	//remove this as once set by the system the customer's UUID should be unmutable
+	public void setCustomerID(Long customerID) {
+		this.customerID = customerID;
+	}
+	*/
+	
+	// accounts list
+	public void setAccounts(ArrayList<Account> accounts) {
+		this.accounts = accounts;
+	}
+
+	public ArrayList<Account> getAccounts() {
+		return accounts;
+	}
+
+	// username
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**
@@ -28,7 +70,7 @@ public class Customer {
 	public String getPassword() {
 		return this.password;
 	}
-	
+
 	/**
 	 * @set a boolean as logged-in-status
 	 */
@@ -42,21 +84,21 @@ public class Customer {
 	public boolean getloggedInStatus() {
 		return this.loggedInStatus;
 	}
-	
+
 	/**
-	 * @return a string of all the customer's accounts and their balances
+	 * @return a string of an account
 	 */
 
 	public String accountsToString() {
 		String s = "";
 		for (Account a : accounts) {
-			s += a.toString()+"\n";
+			s += a.toString();
 		}
 		return s;
 	}
 
 	/**
-	 * display the account names & balances into a list
+	 * display the accounts content into a list
 	 * 
 	 * @return a list containing Accounts
 	 */
@@ -79,6 +121,47 @@ public class Customer {
 			l.add(a.getAccountName());
 		}
 		return l;
+	}
+	
+	/**
+	 * adds account to list of accounts
+	 * 
+	 * @param account
+	 */
+	public void addAccount(Account account) {
+		accounts.add(account);
+
+	}
+
+	/**
+	 * @param accountName
+	 * @return
+	 */
+	public Account getAccountByName(String accountName) {
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(accountName)) {
+				return account;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * checks if the desired account name already exists in the customers list of
+	 * accounts
+	 * 
+	 * @param accountName
+	 * @return true false if account name exists in customers accounts
+	 */
+	// TODO: #31 going to change the name of this method
+	public boolean hasAccount(String accountName) {
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(accountName)) {
+				return true;
+			}
+		}
+		return false;
+
 	}
 	
 	/**
@@ -118,58 +201,6 @@ public class Customer {
 	}
 	
 	/**
-	 * @return a string of the new account options map
-	 */
-	public String mapToString(HashMap<String, String> map) {
-		String s = "";
-		for (HashMap.Entry<String,String> item: map.entrySet()){
-	        s += item.getKey()+ " = "+ item.getValue()+"\n";
-	    }
-		return s;
-	} 
-	
-	
-	/**
-	 * adds account to list of accounts
-	 * 
-	 * @param account
-	 */
-	public void addAccount(Account account) {
-		accounts.add(account);
-
-	}
-
-	/**
-	 * @return list of accounts
-	 */
-	public ArrayList<Account> getAccounts() {
-		return accounts;
-	}
-
-	/**
-	 * @param accountName
-	 * @return
-	 */
-	public Account getAccountByName(String accountName) {
-		for (Account account : accounts) {
-			if (account.getAccountName().equals(accountName)) {
-				return account;
-			}
-		}
-		return null;
-	}
-
-	public boolean checkAccount(String accountName) {
-		for (Account account : accounts) {
-			if (account.getAccountName().equals(accountName)) {
-				return true;
-			}
-		}
-		return false;
-
-	}
-	
-	/**
 	 * map of options for new account names
 	 * 
 	 * @return a map containing numbered Account Names 
@@ -187,5 +218,14 @@ public class Customer {
 		return map;
 	}
 	
-	
+	/**
+	 * @return a string of the new account options map
+	 */
+	public String mapToString(HashMap<String, String> map) {
+		String s = "";
+		for (HashMap.Entry<String,String> item: map.entrySet()){
+	        s += item.getKey()+ " = "+ item.getValue()+"\n";
+	    }
+		return s;
+	} 
 }
