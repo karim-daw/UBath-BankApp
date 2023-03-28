@@ -1,17 +1,19 @@
-package se2.groupb.server.Customer;
+package se2.groupb.server.customer;
+
+import java.util.UUID;
 
 public class CustomerDTO {
 
-    private Long customerID;
+    private UUID customerID;
     private String username;
 
-    public CustomerDTO(Long customerID, String username) {
+    public CustomerDTO(UUID customerID, String username) {
         this.customerID = customerID;
         this.username = username;
 
     }
 
-    public Long getCustomerID() {
+    public UUID getCustomerID() {
         return customerID;
     }
 
