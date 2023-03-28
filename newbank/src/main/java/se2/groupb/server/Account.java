@@ -17,7 +17,17 @@ public class Account {
 	public Double getAccountValue() {
 		return this.openingBalance;
 	}
+	
+	public boolean isOverDrawn() {
 
+		if (getAccountValue()<0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	public String toString() {
 		return (accountName + ": " + openingBalance);
 	}

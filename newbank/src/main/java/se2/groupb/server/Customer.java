@@ -1,10 +1,12 @@
 package se2.groupb.server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Customer {
-
+	
+	
 	private ArrayList<Account> accounts;
 	private String password;
 	private boolean loggedInStatus;
@@ -26,7 +28,7 @@ public class Customer {
 	public String getPassword() {
 		return this.password;
 	}
-
+	
 	/**
 	 * @set a boolean as logged-in-status
 	 */
@@ -40,21 +42,21 @@ public class Customer {
 	public boolean getloggedInStatus() {
 		return this.loggedInStatus;
 	}
-
+	
 	/**
-	 * @return a string of an account
+	 * @return a string of all the customer's accounts and their balances
 	 */
 
 	public String accountsToString() {
 		String s = "";
 		for (Account a : accounts) {
-			s += a.toString();
+			s += a.toString()+"\n";
 		}
 		return s;
 	}
 
 	/**
-	 * display the accounts content into a list
+	 * display the account names & balances into a list
 	 * 
 	 * @return a list containing Accounts
 	 */
@@ -65,7 +67,68 @@ public class Customer {
 		}
 		return l;
 	}
-
+	
+	/**
+	 * display the account names only into a list
+	 * 
+	 * @return a list containing Account Names
+	 */
+	public List<String> acctTypesToList() {
+		ArrayList<String> l = new ArrayList<String>();
+		for (Account a : accounts) {
+			l.add(a.getAccountName());
+		}
+		return l;
+	}
+	
+	/**
+	 * map of source accounts: non-overdrawn accounts & their balances
+	 * 
+	 * @return a map containing numbered Accounts & Balances
+	 */
+	public HashMap<String,String> sourceAcctsMap(){
+		HashMap<String,String> map = new HashMap<String,String>();
+		int i=0;
+		for (Account a : accounts) {
+			if (!(a.isOverDrawn())) {
+				i++;
+				String key=Integer.toString(i);
+				map.put(key, a.toString());
+			}
+		}
+		return map;
+	}
+	
+	/**
+	 * map of options for new account names
+	 * 
+	 * @return a map containing numbered Account Names 
+	 */
+	public HashMap<String,String> destinationAcctsMap(String sourceAcct){
+		HashMap<String,String> map = new HashMap<String,String>();
+		int i=0;
+		for (Account a : accounts) {
+			if (!(a.getAccountName().equals(sourceAcct))) {
+				i++;
+				String key=Integer.toString(i);
+				map.put(key, a.toString());
+			}
+		}
+		return map;
+	}
+	
+	/**
+	 * @return a string of the new account options map
+	 */
+	public String mapToString(HashMap<String, String> map) {
+		String s = "";
+		for (HashMap.Entry<String,String> item: map.entrySet()){
+	        s += item.getKey()+ " = "+ item.getValue()+"\n";
+	    }
+		return s;
+	} 
+	
+	
 	/**
 	 * adds account to list of accounts
 	 * 
@@ -105,5 +168,24 @@ public class Customer {
 		return false;
 
 	}
-
+	
+	/**
+	 * map of options for new account names
+	 * 
+	 * @return a map containing numbered Account Names 
+	 */
+	public HashMap<String,String> newAcctTypes(){
+		HashMap<String,String> map = new HashMap<String,String>();
+		int i=0;
+		for (String a : NewBank.validAcctList) {
+			if (!acctTypesToList().contains(a)) {
+				i++;
+				String key=Integer.toString(i);
+				map.put(key, a); //HashMap showing the available account types for new account creation
+			}
+		}
+		return map;
+	}
+	
+	
 }

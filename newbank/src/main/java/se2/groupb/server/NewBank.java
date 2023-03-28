@@ -1,34 +1,33 @@
 package se2.groupb.server;
 
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Collections;
+import java.util.Arrays;
+
 
 public class NewBank {
-
-	private static final NewBank bank = new NewBank();
+	
+	private static final NewBank bank = new NewBank(); //every instance of NewBank has the same bank info
 	private HashMap<String, Customer> customers;
-
-	private static String main = "Main";
-	private static String savings = "Savings";
-	private static String checking = "Checking";
-	Scanner scanner = new Scanner(System.in);
-
-	public HashMap<String, Customer> getCustomers() {
-		return customers;
-	}
-
+	public static final List<String> validAcctList = 
+		    Collections.unmodifiableList(Arrays.asList("Main","Savings","Checking"));
+	
+	//Constructor
 	private NewBank() {
 		customers = new HashMap<>();
 		addTestData();
 	}
-
+		
+	public HashMap<String, Customer> getCustomers() {
+		return customers;
+	}
+	
 	/**
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
-
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
@@ -50,18 +49,7 @@ public class NewBank {
 		return bank;
 	}
 
-	// private double inputAmount() {
-	// Scanner scanner = new Scanner(System.in);
-	// System.out.println("Please input the amount.");
-	// try {
-	// double amount = scanner.nextDouble();
-	// return amount;
-	// } catch (InputMismatchException e) {
-	// System.out.println("Please re-enter with numbers only.");
-	// return inputAmount(); // call the method recursively to get a valid input
-	// }
-	// }
-
+	
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
 
@@ -81,66 +69,8 @@ public class NewBank {
 			return null;
 		}
 
-	}
-
-	/**
-	 * 
-	 * commands from the NewBank customer are processed in this method
-	 * 
-	 * @param customer
-	 * @param request
-	 * @return
-	 * @throws IOException
-	 */
-	public synchronized String processRequest(CustomerID customer, String request) {
-
-		if (customers.containsKey(customer.getKey())) {
-			String[] requestInputs = request.split("\\s+");
-			String command = requestInputs[0];
-
-			switch (command) {
-				case "SHOWMYACCOUNTS":
-					return showMyAccounts(customer);
-				case "NEWACCOUNT":
-					// String selectAccountType = selectAccountType();
-					// inputBalance
-					return createAccount(customer, requestInputs, 0);
-				case "MOVE":
-					return moveMoney(customer, requestInputs);
-				case "LOGOUT":
-					// return to the main menu userwelcome
-					return logOut(customer);
-				case "PAY":
-					return transferMoney(customer, requestInputs);
-
-				case "CHANGEMYPASSWORD":
-					return changePassword(customer, requestInputs);
-
-				default:
-					return "FAIL";
-			}
-		}
-		return "FAIL";
-	}
-
-	/**
-	 * displays accounts as a list
-	 * 
-	 * @param customer
-	 * @return
-	 */
-
-	private String showMyAccounts(CustomerID customer) {
-		// create a list that will be displayed
-		List<String> accountList = new ArrayList<String>();
-		accountList = customers.get(customer.getKey()).accountsToList();
-		String s = "";
-		for (String a : accountList) {
-			s += a.toString() + "\n";
-		}
-		return s;
-	}
-
+	}	
+					
 	/**
 	 * Creates a new account for a given customer
 	 * 
@@ -153,36 +83,22 @@ public class NewBank {
 	 * @param openingBalance
 	 * @return string regarding success or failure of createtAccount request
 	 */
-	private String createAccount(CustomerID customer, String[] requestInputs, double openingBalance) {
-
-		int inputLength = requestInputs.length;
-		if (inputLength < 2) {
-			return "FAIL: Account type not specified";
-		}
-
-		String accountType = requestInputs[1];
-		if (!accountType.equals(main) && !accountType.equals(checking) && !accountType.equals(savings)) {
-			return "FAIL: Account type not recognised";
-		} else {
-			Customer c = customers.get(customer.getKey());
-			// check if the customer already have the account
-			// account does not exist, continue to create a new account
-			if (c.checkAccount(accountType) == false) {
-				c.addAccount(new Account(accountType, openingBalance));
-				return "SUCCESS: Your " + accountType + " account has been created.";
-			} else {
-				return "FAIL: You already have a " + accountType + " account.";
-			}
-		}
+	
+	/*
+	private String createAccount(Customer customer, String accountType, double openingBalance) {
+		//adds account to bank's data store
+		return "SUCCESS"; //or FAIL
 	}
-
+	
+	*/
+	
 	/**
 	 * Logs out the current customer
 	 * 
 	 * @param customer
 	 */
 
-	private String logOut(CustomerID customer) {
+	public String logOut(CustomerID customer) {
 		customers.get(customer.getKey()).setloggedInStatus(false);
 		return "LOG OUT SUCCESSFUL";
 
@@ -202,7 +118,7 @@ public class NewBank {
 	 * 
 	 * @return string that is SUCCESS or FAIL if transfer succeeded
 	 */
-	private String transferMoney(CustomerID customerID, String[] requestArray) {
+	public String transferMoney(CustomerID customerID, String[] requestArray) {
 
 		if (requestArray.length < 3) {
 			return "FAIL, incomplete PAY Request";
@@ -259,7 +175,7 @@ public class NewBank {
 
 	}
 
-	private boolean isOverDraft(Account account, double deduction) {
+	public boolean isOverDraft(Account account, double deduction) {
 
 		double balance = account.getBalance();
 		if (deduction > balance) {
@@ -279,7 +195,8 @@ public class NewBank {
 	 * @param requestArray
 	 * @return SUCCESS string or FAIL string
 	 */
-	private String moveMoney(CustomerID customerID, String[] requestInputs) {
+	/*
+	public String moveMoney(CustomerID customerID, String[] requestInputs) {
 
 		// Check if request is incomplete
 		int inputLength = requestInputs.length;
@@ -331,6 +248,7 @@ public class NewBank {
 		return "SUCCESS";
 
 	}
+	*/
 
 	/**
 	 * method that changes the password
@@ -342,9 +260,9 @@ public class NewBank {
 	 * @return
 	 */
 
-	public String changePassword(CustomerID customer, String[] requestInputs) {
-		// check if the command is correct
-		// return infinite loop of null, why ?
+	 public String changePassword(CustomerID customer, String[] requestInputs){
+		//check if the command is correct
+		//return infinite loop of null, why ? 
 		int inputLength = requestInputs.length;
 		if (inputLength < 4) {
 			return "FAIL. Please enter your old password and twice your new password after the command.";
@@ -355,21 +273,22 @@ public class NewBank {
 		String confirmNewPassword = requestInputs[3];
 		Customer c = customers.get(customer.getKey());
 
-		// check if the old password is correct
-		if (!c.getPassword().equals(oldPassword)) {
-			return "FAIL. The old password is incorrect.";
+		//check if the old password is correct
+		if (!c.getPassword().equals(oldPassword)){
+			return "FAIL. The old password is incorrect.";			
 		}
 
-		// check if the two new password inputs match.
-		if (!newPassword.equals(confirmNewPassword)) {
+		//check if the two new password inputs match. 
+		if (!newPassword.equals(confirmNewPassword)){
 			return "FAIL. Password confirmation does not match.";
 		}
 
 		else {
 			c.setPassword(newPassword);
 			return "SUCCESS new password is: " + c.getPassword();
-		}
-	}
+		}	
+	 }
+
 
 	/**
 	 * Registers a new customer to hashmap, performs validaiton to see if customer
