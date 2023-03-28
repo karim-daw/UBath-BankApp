@@ -23,7 +23,7 @@ public class TransactionService {
      * 
      * @return string that is SUCCESS or FAIL if transaction succeeded
      */
-    private String transactionMoney(CustomerID customerID, String[] requestArray) {
+    private String transferMoney(CustomerID customerID, String[] requestArray) {
 
         if (requestArray.length < 3) {
             return "FAIL, incomplete PAY Request";
