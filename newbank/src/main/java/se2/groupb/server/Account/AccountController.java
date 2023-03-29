@@ -1,6 +1,6 @@
-package se2.groupb.server.Account;
+package se2.groupb.server.account;
 
-import se2.groupb.server.Customer.CustomerDTO;
+import se2.groupb.server.customer.CustomerDTO;
 
 public class AccountController {
 
@@ -36,7 +36,7 @@ public class AccountController {
             // display account details to user
             // TODO: i think thihs might need to be returned and not printed?
             System.out.println("Account details:");
-            System.out.println("ID: " + accountDTO.getId());
+            System.out.println("ID: " + accountDTO.getAccountId());
             System.out.println("Account number: " + accountDTO.getAccountNumber());
             System.out.println("Balance: " + accountDTO.getBalance());
             System.out.println("Account type: " + accountDTO.getAccountType());

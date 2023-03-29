@@ -1,4 +1,4 @@
-package se2.groupb.server.Account;
+package se2.groupb.server.account;
 
 public class Account {
 	private String accountName;
@@ -8,7 +8,7 @@ public class Account {
 		this.accountName = accountName;
 		this.openingBalance = openingBalance;
 	}
-	
+
 	// TODO: #28 add customer id as attribute for account class
 	public String getAccountName() {
 		return this.accountName;
@@ -17,24 +17,23 @@ public class Account {
 	public double getBalance() {
 		return openingBalance;
 	}
-	
+
 	public boolean isOverDrawn() {
 
-		if (getBalance()<0) {
+		if (getBalance() < 0) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
-	
+
 	public String toString() {
 		return (accountName + ": " + openingBalance);
 	}
 
 	// public void updateBalance(BigDecimal amount) {
-		// this.openingBalance += amount;
-		// }
+	// this.openingBalance += amount;
+	// }
 
 	public void deposit(double amount) {
 		openingBalance += amount;
