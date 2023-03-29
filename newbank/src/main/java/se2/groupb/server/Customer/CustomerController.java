@@ -1,5 +1,6 @@
-package se2.groupb.server.customer;
+package se2.groupb.server.Customer;
 
+//Presentation layer: Takes user inputs and displays system response
 public class CustomerController {
 
     // fields

@@ -16,6 +16,7 @@ import se2.groupb.server.Customer.CustomerService;
 
 public class NewBank {
 	
+	public static final String BIC = "NEWBGB21";
 	private static final NewBank bank = new NewBank(); //every instance of NewBank has the same bank info
 	private HashMap<String,Customer> customers;
 	public static final List<String> validAcctList = 

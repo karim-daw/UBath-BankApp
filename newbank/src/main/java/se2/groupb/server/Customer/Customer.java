@@ -8,6 +8,7 @@ import java.util.UUID;
 import se2.groupb.server.NewBank;
 import se2.groupb.server.Account.Account;
 
+//Customer Domain
 public class Customer {
 
 	// members

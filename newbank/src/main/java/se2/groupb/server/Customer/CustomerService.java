@@ -1,7 +1,8 @@
-package se2.groupb.server.customer;
+package se2.groupb.server.Customer;
 
 import java.util.List;
 
+//Business Logic: makes changes to Domain, sends results to Controller
 public interface CustomerService {
 
     /**

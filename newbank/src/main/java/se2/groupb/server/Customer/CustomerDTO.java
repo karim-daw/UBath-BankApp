@@ -1,22 +1,29 @@
 package se2.groupb.server.Customer;
 
-public class CustomerDTO {
+import java.util.ArrayList;
+import java.util.UUID;
 
-    private Long customerID;
-    private String username;
+import se2.groupb.server.Account.Account;
 
-    public CustomerDTO(Long customerID, String username) {
-        this.customerID = customerID;
-        this.username = username;
+//Subset of Domain for data transfer between layers
+public final class CustomerDTO {
+	
+	public final UUID customerID;
+	private String username;
+	private String password;
+	private ArrayList<Account> accounts;
+	//private ArrayList<Payee> payees;
+	private boolean loggedInStatus;
+
+	//Constructor
+    public CustomerDTO(Customer customer) {
+        this.customerID = customer.getCustomerID();
+        this.username = customer.getUsername();
 
     }
 
-    public Long getCustomerID() {
-        return customerID;
-    }
-
-    public String getCustomerName() {
-        return username;
-    }
-
+    public UUID getCustomerID() {
+		return this.customerID;
+	}
+    
 }

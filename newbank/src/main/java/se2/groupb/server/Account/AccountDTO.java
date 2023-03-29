@@ -2,6 +2,7 @@ package se2.groupb.server.Account;
 
 import java.math.BigDecimal;
 
+//Subset of Domain for data transfer between layers
 public class AccountDTO {
     private Long accountID;
     private int accountNumber;

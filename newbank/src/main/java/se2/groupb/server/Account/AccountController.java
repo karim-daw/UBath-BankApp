@@ -2,6 +2,7 @@ package se2.groupb.server.Account;
 
 import se2.groupb.server.Customer.CustomerDTO;
 
+// Presentation layer: Takes user inputs and displays system response
 public class AccountController {
 
     // fields

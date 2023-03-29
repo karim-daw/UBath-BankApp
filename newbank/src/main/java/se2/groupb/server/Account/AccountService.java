@@ -2,6 +2,7 @@ package se2.groupb.server.Account;
 
 import se2.groupb.server.Customer.CustomerDTO;
 
+//Business Logic: makes changes to Domain, sends results to Controller
 public interface AccountService {
 
     /**
