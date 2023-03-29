@@ -1,4 +1,4 @@
-package se2.groupb.server.Customer;
+package se2.groupb.server.customer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import se2.groupb.server.NewBank;
-import se2.groupb.server.Account.Account;
+import se2.groupb.server.account.Account;
 
 public class Customer {
 
@@ -15,14 +15,14 @@ public class Customer {
 	private String username;
 	private String password;
 	private ArrayList<Account> accounts;
-	//private ArrayList<Payee> payees;
+	// private ArrayList<Payee> payees;
 	private boolean loggedInStatus;
 
-	//constructor
+	// constructor
 	public Customer() {
 		this.customerID = UUID.randomUUID();
 		accounts = new ArrayList<>();
-		//payees = new ArrayList<>();
+		// payees = new ArrayList<>();
 	}
 
 	// methods
@@ -31,14 +31,7 @@ public class Customer {
 	public UUID getCustomerID() {
 		return customerID;
 	}
-	
-	/*
-	//remove this as once set by the system the customer's UUID should be unmutable
-	public void setCustomerID(Long customerID) {
-		this.customerID = customerID;
-	}
-	*/
-	
+
 	// accounts list
 	public void setAccounts(ArrayList<Account> accounts) {
 		this.accounts = accounts;
@@ -109,7 +102,7 @@ public class Customer {
 		}
 		return l;
 	}
-	
+
 	/**
 	 * display the account names only into a list
 	 * 
@@ -122,7 +115,7 @@ public class Customer {
 		}
 		return l;
 	}
-	
+
 	/**
 	 * adds account to list of accounts
 	 * 
@@ -153,7 +146,6 @@ public class Customer {
 	 * @param accountName
 	 * @return true false if account name exists in customers accounts
 	 */
-	// TODO: #31 going to change the name of this method
 	public boolean hasAccount(String accountName) {
 		for (Account account : accounts) {
 			if (account.getAccountName().equals(accountName)) {
@@ -163,69 +155,69 @@ public class Customer {
 		return false;
 
 	}
-	
+
 	/**
 	 * map of source accounts: non-overdrawn accounts & their balances
 	 * 
 	 * @return a map containing numbered Accounts & Balances
 	 */
-	public HashMap<String,String> sourceAcctsMap(){
-		HashMap<String,String> map = new HashMap<String,String>();
-		int i=0;
+	public HashMap<String, String> sourceAcctsMap() {
+		HashMap<String, String> map = new HashMap<String, String>();
+		int i = 0;
 		for (Account a : accounts) {
 			if (!(a.isOverDrawn())) {
 				i++;
-				String key=Integer.toString(i);
+				String key = Integer.toString(i);
 				map.put(key, a.toString());
 			}
 		}
 		return map;
 	}
-	
+
 	/**
 	 * map of options for new account names
 	 * 
-	 * @return a map containing numbered Account Names 
+	 * @return a map containing numbered Account Names
 	 */
-	public HashMap<String,String> destinationAcctsMap(String sourceAcct){
-		HashMap<String,String> map = new HashMap<String,String>();
-		int i=0;
+	public HashMap<String, String> destinationAcctsMap(String sourceAcct) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		int i = 0;
 		for (Account a : accounts) {
 			if (!(a.getAccountName().equals(sourceAcct))) {
 				i++;
-				String key=Integer.toString(i);
+				String key = Integer.toString(i);
 				map.put(key, a.toString());
 			}
 		}
 		return map;
 	}
-	
+
 	/**
 	 * map of options for new account names
 	 * 
-	 * @return a map containing numbered Account Names 
+	 * @return a map containing numbered Account Names
 	 */
-	public HashMap<String,String> newAcctTypes(){
-		HashMap<String,String> map = new HashMap<String,String>();
-		int i=0;
+	public HashMap<String, String> newAcctTypes() {
+		HashMap<String, String> map = new HashMap<String, String>();
+		int i = 0;
 		for (String a : NewBank.validAcctList) {
 			if (!acctTypesToList().contains(a)) {
 				i++;
-				String key=Integer.toString(i);
-				map.put(key, a); //HashMap showing the available account types for new account creation
+				String key = Integer.toString(i);
+				map.put(key, a); // HashMap showing the available account types for new account creation
 			}
 		}
 		return map;
 	}
-	
+
 	/**
 	 * @return a string of the new account options map
 	 */
 	public String mapToString(HashMap<String, String> map) {
 		String s = "";
-		for (HashMap.Entry<String,String> item: map.entrySet()){
-	        s += item.getKey()+ " = "+ item.getValue()+"\n";
-	    }
+		for (HashMap.Entry<String, String> item : map.entrySet()) {
+			s += item.getKey() + " = " + item.getValue() + "\n";
+		}
 		return s;
-	} 
+	}
 }

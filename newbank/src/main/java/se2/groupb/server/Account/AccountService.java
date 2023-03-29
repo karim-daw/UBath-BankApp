@@ -1,6 +1,6 @@
-package se2.groupb.server.Account;
+package se2.groupb.server.account;
 
-import se2.groupb.server.Customer.CustomerDTO;
+import se2.groupb.server.customer.CustomerDTO;
 
 public interface AccountService {
 
