@@ -48,7 +48,7 @@ public class AccountController {
 
     public void depositAmount(AccountDTO accountDTO, double amount) {
 
-        Long accountID = accountDTO.getId();
+        Long accountID = accountDTO.getAccountId();
         boolean success = accountService.deposit(accountID, amount);
         if (success) {
             // display success message to user
