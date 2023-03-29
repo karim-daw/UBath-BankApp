@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
+import se2.groupb.server.customer.CustomerDTO;
 import se2.groupb.server.customer.CustomerID;
 
 public class TransactionService {
@@ -23,15 +24,17 @@ public class TransactionService {
      * 
      * @return string that is SUCCESS or FAIL if transaction succeeded
      */
-    private String transferMoney(CustomerID customerID, String[] requestArray) {
+    private String transferMoney(CustomerDTO customerDTO, String[] requestArray) {
 
         if (requestArray.length < 3) {
             return "FAIL, incomplete PAY Request";
         }
 
         // Check if the customer exists in the hashmap.
-        String customerName = customerID.getKey();
+        String customerName = customerDTO.getCustomerName();
         String payeeName = requestArray[1];
+
+        // TODO: #34 add access to database here to gett customer data
         Customer customer = customers.get(customerName);
         System.out.println(payeeName);
 
