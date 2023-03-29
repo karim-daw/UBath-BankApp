@@ -2,6 +2,7 @@ package se2.groupb.server.customer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import se2.groupb.server.repository.CustomerRepository;
 
@@ -63,7 +64,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public String showMyAccounts(CustomerDTO customerDTO) {
 
-        Long customerID = customerDTO.getCustomerID();
+        UUID customerID = customerDTO.getCustomerID();
 
         // create a list that will be displayed
         List<String> accountList = new ArrayList<String>();
