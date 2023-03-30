@@ -34,7 +34,8 @@ public class NewBank {
 		// adding data for debugging
 		addTestData();
 		// Initialise controllers
-		
+		customerService = new CustomerServiceImpl(customers);
+		customerController = new CustomerController(customerService);
 		//accountService = new AccountServiceImpl());
 		//accountController = new AccountController(accountService);
 	}
@@ -55,8 +56,6 @@ public class NewBank {
 		john.addAccount(new Account(john.getCustomerID(),"Current", "Main", BigDecimal.valueOf(250)));
 		getCustomers().put("John", john);
 		
-		customerService = new CustomerServiceImpl(customers);
-		customerController = new CustomerController(customerService);
 	}
 	
 	public HashMap<String, Customer> getCustomers() {
