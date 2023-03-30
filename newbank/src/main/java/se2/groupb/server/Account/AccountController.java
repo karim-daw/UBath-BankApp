@@ -1,17 +1,18 @@
 package se2.groupb.server.account;
 
+import se2.groupb.server.customer;
+import se2.groupb.server.customerID;
+import se2.groupb.server.customer.CustomerDTO;
 import se2.groupb.server.customer.CustomerDTO;
 
+// Presentation layer: Takes user inputs and displays system response
 public class AccountController {
-
     // fields
-
-    private final AccountService accountService;
+    private final AccountServiceImpl accountService;
 
     // constructor
-
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
+    public AccountController(AccountServiceImpl accountService) {
+        this.accountService = accountService; //business logic
     }
 
     // methods
@@ -24,10 +25,49 @@ public class AccountController {
      * @param openingBalance
      * @return string message of success of failusre
      */
-    public String createNewAccount(CustomerDTO customerDTO, String[] requestInputs, double openingBalance) {
-        return accountService.createAccount(customerDTO, requestInputs, openingBalance);
+    public String createNewAccount(CustomerDTO customerDTO, String accountType, String accountName, 
+    		BigDecimal openingBalance, BigDecimal overdraftLimit) {
+    	String response="";
+    	boolean createdNewAccount = accountService.createAccount(customerDTO, String accountType, String accountName, 
+    			openingBalance);
+        return response;
     }
-
+    
+    public String createAccountEnhancement(CustomerID customerID) {
+		String response=""; //the system response to the user's request
+		Customer customer = bank.getCustomers().get(customerID.getKey()); //the current customer
+		int noOfChoices =customer.newAcctTypes().size();
+		if (noOfChoices>0) { //if there are available account types for creation
+			String systemPrompt = "Create a new account.\nChoose from: \n" + customer.mapToString(customer.newAcctTypes()) +"\nEnter your option number: \n";
+			String userInput = comms.getUserMenuChoice(systemPrompt,noOfChoices);
+			//out.println(userInput);
+			String accountType = customer.newAcctTypes().get(userInput); //gets the new account type
+			//out.println(accountType);
+			
+			systemPrompt = "Enter an opening balance (must be positive): \n";
+			double openingBalance = comms.getOpeningBalance(systemPrompt);
+			
+			systemPrompt="Open a new " + accountType + " account with an opening balance of " + openingBalance+ "?\nEnter 'y' for Yes or 'n' for No: \n";
+			boolean userConfirm = comms.confirm(systemPrompt);
+			
+			if (userConfirm) {
+				customer.addAccount(new Account(accountType, openingBalance)); //adds new account to customer
+				//Call NewBank method to add new customer account to bank's data store
+				response = "SUCCESS: Your " + accountType + " account has been created.\nReturning to Main Menu.";
+			}
+			else {
+				response = "Account creation was cancelled.\nReturning to the Main Menu.";
+			}		
+		}
+		else {
+			response = "All possible account types have been created.\nReturning to Main Menu.";
+			//newBankClientHandler.startup();
+		}
+		return response;
+	}
+    
+    
+    
     /**
      * @param accountId
      */
@@ -46,7 +86,10 @@ public class AccountController {
         }
     }
 
-    public void depositAmount(AccountDTO accountDTO, double amount) {
+    
+    
+    
+    public void creditAmount(AccountDTO accountDTO, double amount) {
 
         Long accountID = accountDTO.getAccountId();
         boolean success = accountService.deposit(accountID, amount);
@@ -59,7 +102,7 @@ public class AccountController {
         }
     }
 
-    public void withdrawAmount(Long accountId, double amount) {
+    public void debitAmount(Long accountId, double amount) {
         boolean success = accountService.withdraw(accountId, amount);
         if (success) {
             // display success message to user
@@ -69,8 +112,6 @@ public class AccountController {
             System.out.println("Withdrawal failed");
         }
     }
-
-    // add create account
 
     // other methods for displaying customer details, transaction history, etc.
 }

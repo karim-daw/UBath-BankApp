@@ -8,6 +8,7 @@ import java.util.UUID;
 import se2.groupb.server.NewBank;
 import se2.groupb.server.account.Account;
 
+//Customer Domain
 public abstract class Customer {
 
 	// members
@@ -17,10 +18,17 @@ public abstract class Customer {
 	private ArrayList<Account> accounts;
 	private boolean loggedInStatus;
 
+	//constructor
+	public Customer(String username, String password) {
+
 	// constructor
 	public Customer() {
 		this.customerID = UUID.randomUUID();
+		this.username = username;
+		this.password = password;
 		accounts = new ArrayList<>();
+		this.loggedInStatus = false;
+		//payees = new ArrayList<>();
 		// payees = new ArrayList<>();
 	}
 
@@ -155,6 +163,11 @@ public abstract class Customer {
 	 * 
 	 * @return a map containing numbered Accounts & Balances
 	 */
+	/*
+	public HashMap<String,String> sourceAcctsMap(){
+		HashMap<String,String> map = new HashMap<String,String>();
+		int i=0;
+
 	public HashMap<String, String> sourceAcctsMap() {
 		HashMap<String, String> map = new HashMap<String, String>();
 		int i = 0;
@@ -167,6 +180,7 @@ public abstract class Customer {
 		}
 		return map;
 	}
+	*/
 
 	/**
 	 * map of options for new account names

@@ -2,10 +2,18 @@ package se2.groupb.server.account;
 
 import se2.groupb.server.customer.CustomerDTO;
 
-public interface AccountService {
+import java.math.BigDecimal;
+import java.util.*;
 
+//Business Logic: makes changes to Domain, sends results to Controller
+public interface AccountService {
+	public static final List<String> validAccountTypes = 
+			Collections.unmodifiableList(Arrays.asList("Current","Savings"));
+	public static final List<BigDecimal> defaultOverdraftLimits = 
+			Collections.unmodifiableList(Arrays.asList(BigDecimal.valueOf(200),BigDecimal.ZERO));
+	
     /**
-     * Creates new account for a given customer with a default account balance of
+     * Creates new account for a given customer with a default account balance and overdraft limit of
      * 0.0
      * 
      * NEWACCOUNT <Name>
@@ -13,11 +21,11 @@ public interface AccountService {
      * Returns SUCCESS or FAIL
      * 
      * @param customerDTO
-     * @param requestInputs
-     * @param openingBalance
+     * @param accountType
+     * @param accountName
      * @return string regarding success or failure of createtAccount request
      */
-    String createAccount(CustomerDTO customerDTO, String[] requestInputs);
+    boolean createAccount(CustomerDTO customer, String accountType, String accountName);
 
     /**
      * Creates a new account for a given customer
@@ -27,11 +35,14 @@ public interface AccountService {
      * Returns SUCCESS or FAIL
      * 
      * @param customerDTO
-     * @param requestInputs
+     * @param accountType
+     * @param accountName
      * @param openingBalance
+     * @param overdraftLimit
      * @return string regarding success or failure of createtAccount request
      */
-    String createAccount(CustomerDTO customerDTO, String[] requestInputs, double openingBalance);
+    boolean createAccount(CustomerDTO customer, String accountType, String accountName, BigDecimal openingBalance,
+    		BigDecimal overdfraftLimit);
 
     /**
      * adds money to account
@@ -40,15 +51,18 @@ public interface AccountService {
      * @param amount
      * @return
      */
-    boolean deposit(Long accountID, double amount);
+    //boolean credit(UUID accountID, BigDecimal amount);
 
     /**
-     * substracts money from account
+     * subtracts money from account
      * 
      * @param accountID
      * @param amount
      * @return
      */
-    boolean withdraw(Long accountID, double amount);
+    //boolean debit(UUID accountID, BigDecimal amount);
+    
+    //boolean exceedsOverdraft() ;
+    
 
 }

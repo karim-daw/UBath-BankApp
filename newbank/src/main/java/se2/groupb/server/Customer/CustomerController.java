@@ -1,17 +1,21 @@
-package se2.groupb.server.customer;
+package se2.groupb.server.Customer;
+
+import java.util.*;
 
 public class CustomerController {
 
     // fields
-
-    private final CustomerService customerService;
+    private final CustomerServiceImpl customerService;
 
     // Constructor
-
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerServiceImpl customerService) {
         this.customerService = customerService;
     }
-
+    
+    public UUID checkLogInDetails(CustomerDTO customerDto) {
+    	return customerService.findCustomer(customerDto);	
+	}
+    
     /**
      * displays the customers accounts as a list
      * 

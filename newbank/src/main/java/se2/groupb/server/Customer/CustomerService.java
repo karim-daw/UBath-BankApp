@@ -1,7 +1,12 @@
-package se2.groupb.server.customer;
+package se2.groupb.server.Customer;
+
+
+import java.util.*;
+
 
 public interface CustomerService {
-
+	
+	public UUID findCustomer(CustomerDTO customerDto);
     /**
      * method that changes the password
      * old password need to be enter
@@ -11,7 +16,7 @@ public interface CustomerService {
      * @param requestInputs
      * @return
      */
-
+	
     String changePassword(CustomerDTO customerDTO, String[] requestInputs);
 
     /**

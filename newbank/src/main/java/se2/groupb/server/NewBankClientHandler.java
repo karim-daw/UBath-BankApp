@@ -5,9 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-
+import java.util.*;
 import se2.groupb.server.account.Account;
-import se2.groupb.server.customer.CustomerDTO;
+import se2.groupb.server.customer.*;
+
 
 public class NewBankClientHandler extends Thread {
 
@@ -45,10 +46,10 @@ public class NewBankClientHandler extends Thread {
 	public PrintWriter out;
 	// private Socket socket;
 	public UserInput comms;
+	
 
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
-		// socket=s;
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
 		comms = new UserInput(in, out);
@@ -60,26 +61,30 @@ public class NewBankClientHandler extends Thread {
 		// CustomerID customerID = null;
 		String request = "";
 		String response = "";
-		CustomerDTO customerDto = null;
+		UUID customerID = null;
 
 		try {
 			while (true) {
-				if (customerDto == null) {
-					request = comms.getUserMenuChoice(welcomeMessage, welcomeChoices);
+				if (customerID == null){
+					request = comms.getUserMenuChoice(welcomeMessage,welcomeChoices);
+
 					// Processes the user's response: 1=LOGIN or 2=REGISTER
 					if (request.equals("1")) {
 						customerID = userLogIn();
 					} else {
-						customerID = userRegistration();
-					}
-				} else {
-					request = comms.getUserMenuChoice(requestMenu, mainMenuChoices);
-					out.println("Request from " + customerID.getKey());
+						//customerID = userRegistration();
+					} 
+				}
+				else {
+					request = comms.getUserMenuChoice(requestMenu,mainMenuChoices);
+					//out.println("Request from " + customerID.getKey());
 					response = processRequest(customerID, request);
 					out.println(response);
-					if (bank.getCustomers().get(customerID.getKey()).getloggedInStatus() == false) {
+					/*
+					if (bank.getCustomers().get(customerID.getKey()).getloggedInStatus()==false) {
 						customerID = null;
 					}
+					*/
 				}
 			}
 		} catch (IOException e) {
@@ -96,12 +101,14 @@ public class NewBankClientHandler extends Thread {
 	}
 
 	// Login for existing customers
-	public CustomerID userLogIn() throws IOException {
+	public UUID userLogIn() throws IOException {
 		String userName = comms.getUserString("Enter Username");
 		String password = comms.getUserString("Enter Password");
-		comms.printSystemMessage("Please wait while we check your details");
+		CustomerDTO customerDto = new CustomerDTO(userName, password);
+		comms.printSystemMessage("Please wait while we check your details");		
+		UUID customerID = bank.getCustomerController().checkLogInDetails(customerDto);
+		
 
-		CustomerID customerID = bank.checkLogInDetails(userName, password);
 		// Validate login details
 		if (customerID == null) {
 			out.println("Log In Failed. Invalid Credentials, please try again.");
@@ -110,9 +117,10 @@ public class NewBankClientHandler extends Thread {
 		}
 		return customerID;
 	}
-
+	
+	/*
 	// Registration for new customers
-	public CustomerID userRegistration() throws IOException {
+	public CustomerDTO userRegistration() throws IOException {
 
 		// Ask for existing username
 		String userName = comms.getUserString("Choose Username");
@@ -125,8 +133,8 @@ public class NewBankClientHandler extends Thread {
 			return null;
 		}
 		// check if userName already exists, if yes is registers gets changed to true
-		CustomerID customerID = bank.registerCustomer(userName, passwordAttempt2);
-		if (customerID != null) {
+		CustomerDTO customerDto = bank.registerCustomer(userName, passwordAttempt2);
+		if (customerDto != null) {
 			String str = String.format("Registration succesfull. New Customer %s", userName);
 			out.println(str);
 		} else {
@@ -134,21 +142,23 @@ public class NewBankClientHandler extends Thread {
 					userName);
 			out.println(str);
 		}
-		return customerID;
+		return customerDto;
 	}
+	*/
+	
+	public synchronized String processRequest(UUID customerID, String request) throws IOException{
 
-	public synchronized String processRequest(CustomerID customerID, String request) throws IOException {
 		if (bank.getCustomers().containsKey(customerID.getKey())) {
 			switch (request) {
 				case "1":
 				case "SHOWMYACCOUNTS":
-					return showMyAccounts(customerID);
+					//return showMyAccounts(customerID);
 				case "2":
 				case "NEWACCOUNT":
-					return createAccountEnhancement(customerID);
+					//return createAccountEnhancement(customerID);
 				case "3":
 				case "MOVE":
-					return moveMoneyEnhancement(customerID);
+					//return moveMoneyEnhancement(customerID);
 				/*
 				 * case "4":
 				 * case "PAY":
@@ -159,18 +169,24 @@ public class NewBankClientHandler extends Thread {
 				 */
 				case "6":
 				case "LOGOUT":
-					return logOut(customerID);
+					//return logOut(customerID);
 				default:
 					return "FAIL";
 			}
 		}
 		return "FAIL";
 	}
+	
+	/*
 
 	public String showMyAccounts(CustomerID customerID) {
 		Customer customer = bank.getCustomers().get(customerID.getKey());
 		return customer.accountsToString();
 	}
+	*/
+	
+	
+	/*
 
 	public String createAccountEnhancement(CustomerID customerID) {
 		String response = ""; // the system response to the user's request
@@ -204,6 +220,10 @@ public class NewBankClientHandler extends Thread {
 		}
 		return response;
 	}
+	*/
+	
+	
+	/*
 
 	public String moveMoneyEnhancement(CustomerID customerID) {
 		// MOVE <Amount> <From> <To>
@@ -255,11 +275,16 @@ public class NewBankClientHandler extends Thread {
 		}
 		return response;
 	}
+	*/
+	
+	
+	/*
 
 	public String logOut(CustomerID customerID) {
 		bank.getCustomers().get(customerID.getKey()).setloggedInStatus(false);
 		return "LOG OUT SUCCESSFUL";
 
 	}
+	*/
 
 }

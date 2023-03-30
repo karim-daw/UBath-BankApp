@@ -1,19 +1,55 @@
 package se2.groupb.server.customer;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import java.util.*;
+import se2.groupb.server.NewBank;
+import se2.groupb.server.NewBankClientHandler;
+import se2.groupb.server.Account.AccountDTO;
 import se2.groupb.server.repository.CustomerRepository;
 
 public class CustomerServiceImpl implements CustomerService {
 
-    private final CustomerRepository customerRepository;
-
+    //private final CustomerRepository customerRepository;
+    private final HashMap<String, Customer> theCustomers;
+    
+    /*
+    //Repository Constructor
     public CustomerServiceImpl(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
-
+    */
+    
+    //Temp Constructor using HashMap
+    public CustomerServiceImpl(HashMap<String, Customer> customers) {
+        this.theCustomers = customers;
+    }
+    
+    public UUID findCustomer(CustomerDTO customerDto) {
+		//CustomerService checks CustomerRepository if they have a customer with the entered username & password
+		//If they do then provide the UUID
+		//If they don't then the UUID is null
+    	String username = customerDto.getUsername();
+    	String password = customerDto.getPassword();
+    	
+    	if (theCustomers.containsKey(username)) {
+			// If username exists then check their password
+			Customer customer = theCustomers.get(username);
+			// If the password input equals the password on system then create new
+			// CustomerID
+			if (customer.getPassword().equals(password)) {
+				customer.setloggedInStatus(true);
+				return customer.getCustomerID();
+			} else {
+				customer.setloggedInStatus(false);
+				return null;
+			}
+		} else {
+			return null;
+		}
+    }
+    
     /**
      * method that changes the password
      * old password need to be enter

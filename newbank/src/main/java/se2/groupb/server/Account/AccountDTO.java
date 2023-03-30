@@ -1,14 +1,16 @@
 package se2.groupb.server.account;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
+//Subset of Domain for data transfer between layers
 public class AccountDTO {
-    private Long accountID;
+    private UUID accountID;
     private int accountNumber;
     private BigDecimal balance;
     private String accountType;
 
-    public AccountDTO(Long accountID, int accountNumber, BigDecimal balance, String accountType) {
+    public AccountDTO(UUID accountID, int accountNumber, BigDecimal balance, String accountType) {
         this.accountID = accountID;
         this.accountNumber = accountNumber;
         this.balance = balance;
