@@ -1,4 +1,4 @@
-package se2.groupb.server.customer;
+package se2.groupb.server.Customer;
 
 import java.util.*;
 import se2.groupb.server.NewBank;
@@ -19,8 +19,8 @@ public class CustomerServiceImpl implements CustomerService {
     */
     
     //Temp Constructor using HashMap
-    public CustomerServiceImpl(NewBank bank) {
-        this.theCustomers = bank.getCustomers();
+    public CustomerServiceImpl() {
+        this.theCustomers = NewBank.getCustomers();
     }
     
     public UUID findCustomer(CustomerDTO customerDto) {

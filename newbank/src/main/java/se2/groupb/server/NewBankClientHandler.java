@@ -72,17 +72,19 @@ public class NewBankClientHandler extends Thread {
 					if (request.equals("1")) {
 						customerID = userLogIn();
 					} else {
-						customerID = userRegistration();
+						//customerID = userRegistration();
 					} 
 				}
 				else {
 					request = comms.getUserMenuChoice(requestMenu,mainMenuChoices);
-					out.println("Request from " + customerID.getKey());
+					//out.println("Request from " + customerID.getKey());
 					response = processRequest(customerID, request);
 					out.println(response);
+					/*
 					if (bank.getCustomers().get(customerID.getKey()).getloggedInStatus()==false) {
 						customerID = null;
 					}
+					*/
 				}
 			}
 		} catch (IOException e) {
@@ -101,7 +103,7 @@ public class NewBankClientHandler extends Thread {
 	
 	
 	// Login for existing customers
-	public UUID userLogIn(NewBank bank) throws IOException {
+	public UUID userLogIn() throws IOException {
 		String userName = comms.getUserString("Enter Username");
 		String password = comms.getUserString("Enter Password");
 		CustomerDTO customerDto = new CustomerDTO(userName, password);
@@ -117,7 +119,8 @@ public class NewBankClientHandler extends Thread {
 		}
 		return customerID;
 	}
-
+	
+	/*
 	// Registration for new customers
 	public CustomerDTO userRegistration() throws IOException {
 
@@ -143,19 +146,20 @@ public class NewBankClientHandler extends Thread {
 		}
 		return customerDto;
 	}
+	*/
 	
-	public synchronized String processRequest(CustomerID customerID, String request) throws IOException{
+	public synchronized String processRequest(UUID customerID, String request) throws IOException{
 		if (bank.getCustomers().containsKey(customerID.getKey())) {
 			switch (request) {
 				case "1":
 				case "SHOWMYACCOUNTS":
-					return showMyAccounts(customerID);
+					//return showMyAccounts(customerID);
 				case "2":
 				case "NEWACCOUNT":
-					return createAccountEnhancement(customerID);
+					//return createAccountEnhancement(customerID);
 				case "3":
 				case "MOVE":
-					return moveMoneyEnhancement(customerID);
+					//return moveMoneyEnhancement(customerID);
 				/*
 				case "4":
 				case "PAY":
@@ -166,7 +170,7 @@ public class NewBankClientHandler extends Thread {
 				*/
 				case "6":
 				case "LOGOUT":
-					return logOut(customerID);
+					//return logOut(customerID);
 				default:
 					return "FAIL";
 			}
@@ -174,11 +178,15 @@ public class NewBankClientHandler extends Thread {
 		return "FAIL";
 	}
 	
+	/*
 	public String showMyAccounts(CustomerID customerID) {
 		Customer customer = bank.getCustomers().get(customerID.getKey());
 		return customer.accountsToString();
 	}
+	*/
 	
+	
+	/*
 	public String createAccountEnhancement(CustomerID customerID) {
 		String response=""; //the system response to the user's request
 		Customer customer = bank.getCustomers().get(customerID.getKey()); //the current customer
@@ -211,7 +219,10 @@ public class NewBankClientHandler extends Thread {
 		}
 		return response;
 	}
+	*/
 	
+	
+	/*
 	public String moveMoneyEnhancement(CustomerID customerID) {
 		//MOVE <Amount> <From> <To>
 		Customer customer = bank.getCustomers().get(customerID.getKey());
@@ -261,11 +272,14 @@ public class NewBankClientHandler extends Thread {
 		}
 		return response;
 	}
+	*/
 	
+	
+	/*
 	public String logOut(CustomerID customerID) {
 		bank.getCustomers().get(customerID.getKey()).setloggedInStatus(false);
 		return "LOG OUT SUCCESSFUL";
 
 	}
-	
+	*/
 }

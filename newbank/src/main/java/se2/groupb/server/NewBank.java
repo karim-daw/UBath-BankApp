@@ -1,6 +1,7 @@
 package se2.groupb.server;
 
 
+import java.math.BigDecimal;
 import java.util.*;
 import se2.groupb.server.Account.Account;
 import se2.groupb.server.Account.AccountController;
@@ -39,21 +40,20 @@ public class NewBank {
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
 	private void addTestData() {
-		Customer bhagy = new Customer();
-		bhagy.addAccount(new Account("Main", 1000.0));
-		bhagy.setPassword("password");
-		getCustomers().put("Bhagy", bhagy); // TODO: #29 Hashmap key should be unique number
-
-		// TODO: #30 Helper service that generates some standard IDnumber
-		Customer christina = new Customer();
-		christina.addAccount(new Account("Savings", 1500.0));
-		christina.setPassword("1234");
-		getCustomers().put("Christina", christina);
-
-		Customer john = new Customer();
-		john.addAccount(new Account("Checking", 250.0));
-		getCustomers().put("John", john);
-		christina.setPassword("4321");
+		CustomerDTO bhagyDTO = new CustomerDTO("Bhagy","password");
+		Customer bhagy = new Customer("Bhagy","password");
+		bhagy.addAccount(new Account(bhagy.getCustomerID(),"Current", "Main", BigDecimal.valueOf(1000)));
+		getCustomers().put(bhagyDTO, bhagy);
+		
+		CustomerDTO christinaDTO = new CustomerDTO("Christina","1234");
+		Customer christina = new Customer("Christina","1234");
+		christina.addAccount(new Account(christina.getCustomerID(),"Savings", "House", BigDecimal.valueOf(1500)));
+		getCustomers().put(christinaDTO, christina);
+		
+		CustomerDTO johnDTO = new CustomerDTO("John","1111");
+		Customer john = new Customer("John","1111");
+		john.addAccount(new Account(john.getCustomerID(),"Current", "Main", BigDecimal.valueOf(250)));
+		getCustomers().put(johnDTO, john);
 	}
 	
 	public HashMap<CustomerDTO, Customer> getCustomers() {
@@ -64,11 +64,11 @@ public class NewBank {
 		return bank;
 	}
 	
-	public static CustomerController getCustomerController() {
-		return bank.customerController;
+	public CustomerController getCustomerController() {
+		return customerController;
 	}
-	public static AccountController getAccountContoller() {
-		return bank.accountController;
+	public AccountController getAccountContoller() {
+		return accountController;
 	}
 	
 	/*

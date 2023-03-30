@@ -36,9 +36,9 @@ public class Account {
 		}
 		
 	//Constructor method for new Account object
-	public Account(CustomerDTO customerDTO, String accountType, String accountName,BigDecimal openingBalance) {
+	public Account(UUID customerID, String accountType, String accountName,BigDecimal openingBalance) {
 		this.accountID = UUID.randomUUID();
-		this.customerID = customerDTO.getCustomerID();
+		this.customerID = customerID;
 		this.accountType = accountType;
 		this.accountName = accountName;
 		this.accountNumber = accountNumberGenerator();
@@ -62,11 +62,11 @@ public class Account {
 	
 	public BigDecimal getDefaultOverdraftLimit() {
 		
-		if (this.accountType = "Current") {
-			this.overdraftLimit = BigDecimal.valueOf(200);
+		if (this.accountType == "Current") {
+			return BigDecimal.valueOf(200);
 		}
 		else {
-			this.overdraftLimit = BigDecimal.ZERO;
+			return BigDecimal.ZERO;
 		}
 	}
 	

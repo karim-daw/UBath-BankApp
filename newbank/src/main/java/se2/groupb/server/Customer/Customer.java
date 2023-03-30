@@ -20,9 +20,12 @@ public class Customer {
 	private boolean loggedInStatus;
 
 	//constructor
-	public Customer() {
+	public Customer(String usename, String password) {
 		this.customerID = UUID.randomUUID();
+		this.username = username;
+		this.password = password;
 		accounts = new ArrayList<>();
+		this.loggedInStatus = false;
 		//payees = new ArrayList<>();
 	}
 
