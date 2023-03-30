@@ -1,46 +1,45 @@
 package se2.groupb.server;
 
-
-
 import java.math.BigDecimal;
-import java.util.*;
-import se2.groupb.server.Account.Account;
-import se2.groupb.server.Account.AccountController;
-import se2.groupb.server.Account.AccountService;
-import se2.groupb.server.Customer.Customer;
-import se2.groupb.server.Customer.CustomerDTO;
-import se2.groupb.server.Customer.CustomerController;
-import se2.groupb.server.Customer.CustomerServiceImpl;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import se2.groupb.server.account.Account;
+import se2.groupb.server.customer.Customer;
+import se2.groupb.server.customer.CustomerController;
+import se2.groupb.server.customer.CustomerDTO;
+import se2.groupb.server.customer.CustomerServiceImpl;
 
 public class NewBank {
-	
+
 	public static final String BIC = "NEWBGB21";
-	
-	private static final NewBank bank = new NewBank(); //every instance of NewBank has the same bank info
-	private HashMap<String,Customer> customers;
-	
-	public static final List<String> validAcctList = 
-		    Collections.unmodifiableList(Arrays.asList("Main","Savings","Checking"));
-	
-	//Constructor
-	
-	//private AccountController accountController;
-	//private AccountServiceImpl accountService;
+
+	private static final NewBank bank = new NewBank(); // every instance of NewBank has the same bank info
+	private HashMap<String, Customer> customers;
+
+	public static final List<String> validAcctList = Collections
+			.unmodifiableList(Arrays.asList("Main", "Savings", "Checking"));
+
+	// Constructor
+
+	// private AccountController accountController;
+	// private AccountServiceImpl accountService;
 	private CustomerController customerController;
 	private CustomerServiceImpl customerService;
-
 
 	private NewBank() {
 		// create temp data store
 		customers = new HashMap<>();
 		// adding data for debugging
 		addTestData();
-    
+
 		// Initialise controllers
 		customerService = new CustomerServiceImpl(customers);
 		customerController = new CustomerController(customerService);
-		//accountService = new AccountServiceImpl());
-		//accountController = new AccountController(accountService);
+		// accountService = new AccountServiceImpl());
+		// accountController = new AccountController(accountService);
 
 	}
 
@@ -48,38 +47,38 @@ public class NewBank {
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
 	private void addTestData() {
-		Customer bhagy = new Customer("Bhagy","password");
-		bhagy.addAccount(new Account(bhagy.getCustomerID(),"Current", "Main", BigDecimal.valueOf(1000)));
+		Customer bhagy = new Customer("Bhagy", "password");
+		bhagy.addAccount(new Account(bhagy.getCustomerID(), "Current", "Main", BigDecimal.valueOf(1000)));
 		getCustomers().put("Bhagy", bhagy);
-		
-		Customer christina = new Customer("Christina","1234");
-		christina.addAccount(new Account(christina.getCustomerID(),"Savings", "House", BigDecimal.valueOf(1500)));
+
+		Customer christina = new Customer("Christina", "1234");
+		christina.addAccount(new Account(christina.getCustomerID(), "Savings", "House", BigDecimal.valueOf(1500)));
 		getCustomers().put("Christina", christina);
-		
-		Customer john = new Customer("John","1111");
-		john.addAccount(new Account(john.getCustomerID(),"Current", "Main", BigDecimal.valueOf(250)));
+
+		Customer john = new Customer("John", "1111");
+		john.addAccount(new Account(john.getCustomerID(), "Current", "Main", BigDecimal.valueOf(250)));
 		getCustomers().put("John", john);
-		
+
 	}
-	
+
 	public HashMap<String, Customer> getCustomers() {
 		return customers;
 	}
-	
-	public static NewBank getBank(){
+
+	public static NewBank getBank() {
 		return bank;
 	}
-	
+
 	public CustomerController getCustomerController() {
 		return customerController;
 	}
-	
+
 	/*
-	public AccountController getAccountContoller() {
-		return accountController;
-	}
-	*/
-	
+	 * public AccountController getAccountContoller() {
+	 * return accountController;
+	 * }
+	 */
+
 	/*
 	 * public synchronized CustomerID checkLogInDetails(String username, String
 	 * password) {
@@ -111,16 +110,17 @@ public class NewBank {
 	 * @param password
 	 * @return
 	 */
-	
+
 	public synchronized Customer checkLogInDetails(CustomerDTO customerDto) {
 		// Check if the username input by the user exists in the bank's system
 		String username = customerDto.getUsername();
 		String password = customerDto.getPassword();
-		
-		//CustomerDTO asks Customer if they have a customer with the entered username & password
-		//If they do then provide the UUID
-		//If they don't then the UUID is null
-		
+
+		// CustomerDTO asks Customer if they have a customer with the entered username &
+		// password
+		// If they do then provide the UUID
+		// If they don't then the UUID is null
+
 		if (customers.containsKey(username)) {
 			Customer customer = customers.get(username);
 			if (customer.getPassword().equals(password)) {
@@ -408,18 +408,19 @@ public class NewBank {
 	 * @param password
 	 * @return true is user successfull registered, false if username already exists
 	 */
-	public synchronized Customer registerCustomer(String username, String password) {
+	// public synchronized Customer registerCustomer(String username, String
+	// password) {
 
-		Customer newCustomer = null;
+	// Customer newCustomer = null;
 
-		if (!customers.containsKey(username)) {
-			newCustomer = new Customer();
-			newCustomer.addAccount(new Account("Main", 0.0));
-			newCustomer.setPassword(password);
-			getCustomers().put(username, newCustomer);
-			return newCustomer;
-		}
-		return null;
-	}
+	// if (!customers.containsKey(username)) {
+	// newCustomer = new Customer();
+	// newCustomer.addAccount(new Account("Main", 0.0));
+	// newCustomer.setPassword(password);
+	// getCustomers().put(username, newCustomer);
+	// return newCustomer;
+	// }
+	// return null;
+	// }
 
 }
