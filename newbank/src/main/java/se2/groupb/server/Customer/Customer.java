@@ -20,7 +20,7 @@ public class Customer {
 	private boolean loggedInStatus;
 
 	//constructor
-	public Customer(String usename, String password) {
+	public Customer(String username, String password) {
 		this.customerID = UUID.randomUUID();
 		this.username = username;
 		this.password = password;
@@ -168,11 +168,13 @@ public class Customer {
 
 	}
 	
+	
 	/**
 	 * map of source accounts: non-overdrawn accounts & their balances
 	 * 
 	 * @return a map containing numbered Accounts & Balances
 	 */
+	/*
 	public HashMap<String,String> sourceAcctsMap(){
 		HashMap<String,String> map = new HashMap<String,String>();
 		int i=0;
@@ -185,6 +187,7 @@ public class Customer {
 		}
 		return map;
 	}
+	*/
 	
 	/**
 	 * map of options for new account names

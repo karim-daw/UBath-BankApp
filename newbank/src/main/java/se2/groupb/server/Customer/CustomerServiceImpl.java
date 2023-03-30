@@ -9,7 +9,7 @@ import se2.groupb.server.repository.CustomerRepository;
 public class CustomerServiceImpl implements CustomerService {
 
     //private final CustomerRepository customerRepository;
-    private final HashMap<CustomerDTO, Customer> theCustomers;
+    private final HashMap<String, Customer> theCustomers;
     
     /*
     //Repository Constructor
@@ -19,15 +19,32 @@ public class CustomerServiceImpl implements CustomerService {
     */
     
     //Temp Constructor using HashMap
-    public CustomerServiceImpl() {
-        this.theCustomers = NewBank.getBank().getCustomers();
+    public CustomerServiceImpl(HashMap<String, Customer> customers) {
+        this.theCustomers = customers;
     }
     
     public UUID findCustomer(CustomerDTO customerDto) {
 		//CustomerService checks CustomerRepository if they have a customer with the entered username & password
 		//If they do then provide the UUID
 		//If they don't then the UUID is null
-    	return theCustomers.get(customerDto).getCustomerID();
+    	String username = customerDto.getUsername();
+    	String password = customerDto.getPassword();
+    	
+    	if (theCustomers.containsKey(username)) {
+			// If username exists then check their password
+			Customer customer = theCustomers.get(username);
+			// If the password input equals the password on system then create new
+			// CustomerID
+			if (customer.getPassword().equals(password)) {
+				customer.setloggedInStatus(true);
+				return customer.getCustomerID();
+			} else {
+				customer.setloggedInStatus(false);
+				return null;
+			}
+		} else {
+			return null;
+		}
     }
     
     /**

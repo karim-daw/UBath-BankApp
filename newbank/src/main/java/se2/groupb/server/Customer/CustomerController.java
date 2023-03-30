@@ -5,10 +5,10 @@ import java.util.*;
 public class CustomerController {
 
     // fields
-    private final CustomerService customerService;
+    private final CustomerServiceImpl customerService;
 
     // Constructor
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerServiceImpl customerService) {
         this.customerService = customerService;
     }
     

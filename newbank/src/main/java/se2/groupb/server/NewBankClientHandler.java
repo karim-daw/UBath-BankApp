@@ -47,10 +47,10 @@ public class NewBankClientHandler extends Thread {
 	public PrintWriter out;
 	//private Socket socket;
 	public UserInput comms;
+	
 
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
-		//socket=s;
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
 		comms = new UserInput(in,out);

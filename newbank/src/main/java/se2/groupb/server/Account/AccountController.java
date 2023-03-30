@@ -7,10 +7,10 @@ import se2.groupb.server.Customer.CustomerDTO;
 // Presentation layer: Takes user inputs and displays system response
 public class AccountController {
     // fields
-    private final AccountService accountService;
+    private final AccountServiceImpl accountService;
 
     // constructor
-    public AccountController(AccountService accountService) {
+    public AccountController(AccountServiceImpl accountService) {
         this.accountService = accountService; //business logic
     }
 

@@ -9,17 +9,21 @@ import se2.groupb.server.repository.AccountRepository;
 import se2.groupb.server.repository.CustomerRepository;
 
 public class AccountServiceImpl implements AccountService{
-
+    /*
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
-    private final HashMap<UUID, AccountDTO> theAccounts;
-    private final HashMap<UUID, CustomerDTO> theCustomers;
-
     public AccountServiceImpl(AccountRepository accountRepository, CustomerRepository customerRepository) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
-        this.theAccounts = new HashMap<>();
-        this.theCustomers = new HashMap<>();
+    }
+    */
+    
+	private UUID CustomerID;
+	private HashMap<AccountDTO, Account> theAccounts;
+    public AccountServiceImpl(UUID CustomerID, HashMap<AccountDTO, Account> accounts) {
+    	this.CustomerID = CustomerID;
+        this.theAccounts = accounts;
+        
     }
     
     @Override

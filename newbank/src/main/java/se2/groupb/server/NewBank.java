@@ -9,54 +9,57 @@ import se2.groupb.server.Account.AccountService;
 import se2.groupb.server.Customer.Customer;
 import se2.groupb.server.Customer.CustomerDTO;
 import se2.groupb.server.Customer.CustomerController;
-import se2.groupb.server.Customer.CustomerService;
+import se2.groupb.server.Customer.CustomerServiceImpl;
 
 public class NewBank {
 	
 	public static final String BIC = "NEWBGB21";
+	
 	private static final NewBank bank = new NewBank(); //every instance of NewBank has the same bank info
-	private HashMap<CustomerDTO,Customer> customers;
+	private HashMap<String,Customer> customers;
+	
 	public static final List<String> validAcctList = 
 		    Collections.unmodifiableList(Arrays.asList("Main","Savings","Checking"));
 	
 	//Constructor
+	
+	//private AccountController accountController;
+	//private AccountServiceImpl accountService;
 	private CustomerController customerController;
-	private CustomerService customerService;
-	private AccountController accountController;
-	private AccountService accountService;
-
+	private CustomerServiceImpl customerService;
 
 	private NewBank() {
 		// create temp data store
 		customers = new HashMap<>();
-		// Initialise controllers
-		customerController = new CustomerController(customerService);
-		accountController = new AccountController(accountService);
 		// adding data for debugging
 		addTestData();
+		// Initialise controllers
+		
+		//accountService = new AccountServiceImpl());
+		//accountController = new AccountController(accountService);
 	}
 	
 	/**
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
 	private void addTestData() {
-		CustomerDTO bhagyDTO = new CustomerDTO("Bhagy","password");
 		Customer bhagy = new Customer("Bhagy","password");
 		bhagy.addAccount(new Account(bhagy.getCustomerID(),"Current", "Main", BigDecimal.valueOf(1000)));
-		getCustomers().put(bhagyDTO, bhagy);
+		getCustomers().put("Bhagy", bhagy);
 		
-		CustomerDTO christinaDTO = new CustomerDTO("Christina","1234");
 		Customer christina = new Customer("Christina","1234");
 		christina.addAccount(new Account(christina.getCustomerID(),"Savings", "House", BigDecimal.valueOf(1500)));
-		getCustomers().put(christinaDTO, christina);
+		getCustomers().put("Christina", christina);
 		
-		CustomerDTO johnDTO = new CustomerDTO("John","1111");
 		Customer john = new Customer("John","1111");
 		john.addAccount(new Account(john.getCustomerID(),"Current", "Main", BigDecimal.valueOf(250)));
-		getCustomers().put(johnDTO, john);
+		getCustomers().put("John", john);
+		
+		customerService = new CustomerServiceImpl(customers);
+		customerController = new CustomerController(customerService);
 	}
 	
-	public HashMap<CustomerDTO, Customer> getCustomers() {
+	public HashMap<String, Customer> getCustomers() {
 		return customers;
 	}
 	
@@ -67,9 +70,12 @@ public class NewBank {
 	public CustomerController getCustomerController() {
 		return customerController;
 	}
+	
+	/*
 	public AccountController getAccountContoller() {
 		return accountController;
 	}
+	*/
 	
 	/*
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
