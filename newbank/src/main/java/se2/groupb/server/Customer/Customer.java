@@ -8,14 +8,13 @@ import java.util.UUID;
 import se2.groupb.server.NewBank;
 import se2.groupb.server.account.Account;
 
-public class Customer {
+public abstract class Customer {
 
 	// members
 	private UUID customerID;
 	private String username;
 	private String password;
 	private ArrayList<Account> accounts;
-	// private ArrayList<Payee> payees;
 	private boolean loggedInStatus;
 
 	// constructor
@@ -30,11 +29,6 @@ public class Customer {
 	// customer id
 	public UUID getCustomerID() {
 		return customerID;
-	}
-
-	// accounts list
-	public void setAccounts(ArrayList<Account> accounts) {
-		this.accounts = accounts;
 	}
 
 	public ArrayList<Account> getAccounts() {
