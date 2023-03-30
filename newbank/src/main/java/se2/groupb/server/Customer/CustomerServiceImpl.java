@@ -20,20 +20,14 @@ public class CustomerServiceImpl implements CustomerService {
     
     //Temp Constructor using HashMap
     public CustomerServiceImpl() {
-        this.theCustomers = NewBank.getCustomers();
+        this.theCustomers = NewBank.getBank().getCustomers();
     }
     
     public UUID findCustomer(CustomerDTO customerDto) {
 		//CustomerService checks CustomerRepository if they have a customer with the entered username & password
 		//If they do then provide the UUID
 		//If they don't then the UUID is null
-		
-    	if (theCustomers.containsKey(customerDto)) {
-			// If customerDto (username & password) exists
-    		UUID customerUUID = theCustomers.get(customerDto).getCustomerID();
-		} else {
-			return null;
-		}
+    	return theCustomers.get(customerDto).getCustomerID();
     }
     
     /**
