@@ -1,4 +1,4 @@
-package se2.groupb.server.Account;
+package se2.groupb.server.account;
 
 import java.math.BigDecimal;
 import java.util.UUID;

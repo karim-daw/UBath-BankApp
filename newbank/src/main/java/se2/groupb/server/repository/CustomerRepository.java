@@ -1,11 +1,22 @@
 package se2.groupb.server.repository;
 
+import java.util.UUID;
+
 import se2.groupb.server.customer.Customer;
 
 public interface CustomerRepository {
 
-    Customer findByCustomerID(Long customerID);
+    /**
+     * @param customerID
+     * @return customer from database
+     */
+    Customer findByCustomerID(UUID customerID);
 
-    Boolean saveNewCustomer()
+    /**
+     * saves customer into database
+     * 
+     * @return
+     */
+    Boolean saveNewCustomer();
 
 }

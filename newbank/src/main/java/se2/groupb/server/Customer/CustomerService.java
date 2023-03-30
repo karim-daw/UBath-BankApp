@@ -1,6 +1,8 @@
 package se2.groupb.server.Customer;
 
+
 import java.util.*;
+
 
 public interface CustomerService {
 	

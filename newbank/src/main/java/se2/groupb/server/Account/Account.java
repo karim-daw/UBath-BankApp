@@ -1,4 +1,4 @@
-package se2.groupb.server.Account;
+package se2.groupb.server.account;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -46,6 +46,7 @@ public class Account {
 		this.overdraftLimit = getDefaultOverdraftLimit();
 		transactions = new ArrayList<>();
 	}
+
 	
 	//generates unique 8-digit Account Number
 	public String accountNumberGenerator() {
@@ -78,6 +79,36 @@ public class Account {
 	
 	public String getCustomerID() {
 		return this.customerID.toString();
+
+
+	// TODO: #28 add customer id as attribute for account class
+	public String getAccountName() {
+		return this.accountName;
+	}
+
+	public double getBalance() {
+		return openingBalance;
+	}
+
+	public boolean isOverDrawn() {
+
+		if (getBalance() < 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public String toString() {
+		return (accountName + ": " + openingBalance);
+	}
+
+	// public void updateBalance(BigDecimal amount) {
+	// this.openingBalance += amount;
+	// }
+
+	public void deposit(double amount) {
+		openingBalance += amount;
 	}
 	
 	public String getAccountType() {

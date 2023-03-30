@@ -1,8 +1,9 @@
-package se2.groupb.server.Account;
+package se2.groupb.server.account;
 
-import se2.groupb.server.Customer;
-import se2.groupb.server.CustomerID;
-import se2.groupb.server.Customer.CustomerDTO;
+import se2.groupb.server.customer;
+import se2.groupb.server.customerID;
+import se2.groupb.server.customer.CustomerDTO;
+import se2.groupb.server.customer.CustomerDTO;
 
 // Presentation layer: Takes user inputs and displays system response
 public class AccountController {
@@ -75,7 +76,7 @@ public class AccountController {
             // display account details to user
             // TODO: i think thihs might need to be returned and not printed?
             System.out.println("Account details:");
-            System.out.println("ID: " + accountDTO.getId());
+            System.out.println("ID: " + accountDTO.getAccountId());
             System.out.println("Account number: " + accountDTO.getAccountNumber());
             System.out.println("Balance: " + accountDTO.getBalance());
             System.out.println("Account type: " + accountDTO.getAccountType());
@@ -90,7 +91,7 @@ public class AccountController {
     
     public void creditAmount(AccountDTO accountDTO, double amount) {
 
-        Long accountID = accountDTO.getId();
+        Long accountID = accountDTO.getAccountId();
         boolean success = accountService.deposit(accountID, amount);
         if (success) {
             // display success message to user

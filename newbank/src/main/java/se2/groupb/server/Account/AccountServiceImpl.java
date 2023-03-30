@@ -1,10 +1,12 @@
-package se2.groupb.server.Account;
+package se2.groupb.server.account;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-import se2.groupb.server.Customer.Customer;
-import se2.groupb.server.Customer.CustomerDTO;
+import se2.groupb.server.customer.Customer;
+import se2.groupb.server.customer.CustomerDTO;
+import se2.groupb.server.customer.Customer;
+import se2.groupb.server.customer.CustomerDTO;
 import se2.groupb.server.repository.AccountRepository;
 import se2.groupb.server.repository.CustomerRepository;
 
