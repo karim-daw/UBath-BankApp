@@ -9,7 +9,7 @@ import se2.groupb.server.NewBank;
 import se2.groupb.server.account.Account;
 
 //Customer Domain
-public abstract class Customer {
+public class Customer {
 
 	// members
 	private UUID customerID;
@@ -18,18 +18,22 @@ public abstract class Customer {
 	private ArrayList<Account> accounts;
 	private boolean loggedInStatus;
 
-	//constructor
-	public Customer(String username, String password) {
-
 	// constructor
 	public Customer() {
 		this.customerID = UUID.randomUUID();
-		this.username = username;
-		this.password = password;
 		accounts = new ArrayList<>();
 		this.loggedInStatus = false;
-		//payees = new ArrayList<>();
 		// payees = new ArrayList<>();
+		// payees = new ArrayList<>();
+	}
+
+	// constructor
+	public Customer(String username, String password) {
+		this.username = username;
+		this.password = password;
+		this.customerID = UUID.randomUUID();
+		accounts = new ArrayList<>();
+		this.loggedInStatus = false;
 	}
 
 	// methods
@@ -125,7 +129,6 @@ public abstract class Customer {
 	 */
 	public void addAccount(Account account) {
 		accounts.add(account);
-
 	}
 
 	/**
@@ -140,6 +143,10 @@ public abstract class Customer {
 		}
 		return null;
 	}
+
+	/**
+	 * @return a string of an account
+	 */
 
 	/**
 	 * checks if the desired account name already exists in the customers list of
@@ -164,23 +171,23 @@ public abstract class Customer {
 	 * @return a map containing numbered Accounts & Balances
 	 */
 	/*
-	public HashMap<String,String> sourceAcctsMap(){
-		HashMap<String,String> map = new HashMap<String,String>();
-		int i=0;
-
-	public HashMap<String, String> sourceAcctsMap() {
-		HashMap<String, String> map = new HashMap<String, String>();
-		int i = 0;
-		for (Account a : accounts) {
-			if (!(a.isOverDrawn())) {
-				i++;
-				String key = Integer.toString(i);
-				map.put(key, a.toString());
-			}
-		}
-		return map;
-	}
-	*/
+	 * public HashMap<String,String> sourceAcctsMap(){
+	 * HashMap<String,String> map = new HashMap<String,String>();
+	 * int i=0;
+	 * 
+	 * public HashMap<String, String> sourceAcctsMap() {
+	 * HashMap<String, String> map = new HashMap<String, String>();
+	 * int i = 0;
+	 * for (Account a : accounts) {
+	 * if (!(a.isOverDrawn())) {
+	 * i++;
+	 * String key = Integer.toString(i);
+	 * map.put(key, a.toString());
+	 * }
+	 * }
+	 * return map;
+	 * }
+	 */
 
 	/**
 	 * map of options for new account names
