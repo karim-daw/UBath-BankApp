@@ -69,9 +69,9 @@ public class NewBankClientHandler extends Thread {
 					request = comms.getUserMenuChoice(welcomeMessage,welcomeChoices);
 					// Processes the user's response: 1=LOGIN or 2=REGISTER
 					if (request.equals("1")) {
-						customerID = userLogIn();
+						customerDto = userLogIn();
 					} else {
-						customerID = userRegistration();
+						customerDto = userRegistration();
 					} 
 				}
 				else {
@@ -100,23 +100,23 @@ public class NewBankClientHandler extends Thread {
 	
 	
 	// Login for existing customers
-	public CustomerID userLogIn() throws IOException {
+	public CustomerDTO userLogIn() throws IOException {
 		String userName = comms.getUserString("Enter Username");
 		String password = comms.getUserString("Enter Password");
 		comms.printSystemMessage("Please wait while we check your details");
 		
-		CustomerID customerID = bank.checkLogInDetails(userName, password);
+		CustomerDTO customerDto = bank.checkLogInDetails(userName, password);
 		// Validate login details
-		if (customerID == null) {
+		if (customerDto == null) {
 			out.println("Log In Failed. Invalid Credentials, please try again.");
 		} else {
 			out.println("Log In Successful. What do you want to do?");
 		}
-		return customerID;
+		return customerDto;
 	}
 
 	// Registration for new customers
-	public CustomerID userRegistration() throws IOException {
+	public CustomerDTO userRegistration() throws IOException {
 
 		// Ask for existing username
 		String userName = comms.getUserString("Choose Username");
@@ -129,8 +129,8 @@ public class NewBankClientHandler extends Thread {
 			return null;
 		}
 		// check if userName already exists, if yes is registers gets changed to true
-		CustomerID customerID = bank.registerCustomer(userName, passwordAttempt2);
-		if (customerID != null) {
+		CustomerDTO customerDto = bank.registerCustomer(userName, passwordAttempt2);
+		if (customerDto != null) {
 			String str = String.format("Registration succesfull. New Customer %s", userName);
 			out.println(str);
 		} else {
@@ -138,7 +138,7 @@ public class NewBankClientHandler extends Thread {
 					userName);
 			out.println(str);
 		}
-		return customerID;
+		return customerDto;
 	}
 	
 	public synchronized String processRequest(CustomerID customerID, String request) throws IOException{

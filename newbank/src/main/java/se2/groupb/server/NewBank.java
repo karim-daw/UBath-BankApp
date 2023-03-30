@@ -18,7 +18,7 @@ public class NewBank {
 	
 	public static final String BIC = "NEWBGB21";
 	private static final NewBank bank = new NewBank(); //every instance of NewBank has the same bank info
-	private HashMap<String,Customer> customers;
+	private HashMap<CustomerDTO,Customer> customers;
 	public static final List<String> validAcctList = 
 		    Collections.unmodifiableList(Arrays.asList("Main","Savings","Checking"));
 	

@@ -18,13 +18,25 @@ public class Account {
 	private String accountName; //editable by the customer
 	private final String accountNumber;
 	private static final String accountBIC = NewBank.BIC;
-	private BigDecimal openingBalance = BigDecimal.ZERO; // default
-	private BigDecimal overdraftLimit=BigDecimal.ZERO;// default
+	private BigDecimal openingBalance;
+	private BigDecimal overdraftLimit;
 	private ArrayList<Transaction> transactions;
-
+	
+	//Constructor method for new Account object with default opening balance and overdraft limit
+		public Account(UUID customerID, String accountType, String accountName) {
+			this.accountID = UUID.randomUUID();
+			this.customerID = customerID;
+			this.accountType = accountType;
+			this.accountName = accountName;
+			this.accountNumber = accountNumberGenerator();
+			this.openingBalance = BigDecimal.ZERO;
+			this.overdraftLimit = BigDecimal.ZERO;
+			transactions = new ArrayList<>();
+		}
+		
 	//Constructor method for new Account object
-	public Account(CustomerDTO customerDTO, String accountType, String accountName, String accountNumber,
-			BigDecimal openingBalance, BigDecimal overdraftLimit) {
+	public Account(CustomerDTO customerDTO, String accountType, String accountName,BigDecimal openingBalance, 
+			BigDecimal overdraftLimit) {
 		this.accountID = UUID.randomUUID();
 		this.customerID = customerDTO.getCustomerID();
 		this.accountType = accountType;
@@ -118,35 +130,6 @@ public class Account {
 	public void setOverdraftLimit(BigDecimal newOverdraftLimit) {
 		this.overdraftLimit= newOverdraftLimit;
 	}
-	
-	//x.compareTo(y): returns 0 if x and y are equal, 1 if x is greater than y and -1 if x is smaller than y
-	public boolean exceedsOverdraft() {
-		if ((getBalance().compareTo(BigDecimal.ZERO)<0) && (getBalance().abs().compareTo(this.overdraftLimit)>0)){
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	
-	
-	/**
-	 * checks if a deduction would result in the account exceeding pre-arranged overdraft
-	 * 
-	 * @param account
-	 * @param deduction
-	 * @return true or false if overdraft
-	 */
-	/*
-	public boolean exceedsOverdraft(BigDecimal deduction) {
-		BigDecimal availableBalance = this.openingBalance.add(this.overdraftLimit);
-		
-		if (availableBalance.compareTo(deduction) < 0) {
-			return true;
-		}
-		return false;
-	}
-	*/
 	
 	//overrides default toString() method for Account objects
 	public String toString() {

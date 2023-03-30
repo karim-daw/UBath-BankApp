@@ -4,13 +4,10 @@ import se2.groupb.server.Customer.CustomerDTO;
 
 // Presentation layer: Takes user inputs and displays system response
 public class AccountController {
-
     // fields
-
     private final AccountService accountService;
 
     // constructor
-
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
@@ -47,7 +44,7 @@ public class AccountController {
         }
     }
 
-    public void depositAmount(AccountDTO accountDTO, double amount) {
+    public void creditAmount(AccountDTO accountDTO, double amount) {
 
         Long accountID = accountDTO.getId();
         boolean success = accountService.deposit(accountID, amount);
@@ -60,7 +57,7 @@ public class AccountController {
         }
     }
 
-    public void withdrawAmount(Long accountId, double amount) {
+    public void debitAmount(Long accountId, double amount) {
         boolean success = accountService.withdraw(accountId, amount);
         if (success) {
             // display success message to user
@@ -70,8 +67,6 @@ public class AccountController {
             System.out.println("Withdrawal failed");
         }
     }
-
-    // add create account
 
     // other methods for displaying customer details, transaction history, etc.
 }
