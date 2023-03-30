@@ -23,7 +23,7 @@ public class AccountServiceImpl implements AccountService{
     }
     
     @Override
-    public AccountDTO createAccount(CustomerDTO customer, String accountType, String accountName) {
+    public boolean createAccount(CustomerDTO customer, String accountType, String accountName) {
         // Generate an account id.
         Account newAccount = new Account(customer.getCustomerID(), accountType, accountName);
 
@@ -43,7 +43,7 @@ public class AccountServiceImpl implements AccountService{
      * @return Returns SUCCESS or FAIL
      */
     @Override
-    public AccountDTO createAccount(CustomerDTO customer, String accountType, String accountName, BigDecimal accountBalance,
+    public boolean createAccount(CustomerDTO customer, String accountType, String accountName, BigDecimal accountBalance,
     		BigDecimal overdraftLimit) {
         // Generate an account id.
         AccountDTO newAccount = new Account(aCustomerId, myAccountId, anAccountName, aBalance);

@@ -5,9 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.*;
 
 import se2.groupb.server.Account.Account;
-import se2.groupb.server.Customer.CustomerDTO;
+import se2.groupb.server.Customer.*;
 
 public class NewBankClientHandler extends Thread {
 	
@@ -61,17 +62,17 @@ public class NewBankClientHandler extends Thread {
 		//CustomerID customerID = null;
 		String request = "";
 		String response = "";
-		CustomerDTO customerDto = null;
+		UUID customerID = null;
 
 		try {
 			while (true) {
-				if (customerDto == null){
+				if (customerID == null){
 					request = comms.getUserMenuChoice(welcomeMessage,welcomeChoices);
 					// Processes the user's response: 1=LOGIN or 2=REGISTER
 					if (request.equals("1")) {
-						customerDto = userLogIn();
+						customerID = userLogIn();
 					} else {
-						customerDto = userRegistration();
+						customerID = userRegistration();
 					} 
 				}
 				else {
@@ -100,19 +101,21 @@ public class NewBankClientHandler extends Thread {
 	
 	
 	// Login for existing customers
-	public CustomerDTO userLogIn() throws IOException {
+	public UUID userLogIn(NewBank bank) throws IOException {
 		String userName = comms.getUserString("Enter Username");
 		String password = comms.getUserString("Enter Password");
+		CustomerDTO customerDto = new CustomerDTO(userName, password);
 		comms.printSystemMessage("Please wait while we check your details");
 		
-		CustomerDTO customerDto = bank.checkLogInDetails(userName, password);
+		UUID customerID = bank.getCustomerController().checkLogInDetails(customerDto);
+		
 		// Validate login details
-		if (customerDto == null) {
+		if (customerID == null) {
 			out.println("Log In Failed. Invalid Credentials, please try again.");
 		} else {
 			out.println("Log In Successful. What do you want to do?");
 		}
-		return customerDto;
+		return customerID;
 	}
 
 	// Registration for new customers

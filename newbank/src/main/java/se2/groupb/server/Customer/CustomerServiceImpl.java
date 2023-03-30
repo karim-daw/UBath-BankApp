@@ -1,18 +1,41 @@
 package se2.groupb.server.customer;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
+import se2.groupb.server.NewBank;
+import se2.groupb.server.NewBankClientHandler;
+import se2.groupb.server.Account.AccountDTO;
 import se2.groupb.server.repository.CustomerRepository;
 
 public class CustomerServiceImpl implements CustomerService {
 
-    private final CustomerRepository customerRepository;
-
+    //private final CustomerRepository customerRepository;
+    private final HashMap<CustomerDTO, Customer> theCustomers;
+    
+    /*
+    //Repository Constructor
     public CustomerServiceImpl(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
-
+    */
+    
+    //Temp Constructor using HashMap
+    public CustomerServiceImpl(NewBank bank) {
+        this.theCustomers = bank.getCustomers();
+    }
+    
+    public UUID findCustomer(CustomerDTO customerDto) {
+		//CustomerService checks CustomerRepository if they have a customer with the entered username & password
+		//If they do then provide the UUID
+		//If they don't then the UUID is null
+		
+    	if (theCustomers.containsKey(customerDto)) {
+			// If customerDto (username & password) exists
+    		UUID customerUUID = theCustomers.get(customerDto).getCustomerID();
+		} else {
+			return null;
+		}
+    }
+    
     /**
      * method that changes the password
      * old password need to be enter

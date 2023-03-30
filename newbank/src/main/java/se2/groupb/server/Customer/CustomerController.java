@@ -1,18 +1,21 @@
 package se2.groupb.server.Customer;
 
-//Presentation layer: Takes user inputs and displays system response
+import java.util.*;
+
 public class CustomerController {
 
     // fields
-
     private final CustomerService customerService;
 
     // Constructor
-
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
-
+    
+    public UUID checkLogInDetails(CustomerDTO customerDto) {
+    	return customerService.findCustomer(customerDto);	
+	}
+    
     /**
      * displays the customers accounts as a list
      * 

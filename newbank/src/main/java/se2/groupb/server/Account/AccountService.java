@@ -9,6 +9,9 @@ import java.util.*;
 public interface AccountService {
 	public static final List<String> validAccountTypes = 
 			Collections.unmodifiableList(Arrays.asList("Current","Savings"));
+	public static final List<BigDecimal> defaultOverdraftLimits = 
+			Collections.unmodifiableList(Arrays.asList(BigDecimal.valueOf(200),BigDecimal.ZERO));
+	
     /**
      * Creates new account for a given customer with a default account balance and overdraft limit of
      * 0.0
@@ -22,7 +25,7 @@ public interface AccountService {
      * @param accountName
      * @return string regarding success or failure of createtAccount request
      */
-    AccountDTO createAccount(CustomerDTO customer, String accountType, String accountName);
+    boolean createAccount(CustomerDTO customer, String accountType, String accountName);
 
     /**
      * Creates a new account for a given customer
@@ -38,7 +41,7 @@ public interface AccountService {
      * @param overdraftLimit
      * @return string regarding success or failure of createtAccount request
      */
-    AccountDTO createAccount(CustomerDTO customer, String accountType, String accountName, BigDecimal openingBalance,
+    boolean createAccount(CustomerDTO customer, String accountType, String accountName, BigDecimal openingBalance,
     		BigDecimal overdfraftLimit);
 
     /**

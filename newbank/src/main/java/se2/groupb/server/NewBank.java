@@ -1,11 +1,7 @@
 package se2.groupb.server;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Collections;
-import java.util.Arrays;
+import java.util.*;
 import se2.groupb.server.Account.Account;
 import se2.groupb.server.Account.AccountController;
 import se2.groupb.server.Account.AccountService;
@@ -30,20 +26,13 @@ public class NewBank {
 
 
 	private NewBank() {
-
 		// create temp data store
 		customers = new HashMap<>();
-
-		// init constorllers
+		// Initialise controllers
 		customerController = new CustomerController(customerService);
 		accountController = new AccountController(accountService);
-
 		// adding data for debugging
 		addTestData();
-	}
-		
-	public HashMap<String, Customer> getCustomers() {
-		return customers;
 	}
 	
 	/**
@@ -66,11 +55,22 @@ public class NewBank {
 		getCustomers().put("John", john);
 		christina.setPassword("4321");
 	}
-
-	public static NewBank getBank() {
+	
+	public HashMap<CustomerDTO, Customer> getCustomers() {
+		return customers;
+	}
+	
+	public static NewBank getBank(){
 		return bank;
 	}
-
+	
+	public static CustomerController getCustomerController() {
+		return bank.customerController;
+	}
+	public static AccountController getAccountContoller() {
+		return bank.accountController;
+	}
+	
 	/*
 	public synchronized CustomerID checkLogInDetails(String username, String password) {
 		// Check if the username input by the user exists in the bank's system
@@ -101,18 +101,21 @@ public class NewBank {
 	 * @param password
 	 * @return
 	 */
-	public synchronized CustomerDTO checkLogInDetails(String username, String password) {
+	
+	public synchronized Customer checkLogInDetails(CustomerDTO customerDto) {
 		// Check if the username input by the user exists in the bank's system
-
+		String username = customerDto.getUsername();
+		String password = customerDto.getPassword();
+		
+		//CustomerDTO asks Customer if they have a customer with the entered username & password
+		//If they do then provide the UUID
+		//If they don't then the UUID is null
+		
 		if (customers.containsKey(username)) {
-			// If username exists then check their password
 			Customer customer = customers.get(username);
-			// If the password input equals the password on system then create new
-			// CustomerID
 			if (customer.getPassword().equals(password)) {
 				customer.setloggedInStatus(true);
-				Long customerID = customer.getCustomerID();
-				return new CustomerDTO(customerID, username);
+				return customer;
 			} else {
 				customer.setloggedInStatus(false);
 				return null;

@@ -20,6 +20,7 @@ public class Account {
 	private static final String accountBIC = NewBank.BIC;
 	private BigDecimal openingBalance;
 	private BigDecimal overdraftLimit;
+			
 	private ArrayList<Transaction> transactions;
 	
 	//Constructor method for new Account object with default opening balance and overdraft limit
@@ -30,20 +31,19 @@ public class Account {
 			this.accountName = accountName;
 			this.accountNumber = accountNumberGenerator();
 			this.openingBalance = BigDecimal.ZERO;
-			this.overdraftLimit = BigDecimal.ZERO;
+			this.overdraftLimit = getOverdraftLimit();
 			transactions = new ArrayList<>();
 		}
 		
 	//Constructor method for new Account object
-	public Account(CustomerDTO customerDTO, String accountType, String accountName,BigDecimal openingBalance, 
-			BigDecimal overdraftLimit) {
+	public Account(CustomerDTO customerDTO, String accountType, String accountName,BigDecimal openingBalance) {
 		this.accountID = UUID.randomUUID();
 		this.customerID = customerDTO.getCustomerID();
 		this.accountType = accountType;
 		this.accountName = accountName;
 		this.accountNumber = accountNumberGenerator();
 		this.openingBalance = openingBalance;
-		this.overdraftLimit = overdraftLimit;
+		this.overdraftLimit = getDefaultOverdraftLimit();
 		transactions = new ArrayList<>();
 	}
 	
@@ -57,9 +57,19 @@ public class Account {
 				String number = Long.toString(l).substring(0,8);
 				return number;
 			}
-			
 		}
 	}
+	
+	public BigDecimal getDefaultOverdraftLimit() {
+		
+		if (this.accountType = "Current") {
+			this.overdraftLimit = BigDecimal.valueOf(200);
+		}
+		else {
+			this.overdraftLimit = BigDecimal.ZERO;
+		}
+	}
+	
 	
 	//Getters and Setters
 	public String getAccountID() {
