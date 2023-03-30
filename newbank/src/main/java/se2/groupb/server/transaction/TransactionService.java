@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerDTO;
-import se2.groupb.server.customer.CustomerID;
 
 public class TransactionService {
 
