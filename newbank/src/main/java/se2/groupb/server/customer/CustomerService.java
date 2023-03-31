@@ -1,4 +1,4 @@
-package se2.groupb.server.Customer;
+package se2.groupb.server.customer;
 
 
 import java.util.*;

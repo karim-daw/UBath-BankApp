@@ -6,7 +6,7 @@ import java.util.UUID;
 import java.util.*;
 import se2.groupb.server.NewBank;
 import se2.groupb.server.NewBankClientHandler;
-import se2.groupb.server.Account.AccountDTO;
+import se2.groupb.server.account.AccountDTO;
 import se2.groupb.server.repository.CustomerRepository;
 
 public class CustomerServiceImpl implements CustomerService {
