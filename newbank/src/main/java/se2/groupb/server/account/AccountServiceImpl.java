@@ -5,8 +5,6 @@ import java.util.*;
 
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerDTO;
-import se2.groupb.server.customer.Customer;
-import se2.groupb.server.customer.CustomerDTO;
 import se2.groupb.server.repository.AccountRepository;
 import se2.groupb.server.repository.CustomerRepository;
 
@@ -21,10 +19,11 @@ public class AccountServiceImpl implements AccountService{
     */
     
 	private UUID CustomerID;
-	private HashMap<AccountDTO, Account> theAccounts;
-    public AccountServiceImpl(UUID CustomerID, HashMap<AccountDTO, Account> accounts) {
-    	this.CustomerID = CustomerID;
-        this.theAccounts = accounts;
+	private HashMap<String, Account> theAccounts;
+	
+    public AccountServiceImpl(UUID CustomerID) {
+    	Customer customer = CustomerRepository.findByCustomerID(CustomerID);
+        this.theAccounts = customer.getAccounts(); //temp account repository for the current customer
         
     }
     

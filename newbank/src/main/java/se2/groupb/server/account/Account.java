@@ -164,9 +164,10 @@ public class Account {
 		// rounding balance down to 2 decimals
 		BigDecimal balance = openingBalance.setScale(2, RoundingMode.FLOOR);
 		int number = balance.toString().length(); // the number of characters in the balance
-		String displayAccount = "\n" + displayChars('=', 60) + "\n" + accountName + "\n" + accountBIC +
-				displayChars(' ', 3) + accountNumber + "\n" + displayChars(' ', 60 - number) + balance + "\n" +
-				displayChars('=', 60);
+		
+		String displayAccount = "\n" + displayChars('=', 52) + "\n" + accountName + "("+ accountType +")\n" + accountBIC +
+				displayChars(' ', 3) + accountNumber + "\n" + displayChars(' ', 52 - number) + balance + "\n" +
+				displayChars('=', 52);
 		return displayAccount;
 	}
 

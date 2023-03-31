@@ -4,8 +4,10 @@ import java.util.UUID;
 
 import se2.groupb.server.NewBank;
 import se2.groupb.server.UserInput;
-import se2.groupb.server.customer.Customer;
-import se2.groupb.server.customer.CustomerDTO;
+import se2.groupb.server.customer.*;
+import se2.groupb.server.repository.CustomerRepository;
+import se2.groupb.server.repository.AccountRepository;
+
 
 // Presentation layer: Takes user inputs and displays system response
 public class AccountController {
@@ -31,13 +33,15 @@ public class AccountController {
      * @param openingBalance
      * @return string message of success of failusre
      */
+    
+    // at this point a customer already exists in the system so they'd have a UUID
+    public String createNewAccount(Customer customer) {
+        String response = ""; // the system response to account creation
+        
+        
 
-    public String createAccountEnhancement(CustomerDTO customerDTO) {
-
-        String response = ""; // the system response to the user's request
-        Customer customer = bank.getCustomers().get(customerDTO.getUsername()); // the current customer
         int noOfChoices = customer.newAcctTypes().size();
-        UUID customerID = customerDTO.getCustomerID();
+        UUID customerID = customerDto.getCustomerID();
 
         if (noOfChoices > 0) { // if there are available account types for creation
             String systemPrompt = "Create a new account.\nChoose from: \n"

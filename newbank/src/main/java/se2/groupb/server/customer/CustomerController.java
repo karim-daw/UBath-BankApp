@@ -2,6 +2,8 @@ package se2.groupb.server.customer;
 
 import java.util.*;
 
+import se2.groupb.server.account.Account;
+
 public class CustomerController {
 
     // fields
@@ -16,14 +18,25 @@ public class CustomerController {
     	return customerService.findCustomer(customerDto);	
 	}
     
+    
+    public boolean isLoggedIn(UUID customerID) {
+    	return customerService.isLoggedIn(customerID);
+    }
+    
+    /*
+    public ArrayList<Account> getAccounts(UUID customerID){
+    	return customerService.getAccounts(customerID);
+    }
+    */
+    
     /**
      * displays the customers accounts as a list
      * 
      * @param customerDTO
      * @return
      */
-    public String displayAccounts(CustomerDTO customerDTO) {
-        return customerService.showMyAccounts(customerDTO);
+    public String displayAccounts(UUID customerID) {
+        return customerService.displayAccounts(customerID);
     }
 
 }

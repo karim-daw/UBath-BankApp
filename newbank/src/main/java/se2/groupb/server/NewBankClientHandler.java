@@ -66,7 +66,7 @@ public class NewBankClientHandler extends Thread {
 		String request = "";
 		String response = "";
 		UUID customerID = null;
-
+		
 		try {
 			while (true) {
 				if (customerID == null) {
@@ -80,15 +80,13 @@ public class NewBankClientHandler extends Thread {
 					}
 				} else {
 					request = comms.getUserMenuChoice(requestMenu, mainMenuChoices);
-					// out.println("Request from " + customerID.getKey());
+					System.out.println("Request from: " + customerID.toString());
 					response = processRequest(customerID, request);
 					out.println(response);
-					/*
-					 * if (bank.getCustomers().get(customerID.getKey()).getloggedInStatus()==false)
-					 * {
-					 * customerID = null;
-					 * }
-					 */
+					String strCustomerID =customerID.toString();
+					if (bank.getCustomers().get(strCustomerID).getloggedInStatus()==false) {
+						customerID = null;
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -106,9 +104,9 @@ public class NewBankClientHandler extends Thread {
 
 	// Login for existing customers
 	public UUID userLogIn() throws IOException {
-		String userName = comms.getUserString("Enter Username");
+		String username = comms.getUserString("Enter Username");
 		String password = comms.getUserString("Enter Password");
-		CustomerDTO customerDto = new CustomerDTO(userName, password);
+		CustomerDTO customerDto = new CustomerDTO(username, password);
 		comms.printSystemMessage("Please wait while we check your details");
 		UUID customerID = bank.getCustomerController().checkLogInDetails(customerDto);
 
@@ -153,53 +151,52 @@ public class NewBankClientHandler extends Thread {
 	 */
 
 	public synchronized String processRequest(UUID customerID, String request) throws IOException {
-
+		
+		//I don't think we need this check, only a customer that has logged in and has a valid customer ID 
+		//can action a request
+		
+		/*
 		HashMap<String, Customer> customers = bank.getCustomers();
 		boolean isCustomer = false;
-
+		
+		
 		for (Customer customer : customers.values()) {
-			if (customer.getCustomerID().equals(customerID)) {
+			if (customer.getCustomerID().equals(customerDto.getCustomerID())) {
 				isCustomer = true;
 				break; // this should not be needed but who knows??
 			}
 		}
-
-		if (isCustomer) {
-			switch (request) {
-				case "1":
-				case "SHOWMYACCOUNTS":
-					// return showMyAccounts(customerID);
-				case "2":
-				case "NEWACCOUNT":
-					// return createAccountEnhancement(customerID);
-				case "3":
-				case "MOVE":
-					// return moveMoneyEnhancement(customerID);
-					/*
-					 * case "4":
-					 * case "PAY":
-					 * return transferMoney(customerID, requestInputs);
-					 * case "5":
-					 * case "CHANGEMYPASSWORD":
-					 * return changePassword(customerID,requestInputs);
-					 */
-				case "6":
-				case "LOGOUT":
-					// return logOut(customerID);
-				default:
-					return "FAIL";
-			}
+		*/
+		
+		switch (request) {
+			case "1":
+			case "SHOWMYACCOUNTS":
+				return showMyAccounts(customerID);
+			case "2":
+			case "NEWACCOUNT":
+				// return createAccountEnhancement(customerID);
+			case "3":
+			case "MOVE":
+				// return moveMoneyEnhancement(customerID);
+				/*
+				 * case "4":
+				 * case "PAY":
+				 * return transferMoney(customerID, requestInputs);
+				 * case "5":
+				 * case "CHANGEMYPASSWORD":
+				 * return changePassword(customerID,requestInputs);
+				 */
+			case "6":
+			case "LOGOUT":
+				// return logOut(customerID);
+			default:
+				return "FAIL";
 		}
-		return "FAIL";
 	}
 
-	/*
-	 * 
-	 * public String showMyAccounts(CustomerID customerID) {
-	 * Customer customer = bank.getCustomers().get(customerID.getKey());
-	 * return customer.accountsToString();
-	 * }
-	 */
+	 public String showMyAccounts(UUID customerID) {
+		 return bank.getCustomerController().displayAccounts(customerID);
+	 }
 
 	/*
 	 * 

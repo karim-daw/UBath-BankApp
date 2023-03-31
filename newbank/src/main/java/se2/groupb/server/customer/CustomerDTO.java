@@ -10,19 +10,17 @@ import java.util.UUID;
 public final class CustomerDTO {
 	private String username;
 	private String password;
+	private UUID customerID;
 
 	//Constructor
     public CustomerDTO(String username, String password) {
-    private UUID customerID;
-    private String username;
-
-    public CustomerDTO(UUID customerID, String username) {
-        this.customerID = customerID;
-        this.username = username;
+    	this.username = username;
         this.password = password;
-
     }
-
+    
+    public CustomerDTO(UUID customerID) {
+        this.customerID = customerID;
+    }
 
     public String getUsername() {
 		return this.username;
@@ -35,9 +33,4 @@ public final class CustomerDTO {
     public UUID getCustomerID() {
         return customerID;
     }
-
-    public String getCustomerName() {
-        return username;
-    }
-
 }

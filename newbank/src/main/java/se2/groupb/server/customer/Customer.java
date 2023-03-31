@@ -19,15 +19,6 @@ public class Customer {
 	private boolean loggedInStatus;
 
 	// constructor
-	public Customer() {
-		this.customerID = UUID.randomUUID();
-		accounts = new ArrayList<>();
-		this.loggedInStatus = false;
-		// payees = new ArrayList<>();
-		// payees = new ArrayList<>();
-	}
-
-	// constructor
 	public Customer(String username, String password) {
 		this.username = username;
 		this.password = password;

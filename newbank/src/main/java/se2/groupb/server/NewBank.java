@@ -37,10 +37,11 @@ public class NewBank {
 
 		// Initialise controllers
 		customerService = new CustomerServiceImpl(customers);
+		//System.out.println(customerService);
 		customerController = new CustomerController(customerService);
 		// accountService = new AccountServiceImpl());
 		// accountController = new AccountController(accountService);
-
+		//displayCustomers();
 	}
 
 	/**
@@ -48,23 +49,31 @@ public class NewBank {
 	 */
 	private void addTestData() {
 		Customer bhagy = new Customer("Bhagy", "password");
-		bhagy.addAccount(new Account(bhagy.getCustomerID(), "Current", "Main", BigDecimal.valueOf(1000)));
-		getCustomers().put("Bhagy", bhagy);
+		bhagy.addAccount(new Account(bhagy.getCustomerID(), "Current", "Main", BigDecimal.valueOf(20000)));
+		bhagy.addAccount(new Account(bhagy.getCustomerID(), "Savings", "Car", BigDecimal.valueOf(1000)));
+		//System.out.println(bhagy.accountsToString());
+		getCustomers().put(bhagy.getCustomerID().toString(), bhagy);
 
 		Customer christina = new Customer("Christina", "1234");
 		christina.addAccount(new Account(christina.getCustomerID(), "Savings", "House", BigDecimal.valueOf(1500)));
-		getCustomers().put("Christina", christina);
+		//System.out.println(christina.accountsToString());
+		getCustomers().put(christina.getCustomerID().toString(), christina);
 
 		Customer john = new Customer("John", "1111");
 		john.addAccount(new Account(john.getCustomerID(), "Current", "Main", BigDecimal.valueOf(250)));
-		getCustomers().put("John", john);
+		//System.out.println(john.accountsToString());
+		getCustomers().put(john.getCustomerID().toString(), john);
 
 	}
 
 	public HashMap<String, Customer> getCustomers() {
 		return customers;
 	}
-
+		
+	public void displayCustomers() {
+		System.out.println(getCustomers().keySet());
+	}
+	
 	public static NewBank getBank() {
 		return bank;
 	}

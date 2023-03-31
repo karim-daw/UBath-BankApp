@@ -1,54 +1,63 @@
 package se2.groupb.server.customer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import java.util.*;
 import se2.groupb.server.NewBank;
 import se2.groupb.server.NewBankClientHandler;
+import se2.groupb.server.account.Account;
 import se2.groupb.server.account.AccountDTO;
 import se2.groupb.server.repository.CustomerRepository;
 
 public class CustomerServiceImpl implements CustomerService {
 
-    //private final CustomerRepository customerRepository;
-    private final HashMap<String, Customer> theCustomers;
-    
-    /*
+	/*
+    private final CustomerRepository customerRepository;
     //Repository Constructor
     public CustomerServiceImpl(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
     */
-    
-    //Temp Constructor using HashMap
+
+	//Temp HashMap Customer Repo
+    private final HashMap<String, Customer> theCustomers;
+    //Temp constructor using HashMap as Customer Repo
     public CustomerServiceImpl(HashMap<String, Customer> customers) {
         this.theCustomers = customers;
     }
     
     public UUID findCustomer(CustomerDTO customerDto) {
-		//CustomerService checks CustomerRepository if they have a customer with the entered username & password
-		//If they do then provide the UUID
-		//If they don't then the UUID is null
+		//CustomerService checks HashMap if they have a customer with the entered username & password
+		//If they do then provide the UUID else return null
     	String username = customerDto.getUsername();
+    	//System.out.println(username);
     	String password = customerDto.getPassword();
+    	//System.out.println(password);
     	
-    	if (theCustomers.containsKey(username)) {
-			// If username exists then check their password
-			Customer customer = theCustomers.get(username);
-			// If the password input equals the password on system then create new
-			// CustomerID
-			if (customer.getPassword().equals(password)) {
-				customer.setloggedInStatus(true);
-				return customer.getCustomerID();
-			} else {
-				customer.setloggedInStatus(false);
-				return null;
-			}
-		} else {
-			return null;
+    	UUID customerID = null;
+    	for (HashMap.Entry<String, Customer> item : theCustomers.entrySet()) {
+    		String item_username = item.getValue().getUsername();
+    		//System.out.println(item_username);
+    		String item_password = item.getValue().getPassword();
+    		//System.out.println(item_password);
+    		if ((item_username.equals(username)) && (item_password.equals(password))) {
+    			//System.out.println("The customer ID is: " + item.getValue().getCustomerID().toString());
+    			item.getValue().setloggedInStatus(true);
+    			customerID =item.getValue().getCustomerID();
+    			break;
+    		}
 		}
+    	return customerID;
     }
+    
+
+    /**
+     * method that checks if customer is logged
+     * @param customerID
+     * @return boolean
+     */
+    public boolean isLoggedIn(UUID customerID) {
+    	Customer customer = theCustomers.get(customerID.toString());
+    	return customer.getloggedInStatus();
+    }
+    
     
     /**
      * method that changes the password
@@ -89,7 +98,8 @@ public class CustomerServiceImpl implements CustomerService {
             return "SUCCESS new password is: " + customer.getPassword();
         }
     }
-
+    
+    
     /**
      * displays accounts as a list
      * 
@@ -98,21 +108,18 @@ public class CustomerServiceImpl implements CustomerService {
      */
 
     @Override
-    public String showMyAccounts(CustomerDTO customerDTO) {
-
-        UUID customerID = customerDTO.getCustomerID();
-
-        // create a list that will be displayed
-        List<String> accountList = new ArrayList<String>();
-        Customer customer = this.customerRepository.findByCustomerID(customerID);
-
-        accountList = customer.accountsToList();
-        String s = "";
-        for (String a : accountList) {
-            s += a.toString() + "\n";
-        }
-        return s;
-
+    public String displayAccounts(UUID customerID){
+        //Customer customer = this.customerRepository.findByCustomerID(customerID); 
+        Customer customer = theCustomers.get(customerID.toString()); //temp repo
+        return customer.accountsToString();
+    } 
+    
+    //printing out the Customer HashMap for checking
+    public String toString() {
+    	String s = "";
+		for (HashMap.Entry<String, Customer> item : theCustomers.entrySet()) {
+			s += item.getKey() + " = " + item.getValue().getUsername() + "\n";
+		}
+		return s;
     }
-
 }
