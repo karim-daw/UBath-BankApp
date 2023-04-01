@@ -6,15 +6,16 @@ import java.io.PrintWriter;
 
 public class UserInput {
 
-	private BufferedReader in;
-	private PrintWriter out;
-
+	private final BufferedReader in;
+	private final PrintWriter out;
+	//public static final UserInput userInput = new UserInput(in,out);
+	
 	// constructor
 	public UserInput(BufferedReader in, PrintWriter out) throws IOException {
 		this.in = in;
 		this.out = out;
 	}
-
+	
 	public void printSystemMessage(String message) {
 		out.println(message);
 	}

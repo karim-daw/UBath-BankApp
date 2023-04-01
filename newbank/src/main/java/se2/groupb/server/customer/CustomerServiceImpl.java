@@ -19,26 +19,20 @@ public class CustomerServiceImpl implements CustomerService {
 	//Temp HashMap Customer Repo
     private final HashMap<String, Customer> theCustomers;
     //Temp constructor using HashMap as Customer Repo
-    public CustomerServiceImpl(HashMap<String, Customer> customers) {
+    public CustomerServiceImpl(HashMap<String,Customer> customers) {
         this.theCustomers = customers;
     }
     
-    public UUID findCustomer(CustomerDTO customerDto) {
+    public UUID userLogin(CustomerDTO customerDto) {
 		//CustomerService checks HashMap if they have a customer with the entered username & password
 		//If they do then provide the UUID else return null
     	String username = customerDto.getUsername();
-    	//System.out.println(username);
     	String password = customerDto.getPassword();
-    	//System.out.println(password);
-    	
     	UUID customerID = null;
     	for (HashMap.Entry<String, Customer> item : theCustomers.entrySet()) {
     		String item_username = item.getValue().getUsername();
-    		//System.out.println(item_username);
     		String item_password = item.getValue().getPassword();
-    		//System.out.println(item_password);
     		if ((item_username.equals(username)) && (item_password.equals(password))) {
-    			//System.out.println("The customer ID is: " + item.getValue().getCustomerID().toString());
     			item.getValue().setloggedInStatus(true);
     			customerID =item.getValue().getCustomerID();
     			break;
@@ -47,7 +41,13 @@ public class CustomerServiceImpl implements CustomerService {
     	return customerID;
     }
     
-
+    public void userLogout(UUID customerID) {
+    	Customer customer = theCustomers.get(customerID.toString());
+    	customer.setloggedInStatus(false);
+    	customerID = null;
+    }
+    
+    
     /**
      * method that checks if customer is logged
      * @param customerID

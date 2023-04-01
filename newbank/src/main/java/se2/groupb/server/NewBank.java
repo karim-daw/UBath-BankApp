@@ -19,26 +19,18 @@ public class NewBank {
 	private static final NewBank bank = new NewBank(); // every instance of NewBank has the same bank info
 	private HashMap<String, Customer> customers;
 
-	public static final List<String> validAcctList = Collections
-			.unmodifiableList(Arrays.asList("Main", "Savings", "Checking"));
+	public static final List<String> validAcctTypes = Collections
+			.unmodifiableList(Arrays.asList("Current", "Savings"));
 
 	// Constructor
 
 	// private AccountController accountController;
 	// private AccountServiceImpl accountService;
-	private CustomerController customerController;
-	private CustomerServiceImpl customerService;
-
 	private NewBank() {
 		// create temp data store
 		customers = new HashMap<>();
 		// adding data for debugging
 		addTestData();
-
-		// Initialise controllers
-		customerService = new CustomerServiceImpl(customers);
-		//System.out.println(customerService);
-		customerController = new CustomerController(customerService);
 		// accountService = new AccountServiceImpl());
 		// accountController = new AccountController(accountService);
 		//displayCustomers();
@@ -76,10 +68,6 @@ public class NewBank {
 	
 	public static NewBank getBank() {
 		return bank;
-	}
-
-	public CustomerController getCustomerController() {
-		return customerController;
 	}
 
 	/*
@@ -166,17 +154,6 @@ public class NewBank {
 	 * 
 	 */
 
-	/**
-	 * Logs out the current customer
-	 * 
-	 * @param customer
-	 */
-
-	public String logOut(CustomerDTO customerDTO) {
-		customers.get(customerDTO.getCustomerName()).setloggedInStatus(false);
-		return "LOG OUT SUCCESSFUL";
-
-	}
 
 	/**
 	 * this method takes care of the PAY feature indicated below, gven and customer
