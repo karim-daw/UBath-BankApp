@@ -17,7 +17,7 @@ public class AccountDTO {
         this.accountType = accountType;
     }
 
-    public Long getAccountId() {
+    public UUID getAccountId() {
         return accountID;
     }
 
