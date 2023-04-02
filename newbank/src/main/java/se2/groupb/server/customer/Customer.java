@@ -5,14 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import se2.groupb.server.NewBank;
 import se2.groupb.server.account.Account;
 
 //Customer Domain
 public class Customer {
 
 	// members
-	private UUID customerID;
+	private final UUID customerID;
 	private String username;
 	private String password;
 	private ArrayList<Account> accounts;
@@ -33,7 +32,7 @@ public class Customer {
 	public UUID getCustomerID() {
 		return customerID;
 	}
-	
+
 	// username
 	public String getUsername() {
 		return username;
@@ -42,28 +41,28 @@ public class Customer {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 	/**
 	 * @return a string of a password
 	 */
 	public String getPassword() {
 		return this.password;
 	}
-	
+
 	/**
 	 * @set a string as password
 	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	/**
 	 * @return a Boolean of a loggedInStatus
 	 */
 	public boolean getloggedInStatus() {
 		return this.loggedInStatus;
 	}
-	
+
 	/**
 	 * @set a boolean as logged-in-status
 	 */
@@ -74,7 +73,7 @@ public class Customer {
 	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
-	
+
 	public ArrayList<Account> getAccountsByType(String accountType) {
 		ArrayList<Account> accountsByType = new ArrayList<>();
 		for (Account a : accounts) {
@@ -84,8 +83,7 @@ public class Customer {
 		}
 		return accountsByType;
 	}
-	
-	
+
 	/**
 	 * @return a string of an account
 	 */
@@ -208,7 +206,6 @@ public class Customer {
 		}
 		return map;
 	}
-
 
 	/**
 	 * @return a string of the new account options map
