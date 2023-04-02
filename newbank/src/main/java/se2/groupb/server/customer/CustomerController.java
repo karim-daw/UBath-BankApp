@@ -1,134 +1,143 @@
 package se2.groupb.server.customer;
 
-
 import java.io.IOException;
 import java.util.*;
 import se2.groupb.server.UserInput;
 import se2.groupb.server.account.*;
 import java.math.BigDecimal;
 
-
 public class CustomerController {
-    // fields
+	// fields
 
-    private final CustomerServiceImpl customerService;
-    private final AccountServiceImpl accountService;
-    private UserInput comms;
+	private final CustomerService customerService;
+	private final AccountService accountService;
+	private UserInput comms;
 
-    // Constructor
-    public CustomerController(CustomerServiceImpl customerService, AccountServiceImpl accountService,UserInput comms) {
-        this.customerService = customerService;
-        this.accountService = accountService;
-        this.comms = comms;
-    }
-    
- // Login for existing customers
- 	public UUID userLogin() {
- 		String systemResponse = "";
- 		String username = comms.getUserString("Enter Username");
- 		String password = comms.getUserString("Enter Password");
- 		CustomerDTO customerDto = new CustomerDTO(username, password);
- 		comms.printSystemMessage("Please wait while we check your details");
- 		UUID customerID = customerService.userLogin(customerDto);
+	// Constructor
+	public CustomerController(CustomerService customerService, AccountService accountService, UserInput comms) {
+		this.customerService = customerService;
+		this.accountService = accountService;
+		this.comms = comms;
+	}
 
- 		// Validate login details
- 		if (customerID == null) {
- 			systemResponse = "LOGIN FAIL. Invalid Credentials, please try again.";
- 			comms.printSystemMessage(systemResponse);
- 		} else {
- 			systemResponse = "LOGIN SUCCESS. What do you want to do?";
- 			comms.printSystemMessage(systemResponse);
- 		}
- 		return customerID;
- 	}
-    
- 	public Customer getCustomer(UUID customerID) {
-    	return customerService.getCustomer(customerID);
-    }
- 	
-    public String userLogout(UUID customerID) {
-    	String systemResponse = "";
-    	String prompt = "Are you sure you want to log out?";
-    	boolean userConfirm = comms.confirm(prompt);
-    	if (userConfirm) {
-    		customerService.userLogout(customerID);
-    		systemResponse = "LOGOUT SUCCESS";
-    	}
-    	else {
-    		systemResponse = "LOGOUT CANCELLED. RETURNING YOU TO THE MAIN MENU.";
-    	}
-    	return systemResponse;
-    }
-    
+	public Customer getCustomer(UUID customerID) {
+		return customerService.getCustomer(customerID);
+	}
 
-    /**
-     * displays the customers accounts as a list
-     * 
-     * @param customerDTO
-     * @return
-     */
-    public String displayAccounts(UUID customerID) {
-        return customerService.displayAccountsAsString(customerID);
-    }
-    
-    public String createAccount(UUID customerID) {
-    	String response = ""; // the system response to the user's request
-    	HashMap<String,String> newAcctOptions = accountService.newAccountAvailableTypes(customerID);
-    	
-    	int noOfChoices = newAcctOptions.size(); //0,1, or 2
-    	if (noOfChoices > 0) { 
-	    	String prompt = "Create a new account: \n" + mapToString(newAcctOptions) + "\nEnter the number of your choice: ";
-	    	String userInput = comms.getUserMenuChoice(prompt, noOfChoices);
-	    	String accountType = newAcctOptions.get(userInput); // the choice of account type entered by the user
-	    	
-	    	//call Account Service to check if customer already has an account type with that name
-	    	boolean duplicateName;
-	    	String accountName;
-	    	do {
-		    	prompt = "Enter an account name: \n";
-	    		accountName = comms.getUserString(prompt);
-	    		duplicateName = accountService.hasAccount(customerID,accountType,accountName);
-	    	}while(duplicateName);
-	    	
-	    	prompt = "Enter a positive opening balance (default is zero): \n";
-	    	BigDecimal openingBalance = comms.getOpeningBalance(prompt);
-	    	
-	    	prompt = "Open a new " + accountType + " account: " + accountName + " with an opening balance of " + openingBalance 
-	    			+ "?\nEnter 'y' for Yes or 'n' for No: \n";
-	    	boolean userConfirm = comms.confirm(prompt);
-	    	
-	    	if (userConfirm) {
-	    		AccountDTO accountDto = new AccountDTO(accountType, accountName, openingBalance);
-	    		Account newAccount = accountService.createAccount(customerID, accountDto);
-	    		
-	    		Customer customer = getCustomer(customerID);
-	    		customer.addAccount(newAccount); // adds new account to customer
-	    		// Call NewBank method to add new customer account to bank's data store
-	    		response = "SUCCESS: Your " + accountType + " account has been created.\nReturning to Main Menu.";
-	    	} else {
-	    		response = "Account creation was cancelled.\nReturning to the Main Menu.";
-	    	}
-    	} else {
-    		response = "All possible account types have been created.\nReturning to Main Menu.";
-    	}
-    	return response;
-    }
-    
-    
-    /**
-    *
+	// Login for existing customers
+	/**
+	 * @return
+	 */
+	public UUID userLogin() {
+		String systemResponse = "";
+		String username = comms.getUserString("Enter Username");
+		String password = comms.getUserString("Enter Password");
+		CustomerDTO customerDto = new CustomerDTO(username, password);
+		comms.printSystemMessage("Please wait while we check your details");
+		UUID customerID = customerService.userLogin(customerDto);
+
+		// Validate login details
+		if (customerID == null) {
+			systemResponse = "LOGIN FAIL. Invalid Credentials, please try again.";
+			comms.printSystemMessage(systemResponse);
+		} else {
+			systemResponse = "LOGIN SUCCESS. What do you want to do?";
+			comms.printSystemMessage(systemResponse);
+		}
+		return customerID;
+	}
+
+	/**
+	 * @param customerID
+	 * @return
+	 */
+	public String userLogout(UUID customerID) {
+		String systemResponse = "";
+		String prompt = "Are you sure you want to log out?";
+		boolean userConfirm = comms.confirm(prompt);
+		if (userConfirm) {
+			customerService.userLogout(customerID);
+			systemResponse = "LOGOUT SUCCESS";
+		} else {
+			systemResponse = "LOGOUT CANCELLED. RETURNING YOU TO THE MAIN MENU.";
+		}
+		return systemResponse;
+	}
+
+	/**
+	 * displays the customers accounts as a list
+	 * 
+	 * @param customerDTO
+	 * @return
+	 */
+	public String displayAccounts(UUID customerID) {
+		return customerService.displayAccounts(customerID);
+	}
+
+	/**
+	 * @param customerID
+	 * @return
+	 */
+	public String createAccount(UUID customerID) {
+		String response = ""; // the system response to the user's request
+		HashMap<String, String> newAcctOptions = accountService.newAccountAvailableTypes(customerID);
+
+		int noOfChoices = newAcctOptions.size(); // 0,1, or 2
+		if (noOfChoices > 0) {
+			String prompt = "Create a new account: \n" + mapToString(newAcctOptions)
+					+ "\nEnter the number of your choice: ";
+			String userInput = comms.getUserMenuChoice(prompt, noOfChoices);
+			String accountType = newAcctOptions.get(userInput); // the choice of account type entered by the user
+
+			// call Account Service to check if customer already has an account type with
+			// that name
+			boolean duplicateName;
+			String accountName;
+			do {
+				prompt = "Enter an account name: \n";
+				accountName = comms.getUserString(prompt);
+				duplicateName = accountService.hasAccount(customerID, accountType, accountName);
+			} while (duplicateName);
+
+			prompt = "Enter a positive opening balance (default is zero): \n";
+			BigDecimal openingBalance = comms.getOpeningBalance(prompt);
+
+			prompt = "Open a new " + accountType + " account: " + accountName + " with an opening balance of "
+					+ openingBalance
+					+ "?\nEnter 'y' for Yes or 'n' for No: \n";
+			boolean userConfirm = comms.confirm(prompt);
+
+			if (userConfirm) {
+				AccountDTO accountDto = new AccountDTO(accountType, accountName, openingBalance);
+				Account newAccount = accountService.createAccount(customerID, accountDto);
+
+				Customer customer = getCustomer(customerID);
+				customer.addAccount(newAccount); // adds new account to customer
+				// Call NewBank method to add new customer account to bank's data store
+				response = "SUCCESS: Your " + accountType + " account has been created.\nReturning to Main Menu.";
+			} else {
+				response = "Account creation was cancelled.\nReturning to the Main Menu.";
+			}
+		} else {
+			response = "All possible account types have been created.\nReturning to Main Menu.";
+		}
+		return response;
+	}
+
+	/**
+	 *
 	 * Helper method for printing the contents of a HashMap<String,String>
 	 * 
 	 * @return a string of the contents
 	 */
 	public String mapToString(HashMap<String, String> map) {
 		String s = "";
-		if (map.size()>0) {
+		if (map.size() > 0) {
 			for (HashMap.Entry<String, String> item : map.entrySet()) {
-				s += item.getKey() + " = " + item.getValue()+ "\n";
+				s += item.getKey() + " = " + item.getValue() + "\n";
 			}
 		}
 		return s;
 	}
- 
+
 }
