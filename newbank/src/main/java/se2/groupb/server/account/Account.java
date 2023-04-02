@@ -72,12 +72,12 @@ public class Account {
 	}
 
 	// Getters and Setters
-	public String getAccountID() {
-		return this.accountID.toString();
+	public UUID getAccountID() {
+		return this.accountID;
 	}
 
-	public String getCustomerID() {
-		return this.customerID.toString();
+	public UUID getCustomerID() {
+		return this.customerID;
 	}
 
 	public boolean isOverDrawn() {

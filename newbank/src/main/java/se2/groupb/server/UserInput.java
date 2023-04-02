@@ -3,6 +3,7 @@ package se2.groupb.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 public class UserInput {
 
@@ -55,7 +56,8 @@ public class UserInput {
 			return -1;
 		}
 	}
-
+	
+	/*
 	// converts user input string to double (used for amounts)
 	public double convertStringToDouble(String userInput) {
 		try {
@@ -66,7 +68,10 @@ public class UserInput {
 			return -1;
 		}
 	}
-
+	
+	*/
+	
+	
 	/**
 	 * gets user's choice from a numbered menu
 	 * 
@@ -89,24 +94,34 @@ public class UserInput {
 		return selection;
 	}
 
+	
+	/*
+	 * firstBigDecimal.compareTo(secondBigDecimal) < 0 // "<"
+		firstBigDecimal.compareTo(secondBigDecimal) > 0 // ">"    
+		firstBigDecimal.compareTo(secondBigDecimal) == 0 // "=="  
+		firstBigDecimal.compareTo(secondBigDecimal) >= 0 // ">="   
+	 */
+	
+	
 	// Gets user's input amount for transfers
-	public double getAmount(String prompt, double limit) {
+	public BigDecimal getAmount(String prompt, BigDecimal limit) {
 		while (true) {
 			String userAmount = getUserString(prompt); // non-null string
 			if (!(userAmount == "error")) {
-				double amount = convertStringToDouble(userAmount);
-				if ((amount >= 0) && (amount <= limit)) {
+				BigDecimal amount = new BigDecimal(userAmount);
+				BigDecimal zero = BigDecimal.ZERO;
+				if ((amount.compareTo(zero) >= 0) && (amount.compareTo(limit) <= 0)) {
 					return amount;
 				}
 			} else {
-				return -1;
+				return new BigDecimal("-1");
 			}
 		}
 	}
 
 	// Gets user's input amount for new account balance
-	public double getOpeningBalance(String prompt) {
-		return getAmount(prompt, Double.MAX_VALUE);
+	public BigDecimal getOpeningBalance(String prompt) {
+		return getAmount(prompt, new BigDecimal(Double.toString(Double.MAX_VALUE)));
 	}
 
 	// gets user's confirmation: 'y' or cancels by entering 'n'

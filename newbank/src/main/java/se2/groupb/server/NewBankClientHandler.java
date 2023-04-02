@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.*;
 import se2.groupb.server.customer.*;
+import se2.groupb.server.account.*;
 
 public class NewBankClientHandler extends Thread {
 
@@ -52,6 +53,9 @@ public class NewBankClientHandler extends Thread {
 	public final UserInput comms;
 	private CustomerController customerController;
 	private CustomerServiceImpl customerService;
+	private AccountServiceImpl accountService;
+	//private AccountController accountController;
+	
 	
 	// constructor
 	//each client has the same bank but different comms because of different sockets
@@ -62,13 +66,15 @@ public class NewBankClientHandler extends Thread {
 		bank = NewBank.getBank(); //static instance of the bank
 		// Initialise controllers
 		customerService = new CustomerServiceImpl(bank.getCustomers());
-		//System.out.println(customerService);
-		customerController = new CustomerController(customerService,comms);
+		accountService = new AccountServiceImpl(bank.getAccounts());
+		customerController = new CustomerController(customerService,accountService,comms);
+		//accountController = new AccountController(accountService,comms);
 	}
 	
 	public CustomerController getCustomerController() {
 		return customerController;
 	}
+	
 	
 	public void run() {
 		// keep getting requests from the client and processing them
@@ -91,7 +97,7 @@ public class NewBankClientHandler extends Thread {
 					}
 				} else {
 					request = comms.getUserMenuChoice(requestMenu, mainMenuChoices);
-					String systemMessage = "Request from: " + customerID.toString();
+					String systemMessage = "Request from: " + getCustomerController().getCustomer(customerID);
 					comms.printSystemMessage(systemMessage);
 					response = processRequest(customerID, request);
 					comms.printSystemMessage(response);
@@ -168,20 +174,22 @@ public class NewBankClientHandler extends Thread {
 			case "1":
 			case "SHOWMYACCOUNTS":
 				return getCustomerController().displayAccounts(customerID);
-			/*
 			case "2":
-			case "NEWACCOUNT":
-				// return createAccountEnhancement(customerID);
+				return "Select account to show Transactions";
 			case "3":
+			case "NEWACCOUNT":
+				return getCustomerController().createAccount(customerID);
+			/*
+			case "4":
 			case "MOVE":
 				// return moveMoneyEnhancement(customerID);
-				/*
-				 * case "4":
-				 * case "PAY":
-				 * return transferMoney(customerID, requestInputs);
-				 * case "5":
-				 * case "CHANGEMYPASSWORD":
-				 * return changePassword(customerID,requestInputs);
+			/*
+			 * case "5":
+			 * case "PAY":
+			 * return transferMoney(customerID, requestInputs);
+			 * case "6":
+			 * case "CHANGEMYPASSWORD":
+			 * return changePassword(customerID,requestInputs);
 			*/
 			case "7":
 			case "LOGOUT":
@@ -296,13 +304,5 @@ public class NewBankClientHandler extends Thread {
 	 * }
 	 */
 
-	/*
-	 * 
-	 * public String logOut(CustomerID customerID) {
-	 * bank.getCustomers().get(customerID.getKey()).setloggedInStatus(false);
-	 * return "LOG OUT SUCCESSFUL";
-	 * 
-	 * }
-	 */
-
+	
 }

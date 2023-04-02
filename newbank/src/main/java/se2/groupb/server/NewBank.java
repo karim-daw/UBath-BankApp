@@ -1,38 +1,26 @@
 package se2.groupb.server;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-
 import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
-import se2.groupb.server.customer.CustomerController;
-import se2.groupb.server.customer.CustomerDTO;
-import se2.groupb.server.customer.CustomerServiceImpl;
+
 
 public class NewBank {
 
 	public static final String BIC = "NEWBGB21";
-
 	private static final NewBank bank = new NewBank(); // every instance of NewBank has the same bank info
-	private HashMap<String, Customer> customers;
-
-	public static final List<String> validAcctTypes = Collections
-			.unmodifiableList(Arrays.asList("Current", "Savings"));
+	
+	private HashMap<String, Customer> customers; //temp customer data store
+	private HashMap<String, Account> accounts; //temp account data store
 
 	// Constructor
-
-	// private AccountController accountController;
-	// private AccountServiceImpl accountService;
 	private NewBank() {
 		// create temp data store
 		customers = new HashMap<>();
+		accounts = new HashMap<>();
 		// adding data for debugging
 		addTestData();
-		// accountService = new AccountServiceImpl());
-		// accountController = new AccountController(accountService);
 		//displayCustomers();
 	}
 
@@ -41,118 +29,46 @@ public class NewBank {
 	 */
 	private void addTestData() {
 		Customer bhagy = new Customer("Bhagy", "password");
-		bhagy.addAccount(new Account(bhagy.getCustomerID(), "Current", "Main", BigDecimal.valueOf(20000)));
-		bhagy.addAccount(new Account(bhagy.getCustomerID(), "Savings", "Car", BigDecimal.valueOf(1000)));
-		//System.out.println(bhagy.accountsToString());
 		getCustomers().put(bhagy.getCustomerID().toString(), bhagy);
-
+		
+		Account bhagy_acct1 = new Account(bhagy.getCustomerID(), "Current", "Main", BigDecimal.valueOf(20000));
+		Account bhagy_acct2 =new Account(bhagy.getCustomerID(), "Savings", "Car", BigDecimal.valueOf(1000));
+		getAccounts().put(bhagy_acct1.getAccountID().toString(), bhagy_acct1);
+		getAccounts().put(bhagy_acct2.getAccountID().toString(), bhagy_acct2);
+		bhagy.addAccount(bhagy_acct1);
+		bhagy.addAccount(bhagy_acct2);
+		
 		Customer christina = new Customer("Christina", "1234");
-		christina.addAccount(new Account(christina.getCustomerID(), "Savings", "House", BigDecimal.valueOf(1500)));
-		//System.out.println(christina.accountsToString());
 		getCustomers().put(christina.getCustomerID().toString(), christina);
-
+		Account christina_acct1 = new Account(christina.getCustomerID(), "Savings", "House", BigDecimal.valueOf(1500));
+		getAccounts().put(christina_acct1.getAccountID().toString(), christina_acct1);
+		christina.addAccount(christina_acct1);
+		
 		Customer john = new Customer("John", "1111");
-		john.addAccount(new Account(john.getCustomerID(), "Current", "Main", BigDecimal.valueOf(250)));
-		//System.out.println(john.accountsToString());
 		getCustomers().put(john.getCustomerID().toString(), john);
-
+		Account john_acct1 = new Account(john.getCustomerID(), "Current", "Main", BigDecimal.valueOf(250));
+		getAccounts().put(john_acct1.getAccountID().toString(), john_acct1);
+		john.addAccount(john_acct1);
 	}
 
 	public HashMap<String, Customer> getCustomers() {
 		return customers;
 	}
-		
+	
+	public HashMap<String, Account> getAccounts() {
+		return accounts;
+	}
+	
+	/*
 	public void displayCustomers() {
 		System.out.println(getCustomers().keySet());
 	}
+	*/
 	
 	public static NewBank getBank() {
 		return bank;
 	}
 
-	/*
-	 * public AccountController getAccountContoller() {
-	 * return accountController;
-	 * }
-	 */
-
-	/*
-	 * public synchronized CustomerID checkLogInDetails(String username, String
-	 * password) {
-	 * // Check if the username input by the user exists in the bank's system
-	 * 
-	 * if (customers.containsKey(username)) {
-	 * // If username exists then check their password
-	 * Customer customer = customers.get(username);
-	 * // If the password input equals the password on system then create new
-	 * // CustomerID
-	 * if (customer.getPassword().equals(password)) {
-	 * customer.setloggedInStatus(true);
-	 * return new CustomerID(username);
-	 * } else {
-	 * customer.setloggedInStatus(false);
-	 * return null;
-	 * }
-	 * } else {
-	 * return null;
-	 * }
-	 * }
-	 */
-
-	/**
-	 * checks login details of user, if valid username and password is found, a
-	 * customer id is generated and returned
-	 * 
-	 * @param username
-	 * @param password
-	 * @return
-	 */
-
-	public synchronized Customer checkLogInDetails(CustomerDTO customerDto) {
-		// Check if the username input by the user exists in the bank's system
-		String username = customerDto.getUsername();
-		String password = customerDto.getPassword();
-
-		// CustomerDTO asks Customer if they have a customer with the entered username &
-		// password
-		// If they do then provide the UUID
-		// If they don't then the UUID is null
-
-		if (customers.containsKey(username)) {
-			Customer customer = customers.get(username);
-			if (customer.getPassword().equals(password)) {
-				customer.setloggedInStatus(true);
-				return customer;
-			} else {
-				customer.setloggedInStatus(false);
-				return null;
-			}
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Creates a new account for a given customer
-	 * 
-	 * NEWACCOUNT <Name>
-	 * e.g. NEWACCOUNT Savings
-	 * Returns SUCCESS or FAIL
-	 * 
-	 * @param customer
-	 * @param requestInputs
-	 * @param openingBalance
-	 * @return string regarding success or failure of createtAccount request
-	 */
-
-	/*
-	 * private String createAccount(Customer customer, String accountType, double
-	 * openingBalance) {
-	 * //adds account to bank's data store
-	 * return "SUCCESS"; //or FAIL
-	 * }
-	 * 
-	 */
 
 
 	/**
@@ -345,47 +261,7 @@ public class NewBank {
 	// }
 	// }
 
-	/**
-	 * 
-	 * commands from the NewBank customer are processed in this method
-	 * 
-	 * @param customer
-	 * @param request
-	 * @return
-	 * @throws IOException
-	 */
-	/*
-	 * public synchronized String processRequest(CustomerDTO customerDto, String
-	 * request) {
-	 * 
-	 * if (customers.containsKey(customerDto.getCustomerName())) {
-	 * String[] requestInputs = request.split("\\s+");
-	 * String command = requestInputs[0];
-	 * 
-	 * switch (command) {
-	 * case "SHOWMYACCOUNTS":
-	 * return customerController.displayAccounts(customerDto);
-	 * case "NEWACCOUNT":
-	 * return accountController.createNewAccount(customerDto, requestInputs, 0);
-	 * case "MOVE":
-	 * return transactionController(customerDto, requestInputs);
-	 * case "LOGOUT":
-	 * // return to the main menu userwelcome
-	 * return logOut(customerDto);
-	 * case "PAY":
-	 * return transferMoney(customerDto, requestInputs);
-	 * 
-	 * case "CHANGEMYPASSWORD":
-	 * return changePassword(customerDto, requestInputs);
-	 * 
-	 * default:
-	 * return "FAIL";
-	 * }
-	 * }
-	 * return "FAIL";
-	 * }
-	 */
-
+	
 	/**
 	 * Registers a new customer to hashmap, performs validaiton to see if customer
 	 * key is already in the hashmap

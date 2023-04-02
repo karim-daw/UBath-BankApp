@@ -1,4 +1,5 @@
 package se2.groupb.server.customer;
+
 import java.util.*;
 import se2.groupb.server.NewBank;
 import se2.groupb.server.NewBankClientHandler;
@@ -18,6 +19,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	//Temp HashMap Customer Repo
     private final HashMap<String, Customer> theCustomers;
+    //private final HashMap<String, Account> theAccounts;
     //Temp constructor using HashMap as Customer Repo
     public CustomerServiceImpl(HashMap<String,Customer> customers) {
         this.theCustomers = customers;
@@ -41,23 +43,43 @@ public class CustomerServiceImpl implements CustomerService {
     	return customerID;
     }
     
+    //returns the Customer object corresponding to the CustomerID provided
+    public Customer getCustomer(UUID customerID) {
+    	Customer customer = null;
+    	for (HashMap.Entry<String, Customer> cust : theCustomers.entrySet()) {
+    		UUID custID = cust.getValue().getCustomerID();
+    		if (custID.equals(customerID)){
+    			customer = cust.getValue();
+    		}
+    	}
+    	return customer;
+    }
+    
+    /**
+     * displays accounts as a list
+     * 
+     * @param customer
+     * @return
+     */
+
+    @Override
+    public String displayAccounts(UUID customerID){
+        //Customer customer = this.customerRepository.findByCustomerID(customerID); 
+        Customer customer = theCustomers.get(customerID.toString()); //temp repo
+        if (customer.accountsToList().isEmpty()) {
+        	return "You have no accounts to display." ;
+        }
+        else {
+        	return customer.accountsToString();
+        } 
+    } 
+    
+    
     public void userLogout(UUID customerID) {
     	Customer customer = theCustomers.get(customerID.toString());
     	customer.setloggedInStatus(false);
     	customerID = null;
     }
-    
-    
-    /**
-     * method that checks if customer is logged
-     * @param customerID
-     * @return boolean
-     */
-    public boolean isLoggedIn(UUID customerID) {
-    	Customer customer = theCustomers.get(customerID.toString());
-    	return customer.getloggedInStatus();
-    }
-    
     
     /**
      * method that changes the password
@@ -99,20 +121,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
     
-    
-    /**
-     * displays accounts as a list
-     * 
-     * @param customer
-     * @return
-     */
-
-    @Override
-    public String displayAccounts(UUID customerID){
-        //Customer customer = this.customerRepository.findByCustomerID(customerID); 
-        Customer customer = theCustomers.get(customerID.toString()); //temp repo
-        return customer.accountsToString();
-    } 
     
     //printing out the Customer HashMap for checking
     public String toString() {
