@@ -8,33 +8,15 @@ import java.util.*;
 
 //Business Logic: makes changes to Domain, sends results to Controller
 public interface AccountService {
-	
-	public static final List<String> validAccountTypes = 
-			Collections.unmodifiableList(Arrays.asList("Current","Savings"));
-	
-	public static final Map<String, Integer> accountTypeLimits = Map.of("Current", 3, "Savings", 2);
-	
-	public static final Map<String, BigDecimal> defaultOverdraftLimits = Map.of("Current", BigDecimal.valueOf(200), 
-			"Savings", BigDecimal.ZERO);
-			
-	
-	
-    /**
-     * Creates new account for a given customer with a default account balance and overdraft limit of
-     * 0.0
-     * 
-     * NEWACCOUNT <Name>
-     * e.g. NEWACCOUNT Savings
-     * Returns SUCCESS or FAIL
-     * 
-     * @param customerDTO
-     * @param accountType
-     * @param accountName
-     * @return string regarding success or failure of createtAccount request
-     */
-    //boolean createAccount(UUID customerID, String accountType, String accountName, BigDecimal openingBalance);
-    
-    
+
+    public static final List<String> validAccountTypes = Collections
+            .unmodifiableList(Arrays.asList("Current", "Savings"));
+
+    public static final Map<String, Integer> accountTypeLimits = Map.of("Current", 3, "Savings", 2);
+
+    public static final Map<String, BigDecimal> defaultOverdraftLimits = Map.of("Current", BigDecimal.valueOf(200),
+            "Savings", BigDecimal.ZERO);
+
     /**
      * Creates a new account for a given customer
      * 
@@ -46,8 +28,27 @@ public interface AccountService {
      * @param accountDto
      * @return string regarding success or failure of createtAccount request
      */
-	Account createAccount(UUID customerID, AccountDTO accountDto);
-    
+    Account createAccount(UUID customerID, AccountDTO accountDto);
+
+    /**
+     * 
+     * 
+     * @param customerID
+     * @return
+     */
+    public HashMap<String, String> newAccountAvailableTypes(UUID customerID);
+
+    /**
+     * checks if the desired account name already exists in the customers list of
+     * accounts by type
+     * 
+     * @param customerID
+     * @param accountType
+     * @param accountName
+     * @return true false if account name exists in customers accounts of the
+     *         specified type
+     */
+    public boolean hasAccount(UUID customerID, String accountType, String accountName);
 
     /**
      * adds money to account
@@ -56,7 +57,7 @@ public interface AccountService {
      * @param amount
      * @return
      */
-    //boolean credit(UUID accountID, BigDecimal amount);
+    // boolean credit(UUID accountID, BigDecimal amount);
 
     /**
      * subtracts money from account
@@ -65,9 +66,8 @@ public interface AccountService {
      * @param amount
      * @return
      */
-    //boolean debit(UUID accountID, BigDecimal amount);
-    
-    //boolean exceedsOverdraft() ;
-    
+    // boolean debit(UUID accountID, BigDecimal amount);
+
+    // boolean exceedsOverdraft() ;
 
 }
