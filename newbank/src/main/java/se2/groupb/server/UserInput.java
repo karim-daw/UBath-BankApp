@@ -3,6 +3,8 @@ package se2.groupb.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class UserInput {
 
@@ -67,6 +69,19 @@ public class UserInput {
 	}
 
 	/**
+	 * converts double to BigDecimal
+	 * 
+	 * @param d
+	 * @return BigInteger as a conversion from input as double
+	 */
+	public static BigDecimal doubleToBigDecimal(double d) {
+		if (Double.isNaN(d) || Double.isInfinite(d)) {
+			throw new IllegalArgumentException("Invalid input: " + d);
+		}
+		return new BigDecimal(Double.toString(d));
+	}
+
+	/**
 	 * gets user's choice from a numbered menu
 	 * 
 	 * @param prompt
@@ -103,9 +118,32 @@ public class UserInput {
 		}
 	}
 
+	/**
+	 * Get user choice for account name
+	 * 
+	 * @param prompt
+	 * @return gets the user inputted account name of null if error
+	 */
+	public String getUserAccountNameChoice(String prompt) {
+		String userAccountName = "error";
+		boolean valid = false;
+		while (!valid) {
+			userAccountName = getUserString(prompt);
+			if (!(userAccountName == "error")) {
+				if (isValidAccountName(userAccountName)) {
+					valid = true;
+				}
+			}
+		}
+		return userAccountName;
+	}
+
 	// Gets user's input amount for new account balance
-	public double getOpeningBalance(String prompt) {
-		return getAmount(prompt, Double.MAX_VALUE);
+	// TODO: this needs to return a BigDecimal
+	public BigDecimal getOpeningBalance(String prompt) {
+		double openingBalance = getAmount(prompt, Double.MAX_VALUE);
+		BigDecimal convertedOpeningBalance = doubleToBigDecimal(openingBalance);
+		return convertedOpeningBalance;
 	}
 
 	// gets user's confirmation: 'y' or cancels by entering 'n'
