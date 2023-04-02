@@ -4,9 +4,17 @@ import java.util.*;
 
 public interface CustomerService {
 
+    /**
+     * @param customerDto
+     * @return
+     */
     public UUID findCustomer(CustomerDTO customerDto);
 
-    public boolean isLoggedIn(UUID customerID);
+    /**
+     * @param customerID
+     * @return
+     */
+    public boolean loginCustomer(UUID customerID);
 
     // public ArrayList<Account> getAccounts(CustomerDTO customerDto);
 
@@ -31,5 +39,8 @@ public interface CustomerService {
      */
     public String displayAccountsAsString(UUID customerID);
 
+    /**
+     * @return
+     */
     public String toString();
 }

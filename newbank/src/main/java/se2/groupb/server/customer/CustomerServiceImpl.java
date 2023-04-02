@@ -43,7 +43,8 @@ public class CustomerServiceImpl implements CustomerService {
             if ((item_username.equals(username)) && (item_password.equals(password))) {
                 // System.out.println("The customer ID is: " +
                 // item.getValue().getCustomerID().toString());
-                item.getValue().setloggedInStatus(true);
+                // item.getValue().setloggedInStatus(true); /// why are we logging in the user
+                // here
                 customerID = item.getValue().getCustomerID();
                 break;
             }
@@ -51,14 +52,26 @@ public class CustomerServiceImpl implements CustomerService {
         return customerID;
     }
 
+    // /**
+    // * method that checks if customer is logged
+    // *
+    // * @param customerID
+    // * @return boolean
+    // */
+    // public boolean isLoggedIn(UUID customerID) {
+    // Customer customer = theCustomers.get(customerID.toString());
+    // return customer.getloggedInStatus();
+    // }
+
     /**
-     * method that checks if customer is logged
+     * method that sets login status of customer
      * 
      * @param customerID
      * @return boolean
      */
-    public boolean isLoggedIn(UUID customerID) {
+    public boolean loginCustomer(UUID customerID) {
         Customer customer = theCustomers.get(customerID.toString());
+        customer.setloggedInStatus(true);
         return customer.getloggedInStatus();
     }
 

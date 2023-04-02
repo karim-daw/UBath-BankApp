@@ -105,16 +105,22 @@ public class NewBankClientHandler extends Thread {
 
 	// Login for existing customers
 	public UUID userLogIn() throws IOException {
+
+		CustomerController customerController = bank.getCustomerController();
 		String username = comms.getUserString("Enter Username");
 		String password = comms.getUserString("Enter Password");
 		CustomerDTO customerDto = new CustomerDTO(username, password);
+
 		comms.printSystemMessage("Please wait while we check your details");
-		UUID customerID = bank.getCustomerController().checkLogInDetails(customerDto);
+		UUID customerID = customerController.checkLogInDetails(customerDto);
 
 		// Validate login details
 		if (customerID == null) {
 			out.println("Log In Failed. Invalid Credentials, please try again.");
 		} else {
+
+			// login user
+			customerController.login(customerID);
 			out.println("Log In Successful. What do you want to do?");
 		}
 		return customerID;

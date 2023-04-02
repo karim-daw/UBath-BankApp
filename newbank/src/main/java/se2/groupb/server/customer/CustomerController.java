@@ -18,12 +18,20 @@ public class CustomerController {
         bank = NewBank.getBank();
     }
 
+    /**
+     * @param customerDto
+     * @return
+     */
     public UUID checkLogInDetails(CustomerDTO customerDto) {
         return customerService.findCustomer(customerDto);
     }
 
-    public boolean isLoggedIn(UUID customerID) {
-        return customerService.isLoggedIn(customerID);
+    /**
+     * @param customerID
+     * @return
+     */
+    public boolean login(UUID customerID) {
+        return customerService.loginCustomer(customerID);
     }
 
     // TODO:
