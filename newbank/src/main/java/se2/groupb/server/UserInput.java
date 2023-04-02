@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class UserInput {
 
@@ -116,26 +115,6 @@ public class UserInput {
 				return -1;
 			}
 		}
-	}
-
-	/**
-	 * Get user choice for account name
-	 * 
-	 * @param prompt
-	 * @return gets the user inputted account name of null if error
-	 */
-	public String getUserAccountNameChoice(String prompt) {
-		String userAccountName = "error";
-		boolean valid = false;
-		while (!valid) {
-			userAccountName = getUserString(prompt);
-			if (!(userAccountName == "error")) {
-				if (isValidAccountName(userAccountName)) {
-					valid = true;
-				}
-			}
-		}
-		return userAccountName;
 	}
 
 	// Gets user's input amount for new account balance
