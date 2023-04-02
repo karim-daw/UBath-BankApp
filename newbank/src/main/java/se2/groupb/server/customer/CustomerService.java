@@ -4,8 +4,21 @@ import java.util.*;
 
 public interface CustomerService {
 
+    /**
+     * @param customerID
+     * @return
+     */
+    public Customer getCustomer(UUID customerID);
+
+    /**
+     * @param customerDto
+     * @return
+     */
     public UUID userLogin(CustomerDTO customerDto);
 
+    /**
+     * @param customerID
+     */
     public void userLogout(UUID customerID);
 
     /**
@@ -27,8 +40,11 @@ public interface CustomerService {
      * @return
      */
 
-    public String changePassword(CustomerDTO customerDTO, String[] requestInputs);
+    public String changePassword(UUID customerID, String[] requestInputs);
 
+    /**
+     * @return
+     */
     public String toString();
 
 }
