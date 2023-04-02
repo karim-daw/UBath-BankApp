@@ -8,12 +8,12 @@ import se2.groupb.server.UserInput;
 public class CustomerController {
 
     // fields
-    private final CustomerServiceImpl customerService;
+    private final CustomerService customerService;
     private final NewBank bank;
     public UserInput comms;
 
     // Constructor
-    public CustomerController(CustomerServiceImpl customerService) {
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
         bank = NewBank.getBank();
     }
@@ -26,11 +26,8 @@ public class CustomerController {
         return customerService.isLoggedIn(customerID);
     }
 
-    /*
-     * public ArrayList<Account> getAccounts(UUID customerID){
-     * return customerService.getAccounts(customerID);
-     * }
-     */
+    // TODO:
+    // add change password service here
 
     /**
      * displays the customers accounts as a list
@@ -39,7 +36,7 @@ public class CustomerController {
      * @return
      */
     public String displayAccounts(UUID customerID) {
-        return customerService.displayAccounts(customerID);
+        return customerService.displayAccountsAsString(customerID);
     }
 
 }
