@@ -34,6 +34,14 @@ public class CustomerController {
         return customerService.loginCustomer(customerID);
     }
 
+    /**
+     * @param customerID
+     * @return
+     */
+    public boolean logout(UUID customerID) {
+        return customerService.logoutCustomer(customerID);
+    }
+
     // TODO:
     // add change password service here
 

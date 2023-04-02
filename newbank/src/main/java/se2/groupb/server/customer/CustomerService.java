@@ -16,6 +16,12 @@ public interface CustomerService {
      */
     public boolean loginCustomer(UUID customerID);
 
+    /**
+     * @param customerID
+     * @return
+     */
+    public boolean logoutCustomer(UUID customerID);
+
     // public ArrayList<Account> getAccounts(CustomerDTO customerDto);
 
     /**

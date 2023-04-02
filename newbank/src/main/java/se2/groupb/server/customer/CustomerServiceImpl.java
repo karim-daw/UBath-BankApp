@@ -63,15 +63,17 @@ public class CustomerServiceImpl implements CustomerService {
     // return customer.getloggedInStatus();
     // }
 
-    /**
-     * method that sets login status of customer
-     * 
-     * @param customerID
-     * @return boolean
-     */
+    @Override
     public boolean loginCustomer(UUID customerID) {
         Customer customer = theCustomers.get(customerID.toString());
         customer.setloggedInStatus(true);
+        return customer.getloggedInStatus();
+    }
+
+    @Override
+    public boolean logoutCustomer(UUID customerID) {
+        Customer customer = theCustomers.get(customerID.toString());
+        customer.setloggedInStatus(false);
         return customer.getloggedInStatus();
     }
 
@@ -142,4 +144,5 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return s;
     }
+
 }
