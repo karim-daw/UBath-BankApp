@@ -4,8 +4,9 @@ import java.util.*;
 //import se2.groupb.server.repository.AccountRepository;
 //import se2.groupb.server.repository.CustomerRepository;
 
-public class AccountServiceImpl implements AccountService{
+public class AccountServiceImpl implements AccountService {
     /*
+
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
     public AccountServiceImpl(AccountRepository accountRepository, CustomerRepository customerRepository) {
@@ -49,6 +50,7 @@ public class AccountServiceImpl implements AccountService{
     	return l;
 	}
 
+
     /**
 	 * checks if the desired account name already exists in the customers list of
 	 * accounts by type
@@ -72,6 +74,7 @@ public class AccountServiceImpl implements AccountService{
     public Integer noAccountsByType(UUID customerID, String accountType) {
     	return getAccountsByType(customerID,accountType).size();
     }
+
     
     public HashMap<String,Boolean> maxAccountsReached(UUID customerID){
     	HashMap<String, Boolean> map = new HashMap<>();
@@ -119,6 +122,7 @@ public class AccountServiceImpl implements AccountService{
 	*/
 	
 	/**
+
      * Creates a new account for a given customer
      * NEWACCOUNT <Name>
      * e.g. NEWACCOUNT Savings
@@ -128,15 +132,18 @@ public class AccountServiceImpl implements AccountService{
      * @param openingBalance
      * @return Returns SUCCESS or FAIL
      */
+
     public Account createAccount(UUID customerID, AccountDTO accountDto) {
         Account newAccount = new Account(customerID, accountDto.getAccountType(), accountDto.getAccountName(),
         		accountDto.getOpeningBalance());
         theAccounts.put(newAccount.getAccountID().toString(), newAccount);
+
         return newAccount;
     }
     
     
     /*
+
     @Override
     public boolean credit(UUID accountID, double amount) {
 
@@ -182,4 +189,5 @@ public class AccountServiceImpl implements AccountService{
 		return false;
 	}
 	*/ 
+
 }

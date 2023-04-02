@@ -8,6 +8,8 @@ import se2.groupb.server.customer.CustomerDTO;
 
 public class TransactionService {
 
+    // TODO: generate UUID for every type of transaction
+
     /*
      * this method takes care of the PAY feature indicated below, gven and customer
      * (pay2er) and a requested payee, this will transaction money from these
@@ -30,7 +32,7 @@ public class TransactionService {
         }
 
         // Check if the customer exists in the hashmap.
-        String customerName = customerDTO.getCustomerName();
+        String customerName = customerDTO.getUsername();
         String payeeName = requestArray[1];
 
         // TODO: #34 add access to database here to gett customer data

@@ -9,16 +9,17 @@ import se2.groupb.server.repository.CustomerRepository;
 
 public class CustomerServiceImpl implements CustomerService {
 
-	/*
-    private final CustomerRepository customerRepository;
-    //Repository Constructor
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
-    */
+    /*
+     * private final CustomerRepository customerRepository;
+     * //Repository Constructor
+     * public CustomerServiceImpl(CustomerRepository customerRepository) {
+     * this.customerRepository = customerRepository;
+     * }
+     */
 
-	//Temp HashMap Customer Repo
+    // Temp HashMap Customer Repo
     private final HashMap<String, Customer> theCustomers;
+
     //private final HashMap<String, Account> theAccounts;
     //Temp constructor using HashMap as Customer Repo
     public CustomerServiceImpl(HashMap<String,Customer> customers) {
@@ -81,6 +82,7 @@ public class CustomerServiceImpl implements CustomerService {
     	customerID = null;
     }
     
+
     /**
      * method that changes the password
      * old password need to be enter
@@ -103,7 +105,12 @@ public class CustomerServiceImpl implements CustomerService {
         String oldPassword = requestInputs[1];
         String newPassword = requestInputs[2];
         String confirmNewPassword = requestInputs[3];
-        Customer customer = customerRepository.findByCustomerID(customerDTO.getCustomerID());
+
+        // Customer customer =
+        // customerRepository.findByCustomerID(customerDTO.getCustomerID());
+
+        UUID customerID = customerDTO.getCustomerID();
+        Customer customer = theCustomers.get(customerID.toString());
 
         // check if the old password is correct
         if (!customer.getPassword().equals(oldPassword)) {
@@ -123,11 +130,13 @@ public class CustomerServiceImpl implements CustomerService {
     
     
     //printing out the Customer HashMap for checking
+
     public String toString() {
-    	String s = "";
-		for (HashMap.Entry<String, Customer> item : theCustomers.entrySet()) {
-			s += item.getKey() + " = " + item.getValue().getUsername() + "\n";
-		}
-		return s;
+        String s = "";
+        for (HashMap.Entry<String, Customer> item : theCustomers.entrySet()) {
+            s += item.getKey() + " = " + item.getValue().getUsername() + "\n";
+        }
+        return s;
     }
+
 }

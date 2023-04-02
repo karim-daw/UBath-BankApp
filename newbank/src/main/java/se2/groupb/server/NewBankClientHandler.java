@@ -58,7 +58,9 @@ public class NewBankClientHandler extends Thread {
 	
 	
 	// constructor
+
 	//each client has the same bank but different comms because of different sockets
+
 	public NewBankClientHandler(Socket s) throws IOException {
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
@@ -83,7 +85,7 @@ public class NewBankClientHandler extends Thread {
 		String request = "";
 		String response = "";
 		UUID customerID = null;
-		
+
 		try {
 			while (true) {
 				if (customerID == null) {
@@ -100,9 +102,11 @@ public class NewBankClientHandler extends Thread {
 					String systemMessage = "Request from: " + getCustomerController().getCustomer(customerID);
 					comms.printSystemMessage(systemMessage);
 					response = processRequest(customerID, request);
+
 					comms.printSystemMessage(response);
 					String strCustomerID =customerID.toString();
 					if (bank.getCustomers().get(strCustomerID).getloggedInStatus()==false) {
+
 						customerID = null;
 					}
 				}
@@ -119,6 +123,7 @@ public class NewBankClientHandler extends Thread {
 			}
 		}
 	}
+
 
 
 	/*
@@ -153,23 +158,25 @@ public class NewBankClientHandler extends Thread {
 	 */
 
 	public synchronized String processRequest(UUID customerID, String request) throws IOException {
+
 		
 		//I don't think we need this check, only a customer that has logged in and has a valid customer ID 
 		//can action a request
 		if (customerID==null) return "FAIL";
+
 		/*
-		HashMap<String, Customer> customers = bank.getCustomers();
-		boolean isCustomer = false;
-		
-		
-		for (Customer customer : customers.values()) {
-			if (customer.getCustomerID().equals(customerDto.getCustomerID())) {
-				isCustomer = true;
-				break; // this should not be needed but who knows??
-			}
-		}
-		*/
-		
+		 * HashMap<String, Customer> customers = bank.getCustomers();
+		 * boolean isCustomer = false;
+		 * 
+		 * 
+		 * for (Customer customer : customers.values()) {
+		 * if (customer.getCustomerID().equals(customerDto.getCustomerID())) {
+		 * isCustomer = true;
+		 * break; // this should not be needed but who knows??
+		 * }
+		 * }
+		 */
+
 		switch (request) {
 			case "1":
 			case "SHOWMYACCOUNTS":
@@ -198,6 +205,7 @@ public class NewBankClientHandler extends Thread {
 				return "FAIL";
 		}
 	}
+
 
 
 	/*

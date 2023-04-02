@@ -73,6 +73,19 @@ public class UserInput {
 	
 	
 	/**
+	 * converts double to BigDecimal
+	 * 
+	 * @param d
+	 * @return BigInteger as a conversion from input as double
+	 */
+	public static BigDecimal doubleToBigDecimal(double d) {
+		if (Double.isNaN(d) || Double.isInfinite(d)) {
+			throw new IllegalArgumentException("Invalid input: " + d);
+		}
+		return new BigDecimal(Double.toString(d));
+	}
+
+	/**
 	 * gets user's choice from a numbered menu
 	 * 
 	 * @param prompt
@@ -122,6 +135,7 @@ public class UserInput {
 	// Gets user's input amount for new account balance
 	public BigDecimal getOpeningBalance(String prompt) {
 		return getAmount(prompt, new BigDecimal(Double.toString(Double.MAX_VALUE)));
+
 	}
 
 	// gets user's confirmation: 'y' or cancels by entering 'n'

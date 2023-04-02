@@ -1,13 +1,16 @@
 package se2.groupb.server.customer;
 
+
 import java.io.IOException;
 import java.util.*;
 import se2.groupb.server.UserInput;
 import se2.groupb.server.account.*;
 import java.math.BigDecimal;
 
+
 public class CustomerController {
     // fields
+
     private final CustomerServiceImpl customerService;
     private final AccountServiceImpl accountService;
     private UserInput comms;
@@ -57,6 +60,7 @@ public class CustomerController {
     	return systemResponse;
     }
     
+
     /**
      * displays the customers accounts as a list
      * 
@@ -64,7 +68,7 @@ public class CustomerController {
      * @return
      */
     public String displayAccounts(UUID customerID) {
-        return customerService.displayAccounts(customerID);
+        return customerService.displayAccountsAsString(customerID);
     }
     
     public String createAccount(UUID customerID) {

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 //Subset of Domain for data transfer between layers
 public class AccountDTO {
+
 	private String accountType;
 	private String accountName;
 	private BigDecimal openingBalance;
@@ -14,6 +15,7 @@ public class AccountDTO {
     	this.accountType = accountType;
         this.accountName= accountName;
         this.openingBalance = openingBalance;
+
     }
     
     
