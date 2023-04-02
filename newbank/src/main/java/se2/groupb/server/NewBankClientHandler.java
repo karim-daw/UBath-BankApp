@@ -52,6 +52,7 @@ public class NewBankClientHandler extends Thread {
 
 	// constructor
 
+	// TODO: #36 insert dependancies of vaious services
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -66,7 +67,7 @@ public class NewBankClientHandler extends Thread {
 		String request = "";
 		String response = "";
 		UUID customerID = null;
-		
+
 		try {
 			while (true) {
 				if (customerID == null) {
@@ -83,8 +84,8 @@ public class NewBankClientHandler extends Thread {
 					System.out.println("Request from: " + customerID.toString());
 					response = processRequest(customerID, request);
 					out.println(response);
-					String strCustomerID =customerID.toString();
-					if (bank.getCustomers().get(strCustomerID).getloggedInStatus()==false) {
+					String strCustomerID = customerID.toString();
+					if (bank.getCustomers().get(strCustomerID).getloggedInStatus() == false) {
 						customerID = null;
 					}
 				}
@@ -151,23 +152,24 @@ public class NewBankClientHandler extends Thread {
 	 */
 
 	public synchronized String processRequest(UUID customerID, String request) throws IOException {
-		
-		//I don't think we need this check, only a customer that has logged in and has a valid customer ID 
-		//can action a request
-		
+
+		// I don't think we need this check, only a customer that has logged in and has
+		// a valid customer ID
+		// can action a request
+
 		/*
-		HashMap<String, Customer> customers = bank.getCustomers();
-		boolean isCustomer = false;
-		
-		
-		for (Customer customer : customers.values()) {
-			if (customer.getCustomerID().equals(customerDto.getCustomerID())) {
-				isCustomer = true;
-				break; // this should not be needed but who knows??
-			}
-		}
-		*/
-		
+		 * HashMap<String, Customer> customers = bank.getCustomers();
+		 * boolean isCustomer = false;
+		 * 
+		 * 
+		 * for (Customer customer : customers.values()) {
+		 * if (customer.getCustomerID().equals(customerDto.getCustomerID())) {
+		 * isCustomer = true;
+		 * break; // this should not be needed but who knows??
+		 * }
+		 * }
+		 */
+
 		switch (request) {
 			case "1":
 			case "SHOWMYACCOUNTS":
@@ -194,9 +196,9 @@ public class NewBankClientHandler extends Thread {
 		}
 	}
 
-	 public String showMyAccounts(UUID customerID) {
-		 return bank.getCustomerController().displayAccounts(customerID);
-	 }
+	public String showMyAccounts(UUID customerID) {
+		return bank.getCustomerController().displayAccounts(customerID);
+	}
 
 	/*
 	 * 
