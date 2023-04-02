@@ -115,7 +115,7 @@ public class CustomerServiceImpl implements CustomerService {
      */
 
     @Override
-    public String displayAccounts(UUID customerID) {
+    public String displayAccountsAsString(UUID customerID) {
         // Customer customer = this.customerRepository.findByCustomerID(customerID);
         Customer customer = theCustomers.get(customerID.toString()); // temp repo
         return customer.accountsToString();
