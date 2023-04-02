@@ -7,15 +7,16 @@ import java.math.BigDecimal;
 
 public class UserInput {
 
-	private BufferedReader in;
-	private PrintWriter out;
-
+	private final BufferedReader in;
+	private final PrintWriter out;
+	//public static final UserInput userInput = new UserInput(in,out);
+	
 	// constructor
 	public UserInput(BufferedReader in, PrintWriter out) throws IOException {
 		this.in = in;
 		this.out = out;
 	}
-
+	
 	public void printSystemMessage(String message) {
 		out.println(message);
 	}
@@ -55,7 +56,8 @@ public class UserInput {
 			return -1;
 		}
 	}
-
+	
+	/*
 	// converts user input string to double (used for amounts)
 	public double convertStringToDouble(String userInput) {
 		try {
@@ -66,7 +68,10 @@ public class UserInput {
 			return -1;
 		}
 	}
-
+	
+	*/
+	
+	
 	/**
 	 * converts double to BigDecimal
 	 * 
@@ -102,27 +107,35 @@ public class UserInput {
 		return selection;
 	}
 
+	
+	/*
+	 * firstBigDecimal.compareTo(secondBigDecimal) < 0 // "<"
+		firstBigDecimal.compareTo(secondBigDecimal) > 0 // ">"    
+		firstBigDecimal.compareTo(secondBigDecimal) == 0 // "=="  
+		firstBigDecimal.compareTo(secondBigDecimal) >= 0 // ">="   
+	 */
+	
+	
 	// Gets user's input amount for transfers
-	public double getAmount(String prompt, double limit) {
+	public BigDecimal getAmount(String prompt, BigDecimal limit) {
 		while (true) {
 			String userAmount = getUserString(prompt); // non-null string
 			if (!(userAmount == "error")) {
-				double amount = convertStringToDouble(userAmount);
-				if ((amount >= 0) && (amount <= limit)) {
+				BigDecimal amount = new BigDecimal(userAmount);
+				BigDecimal zero = BigDecimal.ZERO;
+				if ((amount.compareTo(zero) >= 0) && (amount.compareTo(limit) <= 0)) {
 					return amount;
 				}
 			} else {
-				return -1;
+				return new BigDecimal("-1");
 			}
 		}
 	}
 
 	// Gets user's input amount for new account balance
-	// TODO: this needs to return a BigDecimal
 	public BigDecimal getOpeningBalance(String prompt) {
-		double openingBalance = getAmount(prompt, Double.MAX_VALUE);
-		BigDecimal convertedOpeningBalance = doubleToBigDecimal(openingBalance);
-		return convertedOpeningBalance;
+		return getAmount(prompt, new BigDecimal(Double.toString(Double.MAX_VALUE)));
+
 	}
 
 	// gets user's confirmation: 'y' or cancels by entering 'n'

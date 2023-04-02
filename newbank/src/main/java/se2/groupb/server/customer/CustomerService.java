@@ -2,13 +2,8 @@ package se2.groupb.server.customer;
 
 import java.util.*;
 
-public interface CustomerService {
+//import se2.groupb.server.account.Account;
 
-    /**
-     * @param customerDto
-     * @return
-     */
-    public UUID findCustomer(CustomerDTO customerDto);
 
     /**
      * @param customerID
@@ -24,6 +19,23 @@ public interface CustomerService {
 
     // public ArrayList<Account> getAccounts(CustomerDTO customerDto);
 
+
+public interface CustomerService {
+	
+	UUID userLogin(CustomerDTO customerDto);
+	
+	public void userLogout(UUID customerID);
+    
+    /**
+     * returns a string representation in the form of a list of accounts and prints
+     * them
+     * 
+     * @param customerDTO
+     * @return
+     */
+    public String displayAccounts(UUID customerID);
+    
+
     /**
      * method that changes the password
      * old password need to be enter
@@ -36,17 +48,6 @@ public interface CustomerService {
 
     public String changePassword(CustomerDTO customerDTO, String[] requestInputs);
 
-    /**
-     * returns a string representation in the form of a list of accounts and prints
-     * them
-     * 
-     * @param customerDTO
-     * @return
-     */
-    public String displayAccountsAsString(UUID customerID);
 
-    /**
-     * @return
-     */
     public String toString();
 }

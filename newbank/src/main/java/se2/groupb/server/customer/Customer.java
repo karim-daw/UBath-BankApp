@@ -20,11 +20,11 @@ public class Customer {
 
 	// constructor
 	public Customer(String username, String password) {
+		this.customerID = UUID.randomUUID();
 		this.username = username;
 		this.password = password;
-		this.customerID = UUID.randomUUID();
-		accounts = new ArrayList<>();
 		this.loggedInStatus = false;
+		accounts = new ArrayList<>();
 	}
 
 	// methods
@@ -33,11 +33,7 @@ public class Customer {
 	public UUID getCustomerID() {
 		return customerID;
 	}
-
-	public ArrayList<Account> getAccounts() {
-		return accounts;
-	}
-
+	
 	// username
 	public String getUsername() {
 		return username;
@@ -46,21 +42,28 @@ public class Customer {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
-	/**
-	 * @set a string as password
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
+	
 	/**
 	 * @return a string of a password
 	 */
 	public String getPassword() {
 		return this.password;
 	}
-
+	
+	/**
+	 * @set a string as password
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	/**
+	 * @return a Boolean of a loggedInStatus
+	 */
+	public boolean getloggedInStatus() {
+		return this.loggedInStatus;
+	}
+	
 	/**
 	 * @set a boolean as logged-in-status
 	 */
@@ -68,13 +71,21 @@ public class Customer {
 		this.loggedInStatus = status;
 	}
 
-	/**
-	 * @return a Boolean of a loggedInStatus
-	 */
-	public boolean getloggedInStatus() {
-		return this.loggedInStatus;
+	public ArrayList<Account> getAccounts() {
+		return accounts;
 	}
-
+	
+	public ArrayList<Account> getAccountsByType(String accountType) {
+		ArrayList<Account> accountsByType = new ArrayList<>();
+		for (Account a : accounts) {
+			if (a.getAccountType().equals(accountType)) {
+				accountsByType.add(a);
+			}
+		}
+		return accountsByType;
+	}
+	
+	
 	/**
 	 * @return a string of an account
 	 */
@@ -198,23 +209,6 @@ public class Customer {
 		return map;
 	}
 
-	/**
-	 * map of options for new account names
-	 * 
-	 * @return a map containing numbered Account Names
-	 */
-	public HashMap<String, String> newAcctTypes() {
-		HashMap<String, String> map = new HashMap<String, String>();
-		int i = 0;
-		for (String a : NewBank.validAcctList) {
-			if (!acctTypesToList().contains(a)) {
-				i++;
-				String key = Integer.toString(i);
-				map.put(key, a); // HashMap showing the available account types for new account creation
-			}
-		}
-		return map;
-	}
 
 	/**
 	 * @return a string of the new account options map

@@ -7,12 +7,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.*;
 import se2.groupb.server.customer.*;
+import se2.groupb.server.account.*;
 
 public class NewBankClientHandler extends Thread {
 
 	// statics
 
-	public static final String welcomeMessage = "\n" +
+	private static final String welcomeMessage = "\n" +
 			"====================================================\n" +
 			"||           *** WELCOME TO NEWBANK ***           ||\n" +
 			"====================================================\n" +
@@ -23,43 +24,60 @@ public class NewBankClientHandler extends Thread {
 			"|| and press enter                                ||\n" +
 			"====================================================\n" +
 			"\nEnter Selection:";
-	public static final int welcomeChoices = 2;
+	private static final int welcomeChoices = 2;
 
-	public static final String requestMenu = "\n" +
+	private static final String requestMenu = "\n" +
 			"====================================================\n" +
 			"||           *** NEWBANK MAIN MENU ***            ||\n" +
 			"====================================================\n" +
 			"|| Please select one of the following options:    ||\n" +
 			"||      1. View Accounts                          ||\n" +
-			"||      2. Create New Account                     ||\n" +
-			"||      3. Move Money                             ||\n" +
-			"||      4. Pay Person/Company                     ||\n" +
-			"||      5. Change Password                        ||\n" +
-			"||      6. Logout                                 ||\n" +
+			"||      2. Select Account to View Transactions    ||\n" +
+			"||      3. Create New Account                     ||\n" +
+			"||      4. Move Money                             ||\n" +
+			"||      5. Pay Person/Company                     ||\n" +
+			"||      6. Change Password                        ||\n" +
+			"||      7. Logout                                 ||\n" +
 			"|| Enter the number corresponding to your choice  ||\n" +
 			"|| and press enter                                ||\n" +
 			"====================================================\n" +
 			"\nEnter Selection:";
 
-	public static final int mainMenuChoices = 6;
+	private static final int mainMenuChoices = 7;
 
 	// fields
 
 	private NewBank bank;
-	public BufferedReader in;
-	public PrintWriter out;
-	public UserInput comms;
-
+	private final BufferedReader in;
+	private final PrintWriter out;
+	public final UserInput comms;
+	private CustomerController customerController;
+	private CustomerServiceImpl customerService;
+	private AccountServiceImpl accountService;
+	//private AccountController accountController;
+	
+	
 	// constructor
 
-	// TODO: #36 insert dependancies of vaious services
+	//each client has the same bank but different comms because of different sockets
+
 	public NewBankClientHandler(Socket s) throws IOException {
-		bank = NewBank.getBank();
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
-		comms = new UserInput(in, out);
+		comms = new UserInput(in,out);
+		bank = NewBank.getBank(); //static instance of the bank
+		// Initialise controllers
+		customerService = new CustomerServiceImpl(bank.getCustomers());
+		accountService = new AccountServiceImpl(bank.getAccounts());
+		customerController = new CustomerController(customerService,accountService,comms);
+		//accountController = new AccountController(accountService,comms);
 	}
-
+	
+	public CustomerController getCustomerController() {
+		return customerController;
+	}
+	
+	
 	public void run() {
 		// keep getting requests from the client and processing them
 		// The User is not logged into the system yet so CustomerID is null
@@ -75,17 +93,20 @@ public class NewBankClientHandler extends Thread {
 
 					// Processes the user's response: 1=LOGIN or 2=REGISTER
 					if (request.equals("1")) {
-						customerID = userLogIn();
+						customerID = getCustomerController().userLogin();
 					} else {
 						// customerID = userRegistration();
 					}
 				} else {
 					request = comms.getUserMenuChoice(requestMenu, mainMenuChoices);
-					System.out.println("Request from: " + customerID.toString());
+					String systemMessage = "Request from: " + getCustomerController().getCustomer(customerID);
+					comms.printSystemMessage(systemMessage);
 					response = processRequest(customerID, request);
-					out.println(response);
-					String strCustomerID = customerID.toString();
-					if (bank.getCustomers().get(strCustomerID).getloggedInStatus() == false) {
+
+					comms.printSystemMessage(response);
+					String strCustomerID =customerID.toString();
+					if (bank.getCustomers().get(strCustomerID).getloggedInStatus()==false) {
+
 						customerID = null;
 					}
 				}
@@ -103,28 +124,7 @@ public class NewBankClientHandler extends Thread {
 		}
 	}
 
-	// Login for existing customers
-	public UUID userLogIn() throws IOException {
 
-		CustomerController customerController = bank.getCustomerController();
-		String username = comms.getUserString("Enter Username");
-		String password = comms.getUserString("Enter Password");
-		CustomerDTO customerDto = new CustomerDTO(username, password);
-
-		comms.printSystemMessage("Please wait while we check your details");
-		UUID customerID = customerController.checkLogInDetails(customerDto);
-
-		// Validate login details
-		if (customerID == null) {
-			out.println("Log In Failed. Invalid Credentials, please try again.");
-		} else {
-
-			// login user
-			customerController.login(customerID);
-			out.println("Log In Successful. What do you want to do?");
-		}
-		return customerID;
-	}
 
 	/*
 	 * // Registration for new customers
@@ -159,9 +159,10 @@ public class NewBankClientHandler extends Thread {
 
 	public synchronized String processRequest(UUID customerID, String request) throws IOException {
 
-		// I don't think we need this check, only a customer that has logged in and has
-		// a valid customer ID
-		// can action a request
+		
+		//I don't think we need this check, only a customer that has logged in and has a valid customer ID 
+		//can action a request
+		if (customerID==null) return "FAIL";
 
 		/*
 		 * HashMap<String, Customer> customers = bank.getCustomers();
@@ -179,32 +180,33 @@ public class NewBankClientHandler extends Thread {
 		switch (request) {
 			case "1":
 			case "SHOWMYACCOUNTS":
-				return showMyAccounts(customerID);
+				return getCustomerController().displayAccounts(customerID);
 			case "2":
-			case "NEWACCOUNT":
-				// return createAccountEnhancement(customerID);
+				return "Select account to show Transactions";
 			case "3":
+			case "NEWACCOUNT":
+				return getCustomerController().createAccount(customerID);
+			/*
+			case "4":
 			case "MOVE":
 				// return moveMoneyEnhancement(customerID);
-				/*
-				 * case "4":
-				 * case "PAY":
-				 * return transferMoney(customerID, requestInputs);
-				 * case "5":
-				 * case "CHANGEMYPASSWORD":
-				 * return changePassword(customerID,requestInputs);
-				 */
-			case "6":
+			/*
+			 * case "5":
+			 * case "PAY":
+			 * return transferMoney(customerID, requestInputs);
+			 * case "6":
+			 * case "CHANGEMYPASSWORD":
+			 * return changePassword(customerID,requestInputs);
+			*/
+			case "7":
 			case "LOGOUT":
-				// return logOut(customerID);
+				return getCustomerController().userLogout(customerID);
 			default:
 				return "FAIL";
 		}
 	}
 
-	public String showMyAccounts(UUID customerID) {
-		return bank.getCustomerController().displayAccounts(customerID);
-	}
+
 
 	/*
 	 * 
@@ -310,13 +312,5 @@ public class NewBankClientHandler extends Thread {
 	 * }
 	 */
 
-	/*
-	 * 
-	 * public String logOut(CustomerID customerID) {
-	 * bank.getCustomers().get(customerID.getKey()).setloggedInStatus(false);
-	 * return "LOG OUT SUCCESSFUL";
-	 * 
-	 * }
-	 */
-
+	
 }

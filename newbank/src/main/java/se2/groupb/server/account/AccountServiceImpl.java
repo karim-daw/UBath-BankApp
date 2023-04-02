@@ -1,45 +1,128 @@
 package se2.groupb.server.account;
 
-import java.math.BigDecimal;
 import java.util.*;
-
-import se2.groupb.server.customer.Customer;
-import se2.groupb.server.customer.CustomerDTO;
-import se2.groupb.server.repository.AccountRepository;
-import se2.groupb.server.repository.CustomerRepository;
+//import se2.groupb.server.repository.AccountRepository;
+//import se2.groupb.server.repository.CustomerRepository;
 
 public class AccountServiceImpl implements AccountService {
     /*
-     * private final AccountRepository accountRepository;
-     * private final CustomerRepository customerRepository;
-     * public AccountServiceImpl(AccountRepository accountRepository,
-     * CustomerRepository customerRepository) {
-     * this.accountRepository = accountRepository;
-     * this.customerRepository = customerRepository;
-     * }
-     */
 
-    private UUID CustomerID;
-    private HashMap<String, Account> theAccounts;
-    private CustomerRepository customerRepository;
-
-    public AccountServiceImpl(UUID CustomerID) {
-        Customer customer = customerRepository.findByCustomerID(CustomerID);
-        this.theAccounts = customer.getAccounts(); // temp account repository for the current customer
-
+    private final AccountRepository accountRepository;
+    private final CustomerRepository customerRepository;
+    public AccountServiceImpl(AccountRepository accountRepository, CustomerRepository customerRepository) {
+        this.accountRepository = accountRepository;
+        this.customerRepository = customerRepository;
     }
-
-    @Override
-    public boolean createAccount(CustomerDTO customer, String accountType, String accountName) {
-        // Generate an account id.
-        Account newAccount = new Account(customer.getCustomerID(), accountType, accountName);
-
-        theAccounts.put(newAccount.getAccountID(), newAccount);
-
-        return newAccount;
+    */
+	
+	//attributes
+	private HashMap<String, Account> theAccounts;
+	//private HashMap<String, Customer> theCustomers;
+	
+	//Constructor
+    public AccountServiceImpl(HashMap<String,Account> accounts) {
+    	//this.theCustomers = customers;
+        this.theAccounts = accounts;
     }
+    
+    //methods
+    
+    //get a list of Account objects by Customer ID
+    public ArrayList<Account> getAccounts(UUID customerID) {
+    	ArrayList<Account> l = new ArrayList<>();
+    	for (HashMap.Entry<String, Account> record : theAccounts.entrySet()) {
+    		UUID recordCustomerID = record.getValue().getCustomerID();
+    		if (recordCustomerID.equals(customerID)){
+    			l.add(record.getValue());
+    		}
+    	}
+		return l;
+	}
+    
+    //get a list of Account objects by Customer ID and Account Type
+    public ArrayList<Account> getAccountsByType(UUID customerID, String accountType) {
+    	ArrayList<Account> l = new ArrayList<>();
+    	for (Account a : getAccounts(customerID)) {
+    		if (a.getAccountType().equals(accountType)) {
+    			l.add(a);
+    		}
+    	}
+    	return l;
+	}
+
 
     /**
+	 * checks if the desired account name already exists in the customers list of
+	 * accounts by type
+	 * 
+	 * @param customerID
+	 * @param accountType
+	 * @param accountName
+	 * @return true false if account name exists in customers accounts of the specified type
+	 */
+    public boolean hasAccount(UUID customerID, String accountType, String accountName) {
+    	for (Account a : getAccountsByType(customerID,accountType)) {
+    		if (a.getAccountName().equals(accountName)) {
+    			return true;
+    		}
+    	}
+    	return false;
+	}
+    
+    
+    //get the number of accounts of a specific Account Type for the Customer ID
+    public Integer noAccountsByType(UUID customerID, String accountType) {
+    	return getAccountsByType(customerID,accountType).size();
+    }
+
+    
+    public HashMap<String,Boolean> maxAccountsReached(UUID customerID){
+    	HashMap<String, Boolean> map = new HashMap<>();
+    	
+    	for (HashMap.Entry<String, Integer> acctType : accountTypeLimits.entrySet()) {
+    		String accountType = acctType.getKey(); //the account type
+    		Integer limit = acctType.getValue(); //the max number of accounts allowed
+    		if (noAccountsByType(customerID,accountType)==limit) {
+    			map.put(accountType,true);
+    		}
+    		else {
+    			map.put(accountType,false);
+    		}
+    	}
+    	return map;
+    }
+	
+	public HashMap<String, String> newAccountAvailableTypes(UUID customerID) {
+		HashMap<String, String> map = new HashMap<>();
+		int i = 0;
+		
+		for (HashMap.Entry<String, Boolean> acctType : maxAccountsReached(customerID).entrySet()) {
+			String accountType = acctType.getKey();
+			Boolean maxReached = acctType.getValue();
+			if (!maxReached) {
+				i++;
+				String key = Integer.toString(i);
+				map.put(key, accountType); // HashMap showing the available account types for new account creation
+			}
+		}
+		return map;
+	}
+    
+	/*
+	public ArrayList<String> getAccountNamesByType(UUID customerID,String accountType) {
+		ArrayList<String> accountNames = new ArrayList<>();
+		
+		for (Account a : accounts) {
+			if (a.getAccountType().equals(accountType)) {
+				accountsByType.add(a);
+			}
+		}
+		return accountNames;
+	}
+	*/
+	
+	/**
+
      * Creates a new account for a given customer
      * NEWACCOUNT <Name>
      * e.g. NEWACCOUNT Savings
@@ -49,95 +132,62 @@ public class AccountServiceImpl implements AccountService {
      * @param openingBalance
      * @return Returns SUCCESS or FAIL
      */
-    @Override
-    public boolean createAccount(CustomerDTO customer, String accountType, String accountName,
-            BigDecimal accountBalance,
-            BigDecimal overdraftLimit) {
-        // Generate an account id.
-        AccountDTO newAccount = new Account(aCustomerId, myAccountId, anAccountName, aBalance);
 
-        theAccounts.put(accountID, newAccount);
+    public Account createAccount(UUID customerID, AccountDTO accountDto) {
+        Account newAccount = new Account(customerID, accountDto.getAccountType(), accountDto.getAccountName(),
+        		accountDto.getOpeningBalance());
+        theAccounts.put(newAccount.getAccountID().toString(), newAccount);
 
         return newAccount;
     }
-
+    
+    
     /*
-     * @Override
-     * public boolean credit(UUID accountID, double amount) {
-     * 
-     * // get the Account from db using id
-     * // create new transaction with amount
-     * //
-     * return false;
-     * }
-     * 
-     * @Override
-     * public boolean debit(UUID accountID, double amount) {
-     * return false;
-     * }
-     * 
-     * @Override
-     * public String createAccount(CustomerDTO customerDTO, String[] requestInputs)
-     * {
-     * 
-     * double openingBalance = 0.0;
-     * // validate inputs
-     * int inputLength = requestInputs.length;
-     * if (inputLength < 2) {
-     * return "FAIL: Account type not specified";
-     * }
-     * 
-     * String accountType = requestInputs[1];
-     * if (!accountType.equals(main) && !accountType.equals(checking) &&
-     * !accountType.equals(savings)) {
-     * return "FAIL: Account type not recognised";
-     * } else {
-     * Customer customer =
-     * customerRepository.findByCustomerID(customerDTO.getCustomerID());
-     * 
-     * // check if accounts exists if not, create a new account
-     * if (customer.hasAccount(accountType) == false) {
-     * Account newAccount = new Account(accountType, openingBalance);
-     * customer.addAccount(newAccount);
-     * 
-     * // print success message
-     * return "SUCCESS: Your " + accountType + " account has been created.";
-     * } else {
-     * return "FAIL: You already have a " + accountType + " account.";
-     * }
-     * }
-     * }
-     * 
-     * 
-     * //x.compareTo(y): returns 0 if x and y are equal, 1 if x is greater than y
-     * and -1 if x is smaller than y
-     * public boolean exceedsOverdraft() {
-     * if ((getBalance().compareTo(BigDecimal.ZERO)<0) &&
-     * (getBalance().abs().compareTo(this.overdraftLimit)>0)){
-     * return true;
-     * }
-     * else {
-     * return false;
-     * }
-     * }
-     */
 
-    /**
-     * checks if a deduction would result in the account exceeding pre-arranged
-     * overdraft
-     * 
-     * @param account
-     * @param deduction
-     * @return true or false if overdraft
-     */
+    @Override
+    public boolean credit(UUID accountID, double amount) {
+
+        // get the Account from db using id
+        // create new transaction with amount
+        //
+        return false;
+    }
+    */
+    
     /*
-     * public boolean exceedsOverdraft(BigDecimal deduction) {
-     * BigDecimal availableBalance = this.openingBalance.add(this.overdraftLimit);
-     * 
-     * if (availableBalance.compareTo(deduction) < 0) {
-     * return true;
-     * }
-     * return false;
-     * }
-     */
+    @Override
+    public boolean debit(UUID accountID, double amount) {
+        return false;
+    }
+	*/
+    
+    /*
+  	public boolean exceedsOverdraft() {
+  		if ((getBalance().compareTo(BigDecimal.ZERO)<0) && (getBalance().abs().compareTo(this.overdraftLimit)>0)){
+  			return true;
+  		}
+  		else {
+  			return false;
+  		}
+  	}
+  	*/
+    
+  	/**
+	 * checks if a deduction would result in the account exceeding pre-arranged overdraft
+	 * 
+	 * @param account
+	 * @param deduction
+	 * @return true or false if overdraft
+	 */
+	/*
+	public boolean exceedsOverdraft(BigDecimal deduction) {
+		BigDecimal availableBalance = this.openingBalance.add(this.overdraftLimit);
+		
+		if (availableBalance.compareTo(deduction) < 0) {
+			return true;
+		}
+		return false;
+	}
+	*/ 
+
 }

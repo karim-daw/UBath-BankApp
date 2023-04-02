@@ -20,62 +20,68 @@ public class CustomerServiceImpl implements CustomerService {
     // Temp HashMap Customer Repo
     private final HashMap<String, Customer> theCustomers;
 
-    // Temp constructor using HashMap as Customer Repo
-    public CustomerServiceImpl(HashMap<String, Customer> customers) {
+    //private final HashMap<String, Account> theAccounts;
+    //Temp constructor using HashMap as Customer Repo
+    public CustomerServiceImpl(HashMap<String,Customer> customers) {
         this.theCustomers = customers;
     }
+    
+    public UUID userLogin(CustomerDTO customerDto) {
+		//CustomerService checks HashMap if they have a customer with the entered username & password
+		//If they do then provide the UUID else return null
+    	String username = customerDto.getUsername();
+    	String password = customerDto.getPassword();
+    	UUID customerID = null;
+    	for (HashMap.Entry<String, Customer> item : theCustomers.entrySet()) {
+    		String item_username = item.getValue().getUsername();
+    		String item_password = item.getValue().getPassword();
+    		if ((item_username.equals(username)) && (item_password.equals(password))) {
+    			item.getValue().setloggedInStatus(true);
+    			customerID =item.getValue().getCustomerID();
+    			break;
+    		}
+		}
+    	return customerID;
+    }
+    
+    //returns the Customer object corresponding to the CustomerID provided
+    public Customer getCustomer(UUID customerID) {
+    	Customer customer = null;
+    	for (HashMap.Entry<String, Customer> cust : theCustomers.entrySet()) {
+    		UUID custID = cust.getValue().getCustomerID();
+    		if (custID.equals(customerID)){
+    			customer = cust.getValue();
+    		}
+    	}
+    	return customer;
+    }
+    
+    /**
+     * displays accounts as a list
+     * 
+     * @param customer
+     * @return
+     */
 
-    public UUID findCustomer(CustomerDTO customerDto) {
-        // CustomerService checks HashMap if they have a customer with the entered
-        // username & password
-        // If they do then provide the UUID else return null
-        String username = customerDto.getUsername();
-        // System.out.println(username);
-        String password = customerDto.getPassword();
-        // System.out.println(password);
-
-        UUID customerID = null;
-        for (HashMap.Entry<String, Customer> item : theCustomers.entrySet()) {
-            String item_username = item.getValue().getUsername();
-            // System.out.println(item_username);
-            String item_password = item.getValue().getPassword();
-            // System.out.println(item_password);
-            if ((item_username.equals(username)) && (item_password.equals(password))) {
-                // System.out.println("The customer ID is: " +
-                // item.getValue().getCustomerID().toString());
-                // item.getValue().setloggedInStatus(true); /// why are we logging in the user
-                // here
-                customerID = item.getValue().getCustomerID();
-                break;
-            }
+    @Override
+    public String displayAccounts(UUID customerID){
+        //Customer customer = this.customerRepository.findByCustomerID(customerID); 
+        Customer customer = theCustomers.get(customerID.toString()); //temp repo
+        if (customer.accountsToList().isEmpty()) {
+        	return "You have no accounts to display." ;
         }
-        return customerID;
+        else {
+        	return customer.accountsToString();
+        } 
+    } 
+    
+    
+    public void userLogout(UUID customerID) {
+    	Customer customer = theCustomers.get(customerID.toString());
+    	customer.setloggedInStatus(false);
+    	customerID = null;
     }
-
-    // /**
-    // * method that checks if customer is logged
-    // *
-    // * @param customerID
-    // * @return boolean
-    // */
-    // public boolean isLoggedIn(UUID customerID) {
-    // Customer customer = theCustomers.get(customerID.toString());
-    // return customer.getloggedInStatus();
-    // }
-
-    @Override
-    public boolean loginCustomer(UUID customerID) {
-        Customer customer = theCustomers.get(customerID.toString());
-        customer.setloggedInStatus(true);
-        return customer.getloggedInStatus();
-    }
-
-    @Override
-    public boolean logoutCustomer(UUID customerID) {
-        Customer customer = theCustomers.get(customerID.toString());
-        customer.setloggedInStatus(false);
-        return customer.getloggedInStatus();
-    }
+    
 
     /**
      * method that changes the password
@@ -121,22 +127,10 @@ public class CustomerServiceImpl implements CustomerService {
             return "SUCCESS new password is: " + customer.getPassword();
         }
     }
+    
+    
+    //printing out the Customer HashMap for checking
 
-    /**
-     * displays accounts as a list
-     * 
-     * @param customer
-     * @return
-     */
-
-    @Override
-    public String displayAccountsAsString(UUID customerID) {
-        // Customer customer = this.customerRepository.findByCustomerID(customerID);
-        Customer customer = theCustomers.get(customerID.toString()); // temp repo
-        return customer.accountsToString();
-    }
-
-    // printing out the Customer HashMap for checking
     public String toString() {
         String s = "";
         for (HashMap.Entry<String, Customer> item : theCustomers.entrySet()) {

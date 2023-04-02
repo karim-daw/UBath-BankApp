@@ -5,32 +5,29 @@ import java.util.UUID;
 
 //Subset of Domain for data transfer between layers
 public class AccountDTO {
-    private UUID accountID;
-    private int accountNumber;
-    private BigDecimal balance;
-    private String accountType;
 
-    public AccountDTO(UUID accountID, int accountNumber, BigDecimal balance, String accountType) {
-        this.accountID = accountID;
-        this.accountNumber = accountNumber;
-        this.balance = balance;
-        this.accountType = accountType;
+	private String accountType;
+	private String accountName;
+	private BigDecimal openingBalance;
+    
+	//Constructor
+    public AccountDTO(String accountType, String accountName, BigDecimal openingBalance) {
+    	this.accountType = accountType;
+        this.accountName= accountName;
+        this.openingBalance = openingBalance;
+
     }
-
-    public UUID getAccountId() {
-        return accountID;
-    }
-
-    public int getAccountNumber() {
-        return accountNumber;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
+    
+    
     public String getAccountType() {
         return accountType;
     }
-
+    
+    public String getAccountName() {
+        return accountName;
+    }
+    
+    public BigDecimal getOpeningBalance() {
+        return openingBalance;
+    }
 }
