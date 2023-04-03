@@ -9,23 +9,24 @@ public class UserInput {
 
 	private final BufferedReader in;
 	private final PrintWriter out;
-	//public static final UserInput userInput = new UserInput(in,out);
-	
+	// public static final UserInput userInput = new UserInput(in,out);
+
 	// constructor
 	public UserInput(BufferedReader in, PrintWriter out) throws IOException {
 		this.in = in;
 		this.out = out;
 	}
-	
+
 	public void printSystemMessage(String message) {
 		out.println(message);
 	}
-	
+
 	/**
 	 * reads next line from BufferedReader
+	 * 
 	 * @return
 	 */
-	public String readNextLine() {
+	private String readNextLine() {
 		try {
 			return in.readLine(); // could be null if user didn't enter anything
 		} catch (IOException e) {
@@ -49,7 +50,7 @@ public class UserInput {
 		} while (userInput == null);
 		return userInput;
 	}
-	
+
 	/**
 	 * gets user's choice from a numbered menu
 	 * 
@@ -71,7 +72,7 @@ public class UserInput {
 		}
 		return selection;
 	}
-	
+
 	/**
 	 * converts user input string to integer (used for Menu choices)
 	 * 
@@ -87,7 +88,10 @@ public class UserInput {
 			return -1;
 		}
 	}
-	
+
+	// TODO: need to add interaction for when user wants to transfer money to
+	// another person
+
 	/**
 	 * converts double to BigDecimal
 	 * 
@@ -100,7 +104,7 @@ public class UserInput {
 		}
 		return new BigDecimal(Double.toString(d));
 	}
-	
+
 	/**
 	 * 
 	 * @param prompt
@@ -121,13 +125,13 @@ public class UserInput {
 			}
 		}
 	}
-	
+
 	/*
-	// Gets user's input amount for new account balance
-	public BigDecimal getOpeningBalance(String prompt) {
-		return getAmount(prompt, new BigDecimal(Double.toString(Double.MAX_VALUE)));
-	*/
-	
+	 * // Gets user's input amount for new account balance
+	 * public BigDecimal getOpeningBalance(String prompt) {
+	 * return getAmount(prompt, new BigDecimal(Double.toString(Double.MAX_VALUE)));
+	 */
+
 	// TODO: this needs to return a BigDecimal
 	public BigDecimal getOpeningBalance(String prompt) {
 		double openingBalance = getAmount(prompt, Double.MAX_VALUE);
@@ -135,9 +139,9 @@ public class UserInput {
 		return convertedOpeningBalance;
 	}
 
-
 	/**
 	 * gets user's confirmation: 'y' or cancels by entering 'n'
+	 * 
 	 * @param prompt
 	 * @return
 	 */
