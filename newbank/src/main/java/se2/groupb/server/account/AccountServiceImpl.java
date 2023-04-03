@@ -4,32 +4,21 @@ package se2.groupb.server.account;
 //import se2.groupb.server.repository.CustomerRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import se2.groupb.server.repository.AccountRepositoryImpl;
 
 public class AccountServiceImpl implements AccountService {
-	/*
-	 * 
-	 * private final AccountRepository accountRepository;
-	 * private final CustomerRepository customerRepository;
-	 * public AccountServiceImpl(AccountRepository accountRepository,
-	 * CustomerRepository customerRepository) {
-	 * this.accountRepository = accountRepository;
-	 * this.customerRepository = customerRepository;
-	 * }
-	 */
-
-	// attributes
-	// private HashMap<String, Account> theAccounts;
-	// private HashMap<String, Customer> theCustomers;
 
 	private final AccountRepositoryImpl accountRepository;
+	Map<String, Integer> accountTypeLimits = Account.accountTypeLimits;
 
 	// Constructor
 	public AccountServiceImpl(AccountRepositoryImpl accountRepository) {
 		// this.theCustomers = customers;
 		this.accountRepository = accountRepository;
+
 	}
 
 	// methods
@@ -67,7 +56,8 @@ public class AccountServiceImpl implements AccountService {
 	 *         specified type
 	 */
 	public boolean hasAccount(UUID customerID, String accountType, String accountName) {
-		for (Account a : getAccountsByType(customerID, accountType)) {
+		ArrayList<Account> accountList = accountRepository.findAccountsByType(customerID, accountType);
+		for (Account a : accountList) {
 			if (a.getAccountName().equals(accountName)) {
 				return true;
 			}
@@ -82,7 +72,8 @@ public class AccountServiceImpl implements AccountService {
 	 * @return
 	 */
 	public Integer noAccountsByType(UUID customerID, String accountType) {
-		return getAccountsByType(customerID, accountType).size();
+		ArrayList<Account> accountList = accountRepository.findAccountsByType(customerID, accountType);
+		return accountList.size();
 	}
 
 	/**
@@ -99,6 +90,8 @@ public class AccountServiceImpl implements AccountService {
 
 		// Create a new HashMap to hold the results.
 		HashMap<String, Boolean> accountStatuses = new HashMap<>();
+
+		// get availble accoun type limits
 
 		// Loop through each account type and its associated limit.
 		for (HashMap.Entry<String, Integer> accountTypeLimit : accountTypeLimits.entrySet()) {
