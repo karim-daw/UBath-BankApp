@@ -31,7 +31,7 @@ public class Account {
 	private String accountName; // editable by the customer
 	private final String accountNumber;
 	private static final String accountBIC = NewBank.BIC;
-	private BigDecimal openingBalance;
+	private BigDecimal currentBalance;
 	private BigDecimal overdraftLimit;
 
 	private ArrayList<Transaction> transactions;
@@ -45,19 +45,19 @@ public class Account {
 		this.accountType = accountType;
 		this.accountName = accountName;
 		this.accountNumber = accountNumberGenerator();
-		this.openingBalance = BigDecimal.ZERO;
+		this.currentBalance = BigDecimal.ZERO;
 		this.overdraftLimit = getOverdraftLimit();
 		transactions = new ArrayList<>();
 	}
 
 	// Constructor method for new Account object
-	public Account(UUID customerID, String accountType, String accountName, BigDecimal openingBalance) {
+	public Account(UUID customerID, String accountType, String accountName, BigDecimal currentBalance) {
 		this.accountID = UUID.randomUUID();
 		this.customerID = customerID;
 		this.accountType = accountType;
 		this.accountName = accountName;
 		this.accountNumber = accountNumberGenerator();
-		this.openingBalance = openingBalance;
+		this.currentBalance = currentBalance;
 		this.overdraftLimit = getDefaultOverdraftLimit();
 		transactions = new ArrayList<>();
 	}
@@ -105,10 +105,26 @@ public class Account {
 		}
 	}
 
-	public void deposit(double amount) {
-		BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
-		BigDecimal newBalance = openingBalance.add(amountAsBigDecimal);
-		openingBalance = newBalance;
+	/**
+	 * add amount to account
+	 * 
+	 * @param amount
+	 */
+	public void deposit(BigDecimal amount) {
+		// BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
+		BigDecimal newBalance = currentBalance.add(amount);
+		currentBalance = newBalance;
+	}
+
+	/**
+	 * withdraw amount from account
+	 * 
+	 * @param amount
+	 */
+	public void withdraw(BigDecimal amount) {
+		// BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
+		BigDecimal newBalance = currentBalance.subtract(amount);
+		currentBalance = newBalance;
 	}
 
 	public String getAccountType() {
@@ -142,7 +158,6 @@ public class Account {
 	 */
 	public void addTransaction(Transaction transaction) {
 		transactions.add(transaction);
-
 	}
 
 	/**
@@ -173,6 +188,7 @@ public class Account {
 	}
 
 	// overrides default toString() method for Account objects
+	@Override
 	public String toString() {
 		// rounding balance down to 2 decimals
 		BigDecimal balance = openingBalance.setScale(2, RoundingMode.FLOOR);
