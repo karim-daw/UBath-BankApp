@@ -17,6 +17,12 @@ public interface CustomerService {
     Customer getCustomerbyDTO(CustomerDTO customerDTO);
 
     /**
+     * @param customerDTO
+     * @return
+     */
+    Customer getCustomerbyName(String customerName);
+
+    /**
      * 
      * @param customerDTO
      * @return

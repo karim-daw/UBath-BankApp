@@ -39,6 +39,11 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findByDTO(customerDto);
     }
 
+    @Override
+    public Customer getCustomerbyName(String customerUsername) {
+        return customerRepository.findByName(customerUsername);
+    }
+
     /**
      * Returns true if duplicate username found in Customer Data Store
      * 
