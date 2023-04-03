@@ -42,9 +42,10 @@ public class CustomerServiceImpl implements CustomerService {
     /**
      * Returns true if duplicate username found in Customer Data Store
      * 
-     * @param customerDto
+     * @param username
      * @return boolean
      */
+    @Override
     public boolean duplicateUsername(String username) {
         return customerRepository.duplicateUsername(username);
     }
@@ -69,8 +70,9 @@ public class CustomerServiceImpl implements CustomerService {
      * @param customer
      * @return
      */
-
-    public String displayAccounts(Customer customer) {
+    @Override
+    public String displayAccounts(UUID customerID) {
+        Customer customer = customerRepository.findByID(customerID);
         if (customer.accountsToList().isEmpty()) {
             return "You have no accounts to display.";
         } else {
@@ -78,7 +80,9 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-    public void userLogout(Customer customer) {
+    @Override
+    public void userLogout(UUID customerID) {
+        Customer customer = customerRepository.findByID(customerID);
         customer.setloggedInStatus(false);
         customer = null;
     }
@@ -124,4 +128,5 @@ public class CustomerServiceImpl implements CustomerService {
             return "SUCCESS new password is: " + customer.getPassword();
         }
     }
+
 }
