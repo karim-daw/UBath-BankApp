@@ -30,6 +30,13 @@ public interface AccountService {
      */
     Account createAccount(UUID customerID, AccountDTO accountDto);
 
+    /*
+     * a method that is responsibal for transfering money between two accounts for
+     * the same customer
+     * 
+     * 
+     */
+
     /**
      * 
      * 
