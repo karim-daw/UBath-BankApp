@@ -22,4 +22,10 @@ public class TransactionRepositoryImpl implements EntityRepository {
         return false;
     }
 
+    @Override
+    public Object findByName(String entityName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
