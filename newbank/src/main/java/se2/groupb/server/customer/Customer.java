@@ -25,7 +25,7 @@ public class Customer {
 		this.loggedInStatus = false;
 		accounts = new ArrayList<>();
 	}
-	
+
 	// constructor 2
 	public Customer(CustomerDTO customerDto) {
 		this.customerID = UUID.randomUUID();
@@ -34,7 +34,7 @@ public class Customer {
 		this.loggedInStatus = false;
 		accounts = new ArrayList<>();
 	}
-	
+
 	// methods
 
 	// customer id
