@@ -8,53 +8,53 @@ public interface CustomerService {
      * @param customerID
      * @return
      */
-	Customer getCustomerByID(UUID customerID);
+    Customer getCustomerByID(UUID customerID);
 
     /**
-     * @param customerDto
+     * @param customerDTO
      * @return
      */
-	Customer getCustomerbyDTO(CustomerDTO customerDto);
-	
-	/**
-	 * Returns true if duplicate username found in Customer Data Store
-	 * @param username
-	 * @return boolean
-	 */
-	boolean duplicateUsername(String username);
-	
-	/**
-	 * 
-	 * @param customer
-	 * @return
-	 */
-	boolean addNewCustomer(CustomerDTO customerDto);
-	
+    Customer getCustomerbyDTO(CustomerDTO customerDTO);
+
     /**
-     * @param customer
+     * 
+     * @param customerDTO
+     * @return
      */
-    public void userLogout(Customer customer);
+    boolean addNewCustomer(CustomerDTO customerDTO);
+
+    /**
+     * @param customerID
+     */
+    public void userLogout(UUID customerID);
 
     /**
      * returns a string representation in the form of a list of accounts and prints
      * them
      * 
-     * @param customerDTO
+     * @param customerID
      * @return
      */
-    public String displayAccounts(Customer customer);
+    public String displayAccounts(UUID customerID);
+
+    /**
+     * Returns true if duplicate username found in Customer Data Store
+     * 
+     * @param username
+     * @return boolean
+     */
+    public boolean duplicateUsername(String username);
 
     /**
      * method that changes the password
      * old password need to be enter
      * then a new password, twice
      * 
-     * @param customer
+     * @param customerID
      * @param requestInputs
      * @return
      */
 
     public String changePassword(UUID customerID, String[] requestInputs);
-
 
 }
