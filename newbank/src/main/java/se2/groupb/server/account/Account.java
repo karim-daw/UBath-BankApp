@@ -3,15 +3,28 @@ package se2.groupb.server.account;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import java.nio.ByteBuffer;
+
 import se2.groupb.server.NewBank;
 import se2.groupb.server.transaction.Transaction; //needed for displaying the transactions
 
 //Account Domain
 public class Account {
+
+	public static final List<String> validAccountTypes = Collections
+			.unmodifiableList(Arrays.asList("Current", "Savings"));
+
+	public static final Map<String, Integer> accountTypeLimits = Map.of("Current", 3, "Savings", 2);
+
+	public static final Map<String, BigDecimal> defaultOverdraftLimits = Map.of("Current", BigDecimal.valueOf(200),
+			"Savings", BigDecimal.ZERO);
+
 	private final UUID accountID;
 	private final UUID customerID;
 	private final String accountType;
