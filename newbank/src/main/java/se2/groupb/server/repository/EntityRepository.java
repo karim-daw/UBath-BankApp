@@ -22,6 +22,12 @@ public interface EntityRepository<Entity, EntityDTO> {
     public Entity findByDTO(EntityDTO entityDTO);
 
     /**
+     * @param customerDto
+     * @return
+     */
+    public Entity findByName(String entityName);
+
+    /**
      * saves customer into database
      * 
      * @return
