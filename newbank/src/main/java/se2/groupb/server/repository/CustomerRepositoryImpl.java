@@ -5,9 +5,6 @@ import java.util.UUID;
 
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerDTO;
-//import se2.groupb.server.customer.CustomerService;
-
-// TODO: see if we can add the dummy data for the customer here
 
 public class CustomerRepositoryImpl implements EntityRepository<Customer, CustomerDTO> {
 
@@ -60,6 +57,41 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
     }
 
     /**
+     * Searches the Customer Data Store by Username & Password
+     * 
+     * @param customerDto
+     * @return customer from database
+     */
+    @Override
+    public Customer findByName(String target_username) {
+        Customer customer = null;
+
+        for (HashMap.Entry<String, Customer> cust : theCustomers.entrySet()) {
+            String cust_username = cust.getValue().getUsername();
+            if ((cust_username.equals(target_username))) {
+                customer = cust.getValue();
+                break;
+            }
+        }
+        return customer;
+    }
+
+    /**
+     * saves new customer into database
+     * 
+     * @param customer
+     * @return
+     */
+    @Override
+    public boolean save(Customer newCustomer) {
+        if (findByID(newCustomer.getCustomerID()) == null) {
+            theCustomers.put(newCustomer.getCustomerID().toString(), newCustomer);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Searches if the Username is already taken
      * 
      * @param username
@@ -71,20 +103,6 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
             if (cust_username.equals(username)) {
                 return true;
             }
-        }
-        return false;
-    }
-
-    /**
-     * saves new customer into database
-     * 
-     * @param customer
-     * @return
-     */
-    public boolean save(Customer newCustomer) {
-        if (findByID(newCustomer.getCustomerID()) == null) {
-            theCustomers.put(newCustomer.getCustomerID().toString(), newCustomer);
-            return true;
         }
         return false;
     }
