@@ -179,24 +179,19 @@ public class Customer {
 	 * 
 	 * @return a map containing numbered Accounts & Balances
 	 */
-	/*
-	 * public HashMap<String,String> sourceAcctsMap(){
-	 * HashMap<String,String> map = new HashMap<String,String>();
-	 * int i=0;
-	 * 
-	 * public HashMap<String, String> sourceAcctsMap() {
-	 * HashMap<String, String> map = new HashMap<String, String>();
-	 * int i = 0;
-	 * for (Account a : accounts) {
-	 * if (!(a.isOverDrawn())) {
-	 * i++;
-	 * String key = Integer.toString(i);
-	 * map.put(key, a.toString());
-	 * }
-	 * }
-	 * return map;
-	 * }
-	 */
+
+	public HashMap<String, String> sourceAcctsMap() {
+		HashMap<String, String> map = new HashMap<String, String>();
+		int i = 0;
+		for (Account a : accounts) {
+			if (!(a.isOverDrawn())) {
+				i++;
+				String key = Integer.toString(i);
+				map.put(key, a.toString());
+			}
+		}
+		return map;
+	}
 
 	/**
 	 * map of options for new account names
