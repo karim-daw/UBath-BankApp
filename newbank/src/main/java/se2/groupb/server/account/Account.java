@@ -148,7 +148,7 @@ public class Account {
 	}
 
 	public BigDecimal getBalance() {
-		return this.openingBalance;
+		return this.currentBalance;
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class Account {
 	@Override
 	public String toString() {
 		// rounding balance down to 2 decimals
-		BigDecimal balance = openingBalance.setScale(2, RoundingMode.FLOOR);
+		BigDecimal balance = currentBalance.setScale(2, RoundingMode.FLOOR);
 		int number = balance.toString().length(); // the number of characters in the balance
 
 		String displayAccount = "\n" + displayChars('=', 52) + "\n" + accountName + "(" + accountType + ")\n"
