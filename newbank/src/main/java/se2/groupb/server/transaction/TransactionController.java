@@ -94,23 +94,38 @@ public class TransactionController {
         }
     }
 
-    private String transferMoney(CustomerDTO customerDTO, String[] requestArray) {
+    /**
+     * 
+     * PAY <Person/Company> <Ammount>
+     * e.g. PAY John 100
+     * Returns SUCCESS or FAIL
+     * 
+     * @param customerID
+     * @return
+     */
+    public String transferMoney(UUID customerID) {
 
-        if (requestArray.length < 3) {
-            return "FAIL, incomplete PAY Request";
+        Customer customer = customerService.getCustomerByID(customerID);
+
+        int noOfSourceAccts = customer.sourceAcctsMap().size();
+
+        if (noOfSourceAccts < 1) {
+            return "You need atleast one non-overdrawn account.\nRequest denied.\nReturning to Main Menu.";
         }
 
         // Check if the customer exists in the hashmap.
-        String customerName = customerDTO.getUsername();
-        String payeeName = requestArray[1];
+        String customerName = customer.getUsername();
 
-        // TODO: #34 add access to database here to gett customer data
-        Customer customer = customers.get(customerName);
-        System.out.println(payeeName);
+        String prompt = "Enter NewBank member name you want to PAY money to\nEnter an amount: ";
+        String payeeName = comms.getUserString(prompt);
 
-        if (payeeName.equals(customerName)) {
-            return "FAIL, you are trying to pay yourself";
-        }
+        // System.out.println(payeeName);
+
+        // if (accountNumber.equals(customerName)) {
+        // return "FAIL, you are trying to pay yourself";
+        // }
+
+        Customer payee = customerService.getCustomerbyName(payeeName);
 
         if (!customers.containsKey(payeeName)) {
             return "FAIL, payee not a member of NewBank";
