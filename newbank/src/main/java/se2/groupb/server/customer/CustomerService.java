@@ -8,18 +8,32 @@ public interface CustomerService {
      * @param customerID
      * @return
      */
-    public Customer getCustomer(UUID customerID);
+	Customer getCustomerByID(UUID customerID);
 
     /**
      * @param customerDto
      * @return
      */
-    public UUID userLogin(CustomerDTO customerDto);
-
+	Customer getCustomerbyDTO(CustomerDTO customerDto);
+	
+	/**
+	 * Returns true if duplicate username found in Customer Data Store
+	 * @param username
+	 * @return boolean
+	 */
+	boolean duplicateUsername(String username);
+	
+	/**
+	 * 
+	 * @param customer
+	 * @return
+	 */
+	boolean addNewCustomer(CustomerDTO customerDto);
+	
     /**
-     * @param customerID
+     * @param customer
      */
-    public void userLogout(UUID customerID);
+    public void userLogout(Customer customer);
 
     /**
      * returns a string representation in the form of a list of accounts and prints
@@ -28,7 +42,7 @@ public interface CustomerService {
      * @param customerDTO
      * @return
      */
-    public String displayAccounts(UUID customerID);
+    public String displayAccounts(Customer customer);
 
     /**
      * method that changes the password
@@ -42,9 +56,5 @@ public interface CustomerService {
 
     public String changePassword(UUID customerID, String[] requestInputs);
 
-    /**
-     * @return
-     */
-    public String toString();
 
 }

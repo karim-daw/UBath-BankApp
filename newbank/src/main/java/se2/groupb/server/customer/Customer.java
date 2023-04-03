@@ -17,7 +17,7 @@ public class Customer {
 	private ArrayList<Account> accounts;
 	private boolean loggedInStatus;
 
-	// constructor
+	// constructor 1
 	public Customer(String username, String password) {
 		this.customerID = UUID.randomUUID();
 		this.username = username;
@@ -25,7 +25,16 @@ public class Customer {
 		this.loggedInStatus = false;
 		accounts = new ArrayList<>();
 	}
-
+	
+	// constructor 2
+	public Customer(CustomerDTO customerDto) {
+		this.customerID = UUID.randomUUID();
+		this.username = customerDto.getUsername();
+		this.password = customerDto.getPassword();
+		this.loggedInStatus = false;
+		accounts = new ArrayList<>();
+	}
+	
 	// methods
 
 	// customer id

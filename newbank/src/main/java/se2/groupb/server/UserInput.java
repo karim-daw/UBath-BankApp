@@ -20,7 +20,11 @@ public class UserInput {
 	public void printSystemMessage(String message) {
 		out.println(message);
 	}
-
+	
+	/**
+	 * reads next line from BufferedReader
+	 * @return
+	 */
 	public String readNextLine() {
 		try {
 			return in.readLine(); // could be null if user didn't enter anything
@@ -32,7 +36,7 @@ public class UserInput {
 	}
 
 	/**
-	 * forces user to enter an input (not null)
+	 * keeps prompting the user for input if they haven't entered any
 	 * 
 	 * @param prompt
 	 * @return
@@ -45,46 +49,7 @@ public class UserInput {
 		} while (userInput == null);
 		return userInput;
 	}
-
-	// converts user input string to integer (used for Menu choices)
-	public int convertStringToInt(String userInput) {
-		try {
-			int inputAsInt = Integer.parseInt(userInput);
-			return inputAsInt;
-		} catch (NumberFormatException e) {
-			printSystemMessage("Input isn't an integer.");
-			return -1;
-		}
-	}
 	
-	/*
-	// converts user input string to double (used for amounts)
-	public double convertStringToDouble(String userInput) {
-		try {
-			double inputAsDouble = Double.parseDouble(userInput);
-			return inputAsDouble;
-		} catch (NumberFormatException e) {
-			printSystemMessage("Input isn't a double.");
-			return -1;
-		}
-	}
-	
-	*/
-	
-	
-	/**
-	 * converts double to BigDecimal
-	 * 
-	 * @param d
-	 * @return BigInteger as a conversion from input as double
-	 */
-	public static BigDecimal doubleToBigDecimal(double d) {
-		if (Double.isNaN(d) || Double.isInfinite(d)) {
-			throw new IllegalArgumentException("Invalid input: " + d);
-		}
-		return new BigDecimal(Double.toString(d));
-	}
-
 	/**
 	 * gets user's choice from a numbered menu
 	 * 
@@ -106,17 +71,42 @@ public class UserInput {
 		}
 		return selection;
 	}
-
 	
-	/*
-	 * firstBigDecimal.compareTo(secondBigDecimal) < 0 // "<"
-		firstBigDecimal.compareTo(secondBigDecimal) > 0 // ">"    
-		firstBigDecimal.compareTo(secondBigDecimal) == 0 // "=="  
-		firstBigDecimal.compareTo(secondBigDecimal) >= 0 // ">="   
+	/**
+	 * converts user input string to integer (used for Menu choices)
+	 * 
+	 * @param userInput
+	 * @return
 	 */
+	public int convertStringToInt(String userInput) {
+		try {
+			int inputAsInt = Integer.parseInt(userInput);
+			return inputAsInt;
+		} catch (NumberFormatException e) {
+			printSystemMessage("Input isn't an integer.");
+			return -1;
+		}
+	}
 	
+	/**
+	 * converts double to BigDecimal
+	 * 
+	 * @param d
+	 * @return BigInteger as a conversion from input as double
+	 */
+	public static BigDecimal doubleToBigDecimal(double d) {
+		if (Double.isNaN(d) || Double.isInfinite(d)) {
+			throw new IllegalArgumentException("Invalid input: " + d);
+		}
+		return new BigDecimal(Double.toString(d));
+	}
 	
-	// Gets user's input amount for transfers
+	/**
+	 * 
+	 * @param prompt
+	 * @param limit
+	 * @return
+	 */
 	public BigDecimal getAmount(String prompt, BigDecimal limit) {
 		while (true) {
 			String userAmount = getUserString(prompt); // non-null string
@@ -131,14 +121,26 @@ public class UserInput {
 			}
 		}
 	}
-
+	
+	/*
 	// Gets user's input amount for new account balance
 	public BigDecimal getOpeningBalance(String prompt) {
 		return getAmount(prompt, new BigDecimal(Double.toString(Double.MAX_VALUE)));
-
+	*/
+	
+	// TODO: this needs to return a BigDecimal
+	public BigDecimal getOpeningBalance(String prompt) {
+		double openingBalance = getAmount(prompt, Double.MAX_VALUE);
+		BigDecimal convertedOpeningBalance = doubleToBigDecimal(openingBalance);
+		return convertedOpeningBalance;
 	}
 
-	// gets user's confirmation: 'y' or cancels by entering 'n'
+
+	/**
+	 * gets user's confirmation: 'y' or cancels by entering 'n'
+	 * @param prompt
+	 * @return
+	 */
 	public boolean confirm(String prompt) {
 		String userInput = null;
 		boolean valid = false;

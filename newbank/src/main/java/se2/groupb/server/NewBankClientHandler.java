@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.*;
 import se2.groupb.server.customer.*;
 import se2.groupb.server.account.*;
+import se2.groupb.server.repository.*;
 
 public class NewBankClientHandler extends Thread {
 
@@ -53,9 +54,10 @@ public class NewBankClientHandler extends Thread {
 	public final UserInput comms;
 	private CustomerController customerController;
 	private CustomerServiceImpl customerService;
-	private AccountServiceImpl accountService;
-	//private AccountController accountController;
+	private CustomerRepositoryImpl customerRepository;
 	
+	private AccountServiceImpl accountService;
+	//private AccountRepositoryImpl accountRepository;
 	
 	// constructor
 
@@ -67,10 +69,12 @@ public class NewBankClientHandler extends Thread {
 		comms = new UserInput(in,out);
 		bank = NewBank.getBank(); //static instance of the bank
 		// Initialise controllers
-		customerService = new CustomerServiceImpl(bank.getCustomers());
-		accountService = new AccountServiceImpl(bank.getAccounts());
+		customerRepository = new CustomerRepositoryImpl(bank.getCustomers());
+		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
+		
+		customerService = new CustomerServiceImpl(customerRepository);
+		accountService = new AccountServiceImpl(accountRepository);
 		customerController = new CustomerController(customerService,accountService,comms);
-		//accountController = new AccountController(accountService,comms);
 	}
 	
 	public CustomerController getCustomerController() {
@@ -84,30 +88,25 @@ public class NewBankClientHandler extends Thread {
 		// CustomerID customerID = null;
 		String request = "";
 		String response = "";
-		UUID customerID = null;
-
+		Customer customer = null;
 		try {
 			while (true) {
-				if (customerID == null) {
+				if (customer == null) {
 					request = comms.getUserMenuChoice(welcomeMessage, welcomeChoices);
 
 					// Processes the user's response: 1=LOGIN or 2=REGISTER
 					if (request.equals("1")) {
-						customerID = getCustomerController().userLogin();
+						customer = getCustomerController().userLogin();
 					} else {
-						// customerID = userRegistration();
+						customer = getCustomerController().userRegistration();
 					}
 				} else {
 					request = comms.getUserMenuChoice(requestMenu, mainMenuChoices);
-					String systemMessage = "Request from: " + getCustomerController().getCustomer(customerID);
-					comms.printSystemMessage(systemMessage);
-					response = processRequest(customerID, request);
-
+					comms.printSystemMessage("Request from: " + customer.getUsername());
+					response = processRequest(customer, request);
 					comms.printSystemMessage(response);
-					String strCustomerID =customerID.toString();
-					if (bank.getCustomers().get(strCustomerID).getloggedInStatus()==false) {
-
-						customerID = null;
+					if (customer.getloggedInStatus()==false) {
+						customer = null;
 					}
 				}
 			}
@@ -125,44 +124,12 @@ public class NewBankClientHandler extends Thread {
 	}
 
 
-
-	/*
-	 * // Registration for new customers
-	 * public CustomerDTO userRegistration() throws IOException {
-	 * 
-	 * // Ask for existing username
-	 * String userName = comms.getUserString("Choose Username");
-	 * // ask password
-	 * String passwordAttempt1 = comms.getUserString("Choose Password");
-	 * String passwordAttempt2 = comms.getUserString("Re-Enter Password");
-	 * 
-	 * if (!passwordAttempt2.equals(passwordAttempt1)) {
-	 * out.println("Passwords do not match");
-	 * return null;
-	 * }
-	 * // check if userName already exists, if yes is registers gets changed to true
-	 * CustomerDTO customerDto = bank.registerCustomer(userName, passwordAttempt2);
-	 * if (customerDto != null) {
-	 * String str = String.format("Registration succesfull. New Customer %s",
-	 * userName);
-	 * out.println(str);
-	 * } else {
-	 * String str = String.
-	 * format("Customer name %s already exists, try registerings with a different name"
-	 * ,
-	 * userName);
-	 * out.println(str);
-	 * }
-	 * return customerDto;
-	 * }
-	 */
-
-	public synchronized String processRequest(UUID customerID, String request) throws IOException {
+	public synchronized String processRequest(Customer customer, String request) throws IOException {
 
 		
 		//I don't think we need this check, only a customer that has logged in and has a valid customer ID 
 		//can action a request
-		if (customerID==null) return "FAIL";
+		if (customer==null) return "FAIL";
 
 		/*
 		 * HashMap<String, Customer> customers = bank.getCustomers();
@@ -180,12 +147,12 @@ public class NewBankClientHandler extends Thread {
 		switch (request) {
 			case "1":
 			case "SHOWMYACCOUNTS":
-				return getCustomerController().displayAccounts(customerID);
+				return getCustomerController().displayAccounts(customer);
 			case "2":
 				return "Select account to show Transactions";
 			case "3":
 			case "NEWACCOUNT":
-				return getCustomerController().createAccount(customerID);
+				return getCustomerController().createAccount(customer);
 			/*
 			case "4":
 			case "MOVE":
@@ -200,7 +167,7 @@ public class NewBankClientHandler extends Thread {
 			*/
 			case "7":
 			case "LOGOUT":
-				return getCustomerController().userLogout(customerID);
+				return getCustomerController().userLogout(customer);
 			default:
 				return "FAIL";
 		}

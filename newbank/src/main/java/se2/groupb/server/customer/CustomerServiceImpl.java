@@ -1,57 +1,65 @@
 package se2.groupb.server.customer;
 
 import java.util.*;
+import se2.groupb.server.repository.CustomerRepositoryImpl;
 
 public class CustomerServiceImpl implements CustomerService {
-
-    /*
-     * private final CustomerRepository customerRepository;
-     * //Repository Constructor
-     * public CustomerServiceImpl(CustomerRepository customerRepository) {
-     * this.customerRepository = customerRepository;
-     * }
+	
+	//fields
+	private final CustomerRepositoryImpl customerRepository;
+	
+	//Constructor
+	public CustomerServiceImpl(CustomerRepositoryImpl customerRepository) {
+		this.customerRepository = customerRepository;
+	}
+	
+	//methods
+	
+	// returns the Customer object corresponding to the CustomerID provided
+	/**
+	 * returns Customer object from DataStore with the required ID
+	 * @param customerID
+	 * @return Customer
+	 */
+	@Override
+    public Customer getCustomerByID(UUID customerID) {
+    	return customerRepository.findByCustomerID(customerID);
+    }
+    
+	
+    /**
+     * returns Customer object from DataStore with the required DTO (username & password)
+     * @param customerDto
+     * @return
      */
-
-    // Temp HashMap Customer Repo
-    private final HashMap<String, Customer> theCustomers;
-
-    // private final HashMap<String, Account> theAccounts;
-    // Temp constructor using HashMap as Customer Repo
-    public CustomerServiceImpl(HashMap<String, Customer> customers) {
-        this.theCustomers = customers;
+	@Override
+    public Customer getCustomerbyDTO(CustomerDTO customerDto) {
+    	return customerRepository.findByCustomerDTO(customerDto);
     }
-
-    public UUID userLogin(CustomerDTO customerDto) {
-        // CustomerService checks HashMap if they have a customer with the entered
-        // username & password
-        // If they do then provide the UUID else return null
-        String username = customerDto.getUsername();
-        String password = customerDto.getPassword();
-        UUID customerID = null;
-        for (HashMap.Entry<String, Customer> item : theCustomers.entrySet()) {
-            String item_username = item.getValue().getUsername();
-            String item_password = item.getValue().getPassword();
-            if ((item_username.equals(username)) && (item_password.equals(password))) {
-                item.getValue().setloggedInStatus(true);
-                customerID = item.getValue().getCustomerID();
-                break;
-            }
-        }
-        return customerID;
-    }
-
-    // returns the Customer object corresponding to the CustomerID provided
-    public Customer getCustomer(UUID customerID) {
-        Customer customer = null;
-        for (HashMap.Entry<String, Customer> cust : theCustomers.entrySet()) {
-            UUID custID = cust.getValue().getCustomerID();
-            if (custID.equals(customerID)) {
-                customer = cust.getValue();
-            }
-        }
-        return customer;
-    }
-
+    
+	/**
+	 * Returns true if duplicate username found in Customer Data Store
+	 * @param customerDto
+	 * @return boolean
+	 */
+	@Override
+	public boolean duplicateUsername(String username) {
+		return customerRepository.duplicateUsername(username);
+	}
+	
+	/**
+	 * Returns true if a new customer has been added to the Customer Data Store
+	 * @param customer
+	 * @return boolean
+	 */
+	public boolean addNewCustomer(CustomerDTO customerDto) {
+    	Customer newCustomer = new Customer(customerDto);
+		if (customerRepository.saveNewCustomer(newCustomer)) {
+			return true;
+		}
+    	return false;
+	}
+	
     /**
      * displays accounts as a list
      * 
@@ -60,20 +68,18 @@ public class CustomerServiceImpl implements CustomerService {
      */
 
     @Override
-    public String displayAccounts(UUID customerID) {
-        // Customer customer = this.customerRepository.findByCustomerID(customerID);
-        Customer customer = theCustomers.get(customerID.toString()); // temp repo
+    public String displayAccounts(Customer customer) {
         if (customer.accountsToList().isEmpty()) {
             return "You have no accounts to display.";
         } else {
             return customer.accountsToString();
         }
     }
-
-    public void userLogout(UUID customerID) {
-        Customer customer = theCustomers.get(customerID.toString());
+    
+    @Override
+    public void userLogout(Customer customer) {
         customer.setloggedInStatus(false);
-        customerID = null;
+        customer = null;
     }
 
     /**
@@ -85,7 +91,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @param requestInputs
      * @return
      */
-
+    
     @Override
     public String changePassword(UUID customerID, String[] requestInputs) {
         // check if the command is correct
@@ -100,7 +106,7 @@ public class CustomerServiceImpl implements CustomerService {
         String confirmNewPassword = requestInputs[3];
 
         // customerRepository.findByCustomerID(customerDTO.getCustomerID());
-        Customer customer = theCustomers.get(customerID.toString());
+        Customer customer = getCustomerByID(customerID);
 
         // check if the old password is correct
         if (!customer.getPassword().equals(oldPassword)) {
@@ -117,15 +123,4 @@ public class CustomerServiceImpl implements CustomerService {
             return "SUCCESS new password is: " + customer.getPassword();
         }
     }
-
-    // printing out the Customer HashMap for checking
-
-    public String toString() {
-        String s = "";
-        for (HashMap.Entry<String, Customer> item : theCustomers.entrySet()) {
-            s += item.getKey() + " = " + item.getValue().getUsername() + "\n";
-        }
-        return s;
-    }
-
 }
