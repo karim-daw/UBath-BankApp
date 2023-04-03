@@ -168,8 +168,6 @@ public class CustomerController {
 			if (userConfirm) {
 				AccountDTO accountDto = new AccountDTO(accountType, accountName, openingBalance);
 				Account newAccount = accountService.createAccount(customerID, accountDto);
-
-				Customer customer = getCustomer(customerID);
 				customer.addAccount(newAccount); // adds new account to customer
 				// Call NewBank method to add new customer account to bank's data store
 				response = "SUCCESS: Your " + accountType + " account has been created.\nReturning to Main Menu.";
