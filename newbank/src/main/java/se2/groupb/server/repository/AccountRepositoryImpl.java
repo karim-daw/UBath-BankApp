@@ -26,7 +26,11 @@ public class AccountRepositoryImpl implements EntityRepository<Account, AccountD
     public Account findByID(UUID accountID) {
         return theAccounts.get(accountID.toString());
     }
-
+    
+    public UUID findCustomerByID(UUID accountID) {
+    	return theAccounts.get(accountID.toString()).getCustomerID();
+    }
+    
     @Override
     public boolean save(Account newAccount) {
         // check if account exists in repo

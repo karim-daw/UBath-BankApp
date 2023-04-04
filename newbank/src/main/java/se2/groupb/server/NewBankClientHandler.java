@@ -82,7 +82,11 @@ public class NewBankClientHandler extends Thread {
 		customerController = new CustomerController(customerService, accountService, comms);
 		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
 	}
-
+	
+	public AccountServiceImpl getAccountService() {
+		return this.accountService;
+	}
+	
 	public void run() {
 		// keep getting requests from the client and processing them
 		// The User is not logged into the system yet so CustomerID is null

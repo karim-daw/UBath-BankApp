@@ -13,7 +13,8 @@ public interface EntityRepository<Entity, EntityDTO> {
      * @return customer from database
      */
     public Entity findByID(UUID entityID);
-
+    
+    
     /**
      * 
      * @param customerDto
