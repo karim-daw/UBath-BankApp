@@ -114,6 +114,7 @@ public class NewBankClientHandler extends Thread {
 			 * case "CHANGEMYPASSWORD":
 			 * return changePassword(customerID,requestInputs);
 			 */
+			// TODO: PUT in LOAN here
 			case "7":
 			case "LOGOUT":
 				return customerController.userLogout(customerID);
