@@ -60,7 +60,7 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
      * Searches the Customer Data Store by Username & Password
      * 
      * @param customerDto
-     * @return customer from database
+     * @return customer from database, if not found returns null
      */
     @Override
     public Customer findByName(String target_username) {
