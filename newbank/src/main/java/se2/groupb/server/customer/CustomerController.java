@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 public class CustomerController {
 	// fields
-	
+
 	private final CustomerService customerService;
 	private final AccountService accountService;
 	private UserInput comms;
@@ -19,11 +19,12 @@ public class CustomerController {
 		this.accountService = accountService;
 		this.comms = comms;
 	}
-	
-	//methods
-	
+
+	// methods
+
 	/**
 	 * Returns the Customer object from the Data Store
+	 * 
 	 * @param customerID
 	 * @return
 	 */
@@ -31,12 +32,12 @@ public class CustomerController {
 		return customerService.getCustomerByID(customerID);
 	}
 
-
 	/**
 	 * Login for existing customers
+	 * 
 	 * @return Customer object
 	 */
-	public Customer userLogin() {
+	public UUID userLogin() {
 		String systemResponse = "";
 		String username = comms.getUserString("Enter Username");
 		String password = comms.getUserString("Enter Password");
@@ -52,15 +53,15 @@ public class CustomerController {
 			systemResponse = "LOGIN SUCCESS. What do you want to do?";
 			comms.printSystemMessage(systemResponse);
 		}
-		return customer;
+		return customer.getCustomerID();
 	}
-	
+
 	/**
 	 * Create a new Customer
 	 * 
 	 * @return CustomerDTO
 	 */
-	public Customer userRegistration() {
+	public UUID userRegistration() {
 		String username;
 		boolean duplicateUsername;
 		do {
@@ -70,7 +71,7 @@ public class CustomerController {
 				comms.printSystemMessage("Username taken. Please try again. ");
 			}
 		} while (duplicateUsername);
-		
+
 		// ask for a password
 		String passwordAttempt1;
 		String passwordAttempt2;
@@ -83,16 +84,20 @@ public class CustomerController {
 				comms.printSystemMessage("Passwords do not match. Please try again.");
 			}
 		} while (!matchedPasswords);
-		
-		String prompt = "Create new user with username " + username + " and password " + passwordAttempt2 +"?";
+
+		String prompt = "Create new user with username " + username + " and password " + passwordAttempt2 + "?";
 		boolean userConfirm = comms.confirm(prompt);
 		if (userConfirm) {
 			CustomerDTO customerDto = new CustomerDTO(username, passwordAttempt2);
 			if (customerService.addNewCustomer(customerDto)) {
 				String str = String.format("Registration succesfull. Please login to proceed.");
 				comms.printSystemMessage(str);
-			}
-			else {
+				/*
+				Customer customer = customerService.getCustomerbyDTO(customerDto);
+				UUID customerID = customer.getCustomerID();
+				return customerID;
+				*/
+			} else {
 				String str = String.format("Database update failed. User not registered.");
 				comms.printSystemMessage(str);
 			}
@@ -102,18 +107,17 @@ public class CustomerController {
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * @param customerID
 	 * @return
 	 */
-	public String userLogout(Customer customer) {
+	public String userLogout(UUID customerID) {
 		String systemResponse = "";
 		String prompt = "Are you sure you want to log out?";
 		boolean userConfirm = comms.confirm(prompt);
 		if (userConfirm) {
-			customerService.userLogout(customer);
+			customerService.userLogout(customerID);
 			systemResponse = "LOGOUT SUCCESS";
 		} else {
 			systemResponse = "LOGOUT CANCELLED. RETURNING YOU TO THE MAIN MENU.";
@@ -127,17 +131,21 @@ public class CustomerController {
 	 * @param customerDTO
 	 * @return
 	 */
-	public String displayAccounts(Customer customer) {
-		return customerService.displayAccounts(customer);
+	public String displayAccounts(UUID customerID) {
+		return customerService.displayAccounts(customerID);
 	}
 
 	/**
+	 * NEWACCOUNT <Name>
+	 * e.g. NEWACCOUNT Savings
+	 * Returns SUCCESS or FAIL
+	 * 
 	 * @param customerID
 	 * @return
 	 */
-	public String createAccount(Customer customer) {
+	public String newAccount(UUID customerID) {
 		String response = ""; // the system response to the user's request
-		UUID customerID= customer.getCustomerID();
+		// UUID customerID = customer.getCustomerID();
 		HashMap<String, String> newAcctOptions = accountService.newAccountAvailableTypes(customerID);
 
 		int noOfChoices = newAcctOptions.size(); // 0,1, or 2
@@ -146,17 +154,21 @@ public class CustomerController {
 					+ "\nEnter the number of your choice: ";
 			String userInput = comms.getUserMenuChoice(prompt, noOfChoices);
 			String accountType = newAcctOptions.get(userInput); // the choice of account type entered by the user
+			String str = "Create a new " + accountType +" account.\n";
+			comms.printSystemMessage(str);
 
-			// call Account Service to check if customer already has an account type with
-			// that name
+			// check if customer already has an account type with that name
 			boolean duplicateName;
 			String accountName;
 			do {
-				prompt = "Enter an account name: \n";
+				prompt = "Enter an account name: ";
 				accountName = comms.getUserString(prompt);
 				duplicateName = accountService.hasAccount(customerID, accountType, accountName);
+				if (duplicateName) {
+					comms.printSystemMessage("Account name taken. Please try again.");
+				}
 			} while (duplicateName);
-
+			
 			prompt = "Enter a positive opening balance (default is zero): \n";
 			BigDecimal openingBalance = comms.getOpeningBalance(prompt);
 
@@ -166,16 +178,20 @@ public class CustomerController {
 			boolean userConfirm = comms.confirm(prompt);
 
 			if (userConfirm) {
+
+				// adds new account to customer
 				AccountDTO accountDto = new AccountDTO(accountType, accountName, openingBalance);
 				Account newAccount = accountService.createAccount(customerID, accountDto);
-				customer.addAccount(newAccount); // adds new account to customer
+				Customer customer = customerService.getCustomerByID(customerID);
+				customer.addAccount(newAccount);
+
 				// Call NewBank method to add new customer account to bank's data store
 				response = "SUCCESS: Your " + accountType + " account has been created.\nReturning to Main Menu.";
 			} else {
 				response = "Account creation was cancelled.\nReturning to the Main Menu.";
 			}
 		} else {
-			response = "All possible account types have been created.\nReturning to Main Menu.";
+			response = "You have reached the maximum number of accounts.\nReturning to Main Menu.";
 		}
 		return response;
 	}

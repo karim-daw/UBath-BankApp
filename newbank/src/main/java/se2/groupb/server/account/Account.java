@@ -3,22 +3,35 @@ package se2.groupb.server.account;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import java.nio.ByteBuffer;
+
 import se2.groupb.server.NewBank;
 import se2.groupb.server.transaction.Transaction; //needed for displaying the transactions
 
 //Account Domain
 public class Account {
+
+	public static final List<String> validAccountTypes = Collections
+			.unmodifiableList(Arrays.asList("Current", "Savings"));
+
+	public static final Map<String, Integer> accountTypeLimits = Map.of("Current", 3, "Savings", 2);
+
+	public static final Map<String, BigDecimal> defaultOverdraftLimits = Map.of("Current", BigDecimal.valueOf(200),
+			"Savings", BigDecimal.ZERO);
+
 	private final UUID accountID;
 	private final UUID customerID;
 	private final String accountType;
 	private String accountName; // editable by the customer
 	private final String accountNumber;
 	private static final String accountBIC = NewBank.BIC;
-	private BigDecimal openingBalance;
+	private BigDecimal currentBalance;
 	private BigDecimal overdraftLimit;
 
 	private ArrayList<Transaction> transactions;
@@ -32,19 +45,19 @@ public class Account {
 		this.accountType = accountType;
 		this.accountName = accountName;
 		this.accountNumber = accountNumberGenerator();
-		this.openingBalance = BigDecimal.ZERO;
+		this.currentBalance = BigDecimal.ZERO;
 		this.overdraftLimit = getOverdraftLimit();
 		transactions = new ArrayList<>();
 	}
 
 	// Constructor method for new Account object
-	public Account(UUID customerID, String accountType, String accountName, BigDecimal openingBalance) {
+	public Account(UUID customerID, String accountType, String accountName, BigDecimal currentBalance) {
 		this.accountID = UUID.randomUUID();
 		this.customerID = customerID;
 		this.accountType = accountType;
 		this.accountName = accountName;
 		this.accountNumber = accountNumberGenerator();
-		this.openingBalance = openingBalance;
+		this.currentBalance = currentBalance;
 		this.overdraftLimit = getDefaultOverdraftLimit();
 		transactions = new ArrayList<>();
 	}
@@ -92,10 +105,26 @@ public class Account {
 		}
 	}
 
-	public void deposit(double amount) {
-		BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
-		BigDecimal newBalance = openingBalance.add(amountAsBigDecimal);
-		openingBalance = newBalance;
+	/**
+	 * add amount to account
+	 * 
+	 * @param amount
+	 */
+	public void deposit(BigDecimal amount) {
+		// BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
+		BigDecimal newBalance = currentBalance.add(amount);
+		currentBalance = newBalance;
+	}
+
+	/**
+	 * withdraw amount from account
+	 * 
+	 * @param amount
+	 */
+	public void withdraw(BigDecimal amount) {
+		// BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
+		BigDecimal newBalance = currentBalance.subtract(amount);
+		currentBalance = newBalance;
 	}
 
 	public String getAccountType() {
@@ -119,7 +148,7 @@ public class Account {
 	}
 
 	public BigDecimal getBalance() {
-		return this.openingBalance;
+		return this.currentBalance;
 	}
 
 	/**
@@ -129,7 +158,6 @@ public class Account {
 	 */
 	public void addTransaction(Transaction transaction) {
 		transactions.add(transaction);
-
 	}
 
 	/**
@@ -160,9 +188,10 @@ public class Account {
 	}
 
 	// overrides default toString() method for Account objects
+	@Override
 	public String toString() {
 		// rounding balance down to 2 decimals
-		BigDecimal balance = openingBalance.setScale(2, RoundingMode.FLOOR);
+		BigDecimal balance = currentBalance.setScale(2, RoundingMode.FLOOR);
 		int number = balance.toString().length(); // the number of characters in the balance
 
 		String displayAccount = "\n" + displayChars('=', 52) + "\n" + accountName + "(" + accountType + ")\n"

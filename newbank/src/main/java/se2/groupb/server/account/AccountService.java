@@ -9,72 +9,64 @@ import java.util.*;
 //Business Logic: makes changes to Domain, sends results to Controller
 public interface AccountService {
 
-    public static final List<String> validAccountTypes = Collections
-            .unmodifiableList(Arrays.asList("Current", "Savings"));
+        /**
+         * Creates a new account for a given customer
+         * 
+         * NEWACCOUNT <Name>
+         * e.g. NEWACCOUNT Savings
+         * Returns SUCCESS or FAIL
+         * 
+         * @param UUID
+         * @param accountDto
+         * @return string regarding success or failure of createtAccount request
+         */
+        Account createAccount(UUID customerID, AccountDTO accountDto);
 
-    public static final Map<String, Integer> accountTypeLimits = Map.of("Current", 3, "Savings", 2);
+        /*
+         * a method that is responsibal for transfering money between two accounts for
+         * the same customer
+         * 
+         * 
+         */
 
-    public static final Map<String, BigDecimal> defaultOverdraftLimits = Map.of("Current", BigDecimal.valueOf(200),
-            "Savings", BigDecimal.ZERO);
+        /**
+         * 
+         * 
+         * @param customerID
+         * @return
+         */
+        public HashMap<String, String> newAccountAvailableTypes(UUID customerID);
 
-    /**
-     * Creates a new account for a given customer
-     * 
-     * NEWACCOUNT <Name>
-     * e.g. NEWACCOUNT Savings
-     * Returns SUCCESS or FAIL
-     * 
-     * @param UUID
-     * @param accountDto
-     * @return string regarding success or failure of createtAccount request
-     */
-    Account createAccount(UUID customerID, AccountDTO accountDto);
+        /**
+         * checks if the desired account name already exists in the customers list of
+         * accounts by type
+         * 
+         * @param customerID
+         * @param accountType
+         * @param accountName
+         * @return true false if account name exists in customers accounts of the
+         *         specified type
+         */
+        public boolean hasAccount(UUID customerID, String accountType, String accountName);
 
-    /*
-     * a method that is responsibal for transfering money between two accounts for
-     * the same customer
-     * 
-     * 
-     */
+        /**
+         * adds money to account
+         * 
+         * @param accountID
+         * @param amount
+         * @return
+         */
+        // boolean credit(UUID accountID, BigDecimal amount);
 
-    /**
-     * 
-     * 
-     * @param customerID
-     * @return
-     */
-    public HashMap<String, String> newAccountAvailableTypes(UUID customerID);
+        /**
+         * subtracts money from account
+         * 
+         * @param accountID
+         * @param amount
+         * @return
+         */
+        // boolean debit(UUID accountID, BigDecimal amount);
 
-    /**
-     * checks if the desired account name already exists in the customers list of
-     * accounts by type
-     * 
-     * @param customerID
-     * @param accountType
-     * @param accountName
-     * @return true false if account name exists in customers accounts of the
-     *         specified type
-     */
-    public boolean hasAccount(UUID customerID, String accountType, String accountName);
-
-    /**
-     * adds money to account
-     * 
-     * @param accountID
-     * @param amount
-     * @return
-     */
-    // boolean credit(UUID accountID, BigDecimal amount);
-
-    /**
-     * subtracts money from account
-     * 
-     * @param accountID
-     * @param amount
-     * @return
-     */
-    // boolean debit(UUID accountID, BigDecimal amount);
-
-    // boolean exceedsOverdraft() ;
+        // boolean exceedsOverdraft() ;
 
 }

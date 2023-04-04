@@ -1,29 +1,24 @@
 package se2.groupb.server.account;
 
-import java.util.*;
 //import se2.groupb.server.repository.AccountRepository;
 //import se2.groupb.server.repository.CustomerRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import se2.groupb.server.repository.AccountRepositoryImpl;
 
 public class AccountServiceImpl implements AccountService {
-	/*
-	 * 
-	 * private final AccountRepository accountRepository;
-	 * private final CustomerRepository customerRepository;
-	 * public AccountServiceImpl(AccountRepository accountRepository,
-	 * CustomerRepository customerRepository) {
-	 * this.accountRepository = accountRepository;
-	 * this.customerRepository = customerRepository;
-	 * }
-	 */
 
-	// attributes
-	private HashMap<String, Account> theAccounts;
-	// private HashMap<String, Customer> theCustomers;
+	private final AccountRepositoryImpl accountRepository;
+	Map<String, Integer> accountTypeLimits = Account.accountTypeLimits;
 
 	// Constructor
-	public AccountServiceImpl(HashMap<String, Account> accounts) {
+	public AccountServiceImpl(AccountRepositoryImpl accountRepository) {
 		// this.theCustomers = customers;
-		this.theAccounts = accounts;
+		this.accountRepository = accountRepository;
+
 	}
 
 	// methods
@@ -34,14 +29,9 @@ public class AccountServiceImpl implements AccountService {
 	 * @return
 	 */
 	public ArrayList<Account> getAccounts(UUID customerID) {
-		ArrayList<Account> l = new ArrayList<>();
-		for (HashMap.Entry<String, Account> record : theAccounts.entrySet()) {
-			UUID recordCustomerID = record.getValue().getCustomerID();
-			if (recordCustomerID.equals(customerID)) {
-				l.add(record.getValue());
-			}
-		}
-		return l;
+		ArrayList<Account> accountList = accountRepository.findAccounts(customerID);
+		return accountList;
+
 	}
 
 	// get a list of Account objects by Customer ID and Account Type
@@ -51,13 +41,8 @@ public class AccountServiceImpl implements AccountService {
 	 * @return
 	 */
 	public ArrayList<Account> getAccountsByType(UUID customerID, String accountType) {
-		ArrayList<Account> l = new ArrayList<>();
-		for (Account a : getAccounts(customerID)) {
-			if (a.getAccountType().equals(accountType)) {
-				l.add(a);
-			}
-		}
-		return l;
+		ArrayList<Account> accountList = accountRepository.findAccountsByType(customerID, accountType);
+		return accountList;
 	}
 
 	/**
@@ -71,7 +56,8 @@ public class AccountServiceImpl implements AccountService {
 	 *         specified type
 	 */
 	public boolean hasAccount(UUID customerID, String accountType, String accountName) {
-		for (Account a : getAccountsByType(customerID, accountType)) {
+		ArrayList<Account> accountList = accountRepository.findAccountsByType(customerID, accountType);
+		for (Account a : accountList) {
 			if (a.getAccountName().equals(accountName)) {
 				return true;
 			}
@@ -86,7 +72,8 @@ public class AccountServiceImpl implements AccountService {
 	 * @return
 	 */
 	public Integer noAccountsByType(UUID customerID, String accountType) {
-		return getAccountsByType(customerID, accountType).size();
+		ArrayList<Account> accountList = accountRepository.findAccountsByType(customerID, accountType);
+		return accountList.size();
 	}
 
 	/**
@@ -103,6 +90,8 @@ public class AccountServiceImpl implements AccountService {
 
 		// Create a new HashMap to hold the results.
 		HashMap<String, Boolean> accountStatuses = new HashMap<>();
+
+		// get availble accoun type limits
 
 		// Loop through each account type and its associated limit.
 		for (HashMap.Entry<String, Integer> accountTypeLimit : accountTypeLimits.entrySet()) {
@@ -146,20 +135,6 @@ public class AccountServiceImpl implements AccountService {
 		return map;
 	}
 
-	/*
-	 * public ArrayList<String> getAccountNamesByType(UUID customerID,String
-	 * accountType) {
-	 * ArrayList<String> accountNames = new ArrayList<>();
-	 * 
-	 * for (Account a : accounts) {
-	 * if (a.getAccountType().equals(accountType)) {
-	 * accountsByType.add(a);
-	 * }
-	 * }
-	 * return accountNames;
-	 * }
-	 */
-
 	/**
 	 * 
 	 * Creates a new account for a given customer
@@ -169,15 +144,17 @@ public class AccountServiceImpl implements AccountService {
 	 * @param customer
 	 * @param requestInputs
 	 * @param openingBalance
-	 * @return Returns SUCCESS or FAIL
+	 * @return Returns the created Account or null if somethign went wrong
 	 */
 
 	public Account createAccount(UUID customerID, AccountDTO accountDto) {
 		Account newAccount = new Account(customerID, accountDto.getAccountType(), accountDto.getAccountName(),
 				accountDto.getOpeningBalance());
-		theAccounts.put(newAccount.getAccountID().toString(), newAccount);
-
-		return newAccount;
+		boolean success = accountRepository.save(newAccount);
+		if (success) {
+			return newAccount;
+		}
+		return null;
 	}
 
 	/*
