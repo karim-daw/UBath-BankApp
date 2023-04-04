@@ -152,6 +152,23 @@ public class Account {
 	}
 
 	/**
+	 * @param deduction
+	 * @return
+	 */
+	public boolean hasInsufficientFunds(BigDecimal deduction) {
+
+		BigDecimal overDraftLimit = getOverdraftLimit();
+		BigDecimal currentBalance = getBalance();
+		BigDecimal totalTransferLimit = overDraftLimit.add(currentBalance);
+
+		// check if totalTransferlimit is smaller than deduction
+		if (totalTransferLimit.compareTo(deduction) == -1) {
+			return false;
+		}
+		return false;
+	}
+
+	/**
 	 * adds transaction to list of transactions
 	 * 
 	 * @param transaction
