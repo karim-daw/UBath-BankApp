@@ -121,10 +121,12 @@ public class TransactionController {
 
         // System.out.println(payeeName);
 
+        // TODO: make sure to fix this
         // if (accountNumber.equals(customerName)) {
         // return "FAIL, you are trying to pay yourself";
         // }
 
+        // TODO: THIS IS WHEERE I LEFT OFF....
         Customer payee = customerService.getCustomerbyName(payeeName);
 
         if (!customers.containsKey(payeeName)) {
