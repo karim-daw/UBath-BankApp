@@ -69,4 +69,10 @@ public class AccountRepositoryImpl implements EntityRepository<Account, AccountD
         }
         return l;
     }
+
+    @Override
+    public Account findByName(String entityName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
