@@ -134,9 +134,8 @@ public class UserInput {
 
 	// TODO: this needs to return a BigDecimal
 	public BigDecimal getOpeningBalance(String prompt) {
-		double openingBalance = getAmount(prompt, Double.MAX_VALUE);
-		BigDecimal convertedOpeningBalance = doubleToBigDecimal(openingBalance);
-		return convertedOpeningBalance;
+		BigDecimal openingBalance = getAmount(prompt, new BigDecimal(Double.toString(Double.MAX_VALUE)));
+		return openingBalance;
 	}
 
 	/**

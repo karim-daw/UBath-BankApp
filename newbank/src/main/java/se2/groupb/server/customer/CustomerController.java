@@ -91,10 +91,12 @@ public class CustomerController {
 			CustomerDTO customerDto = new CustomerDTO(username, passwordAttempt2);
 			if (customerService.addNewCustomer(customerDto)) {
 				String str = String.format("Registration succesfull. Please login to proceed.");
+				comms.printSystemMessage(str);
+				/*
 				Customer customer = customerService.getCustomerbyDTO(customerDto);
 				UUID customerID = customer.getCustomerID();
-				comms.printSystemMessage(str);
 				return customerID;
+				*/
 			} else {
 				String str = String.format("Database update failed. User not registered.");
 				comms.printSystemMessage(str);
@@ -152,16 +154,21 @@ public class CustomerController {
 					+ "\nEnter the number of your choice: ";
 			String userInput = comms.getUserMenuChoice(prompt, noOfChoices);
 			String accountType = newAcctOptions.get(userInput); // the choice of account type entered by the user
+			String str = "Create a new " + accountType +" account.\n";
+			comms.printSystemMessage(str);
 
 			// check if customer already has an account type with that name
 			boolean duplicateName;
 			String accountName;
 			do {
-				prompt = "Enter an account name: \n";
+				prompt = "Enter an account name: ";
 				accountName = comms.getUserString(prompt);
 				duplicateName = accountService.hasAccount(customerID, accountType, accountName);
+				if (duplicateName) {
+					comms.printSystemMessage("Account name taken. Please try again.");
+				}
 			} while (duplicateName);
-
+			
 			prompt = "Enter a positive opening balance (default is zero): \n";
 			BigDecimal openingBalance = comms.getOpeningBalance(prompt);
 
@@ -184,7 +191,7 @@ public class CustomerController {
 				response = "Account creation was cancelled.\nReturning to the Main Menu.";
 			}
 		} else {
-			response = "All possible account types have been created.\nReturning to Main Menu.";
+			response = "You have reached the maximum number of accounts.\nReturning to Main Menu.";
 		}
 		return response;
 	}

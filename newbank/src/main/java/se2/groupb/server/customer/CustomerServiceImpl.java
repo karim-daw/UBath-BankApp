@@ -89,7 +89,6 @@ public class CustomerServiceImpl implements CustomerService {
     public void userLogout(UUID customerID) {
         Customer customer = customerRepository.findByID(customerID);
         customer.setloggedInStatus(false);
-        customer = null;
     }
 
     /**

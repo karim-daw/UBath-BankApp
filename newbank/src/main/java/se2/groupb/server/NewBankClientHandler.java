@@ -83,15 +83,52 @@ public class NewBankClientHandler extends Thread {
 		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
 	}
 
-	public synchronized String processRequest(Customer customer, String request) throws IOException {
-
-		// I don't think we need this check, only a customer that has logged in and has
-		// a valid customer ID
-		// can action a request
-		if (customer == null)
-			return "FAIL";
-
-		UUID customerID = customer.getCustomerID();
+	public void run() {
+		// keep getting requests from the client and processing them
+		// The User is not logged into the system yet so CustomerID is null
+		// CustomerID customerID = null;
+		String request = "";
+		String response = "";
+		UUID customerID = null;
+		try {
+			while (true) {
+				if (customerID == null) {
+					// welcome message and choice
+					request = comms.getUserMenuChoice(welcomeMessage, welcomeChoices);
+					// Processes the user's response: 1=LOGIN or 2=REGISTER
+					if (request.equals("1")) {
+						customerID = customerController.userLogin();
+					} else {
+						customerID = customerController.userRegistration();
+					}
+				} else {
+					// show menu choices
+					request = comms.getUserMenuChoice(requestMenu, mainMenuChoices);
+					Customer customer = customerController.getCustomer(customerID);
+					comms.printSystemMessage("Request from: " + customer.getUsername());
+					// process menu choice request
+					response = processRequest(customerID, request);
+					comms.printSystemMessage(response);
+					boolean logedInStatus = customer.getloggedInStatus();
+					if (!logedInStatus) {
+						customerID = null;
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				in.close();
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				Thread.currentThread().interrupt();
+			}
+		}
+	}
+	
+	public synchronized String processRequest(UUID customerID, String request) throws IOException {
 
 		switch (request) {
 			case "1":
@@ -122,53 +159,5 @@ public class NewBankClientHandler extends Thread {
 				return "FAIL";
 		}
 	}
-
-	public void run() {
-		// keep getting requests from the client and processing them
-		// The User is not logged into the system yet so CustomerID is null
-		// CustomerID customerID = null;
-		String request = "";
-		String response = "";
-		UUID customerID = null;
-		try {
-			while (true) {
-				if (customerID == null) {
-
-					// welcome message and choice
-					request = comms.getUserMenuChoice(welcomeMessage, welcomeChoices);
-
-					// Processes the user's response: 1=LOGIN or 2=REGISTER
-					if (request.equals("1")) {
-						customerID = customerController.userLogin();
-					} else {
-						customerID = customerController.userRegistration();
-					}
-				} else {
-					// show menu choices
-					request = comms.getUserMenuChoice(requestMenu, mainMenuChoices);
-					Customer customer = customerController.getCustomer(customerID);
-
-					comms.printSystemMessage("Request from: " + customer.getUsername());
-
-					// process menu choice request
-					response = processRequest(customer, request);
-					comms.printSystemMessage(response);
-					if (customer.getloggedInStatus() == false) {
-						customer = null;
-					}
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				in.close();
-				out.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				Thread.currentThread().interrupt();
-			}
-		}
-	}
-
+	
 }
