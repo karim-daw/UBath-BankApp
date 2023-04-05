@@ -58,9 +58,9 @@ public interface CustomerService {
      * 
      * @param customerID
      * @param requestInputs
-     * @return
+     * @return true or false if successful
      */
 
-    public String changePassword(UUID customerID, String[] requestInputs);
+    public boolean updatePassword(UUID customerID, String newPassword);
 
 }
