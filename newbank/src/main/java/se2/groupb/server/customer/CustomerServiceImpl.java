@@ -102,35 +102,16 @@ public class CustomerServiceImpl implements CustomerService {
      */
 
     @Override
-    public String changePassword(UUID customerID, String[] requestInputs) {
-        // check if the command is correct
-        // return infinite loop of null, why ?
-        int inputLength = requestInputs.length;
-        if (inputLength < 4) {
-            return "FAIL. Please enter your old password and twice your new password after the command.";
-        }
+    public boolean updatePassword(UUID customerID, String newPassword) {
 
-        String oldPassword = requestInputs[1];
-        String newPassword = requestInputs[2];
-        String confirmNewPassword = requestInputs[3];
-
-        // customerRepository.findByCustomerID(customerDTO.getCustomerID());
         Customer customer = getCustomerByID(customerID);
-
-        // check if the old password is correct
-        if (!customer.getPassword().equals(oldPassword)) {
-            return "FAIL. The old password is incorrect.";
+        customer.setPassword(newPassword);
+        boolean success = customerRepository.update(customer);// update customer model
+        if (success) {
+            return true;
         }
+        return false;
 
-        // check if the two new password inputs match.
-        if (!newPassword.equals(confirmNewPassword)) {
-            return "FAIL. Password confirmation does not match.";
-        }
-
-        else {
-            customer.setPassword(newPassword);
-            return "SUCCESS new password is: " + customer.getPassword();
-        }
     }
 
 }
