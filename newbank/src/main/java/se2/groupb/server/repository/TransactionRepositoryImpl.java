@@ -2,28 +2,31 @@ package se2.groupb.server.repository;
 
 import java.util.UUID;
 
-public class TransactionRepositoryImpl implements EntityRepository {
+import se2.groupb.server.transaction.Transaction;
+import se2.groupb.server.transaction.TransactionDTO;
+
+public class TransactionRepositoryImpl implements EntityRepository<Transaction, TransactionDTO> {
 
     @Override
-    public Object findByDTO(Object entityDTO) {
+    public Transaction findByDTO(TransactionDTO transactionDTO) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Object findByID(UUID entityID) {
+    public Transaction findByID(UUID transactionID) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public boolean save(Object entity) {
+    public boolean save(Transaction transaction) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public Object findByName(String entityName) {
+    public Transaction findByName(String transactionName) {
         // TODO Auto-generated method stub
         return null;
     }
