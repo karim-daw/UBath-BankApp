@@ -27,15 +27,47 @@ public class AccountRepositoryImpl implements EntityRepository<Account, AccountD
         return theAccounts.get(accountID.toString());
     }
 
+    /**
+     * @param newAccount
+     * @return true if account is added succesfully, false if account is not found
+     *         or if there is an error
+     */
     @Override
     public boolean save(Account newAccount) {
-        // check if account exists in repo
-        if (findByID(newAccount.getAccountID()) == null) {
-            // if doesnt exist put it in store
-            theAccounts.put(newAccount.getAccountID().toString(), newAccount);
-            return true;
+        try {
+            // check if account exists in repo
+            if (findByID(newAccount.getAccountID()) == null) {
+                // if doesnt exist put it in store
+                theAccounts.put(newAccount.getAccountID().toString(), newAccount);
+                return true; // account update is sucessful
+            } else {
+                return false; // account not found
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // error occureed
         }
-        return false;
+    }
+
+    /**
+     * @param newAccount
+     * @return true if account is updated succesfully, false if account is not found
+     *         or if there is an error
+     */
+    public boolean update(Account newAccount) {
+        try {
+            // check if account exists in repo
+            if (findByID(newAccount.getAccountID()) != null) {
+                // if doesnt exist put it in store
+                theAccounts.put(newAccount.getAccountID().toString(), newAccount);
+                return true; // account update is sucessful
+            } else {
+                return false; // account not found
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // error occureed
+        }
     }
 
     // get a list of Account objects by Customer ID
