@@ -52,6 +52,22 @@ public interface CustomerService {
     public boolean duplicateUsername(String username);
 
     /**
+     * returns the hashed password given a customerDTO
+     * 
+     * @param customerDTO
+     * @return
+     */
+    public String getHashedPassword(CustomerDTO customerDTO);
+
+    /**
+     * returns the username given a customerDTO
+     * 
+     * @param customerDTO
+     * @return
+     */
+    public String getUsername(CustomerDTO customerDTO);
+
+    /**
      * method that changes the password
      * old password need to be enter
      * then a new password, twice
