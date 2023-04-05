@@ -9,8 +9,8 @@ import java.util.*;
 import se2.groupb.server.customer.*;
 import se2.groupb.server.account.*;
 import se2.groupb.server.repository.*;
-import se2.groupb.server.transaction.TransactionController;
-import se2.groupb.server.transaction.TransactionService;
+import se2.groupb.server.transaction.*;
+import se2.groupb.server.loan.*;
 
 public class NewBankClientHandler extends Thread {
 
@@ -54,15 +54,20 @@ public class NewBankClientHandler extends Thread {
 	private final BufferedReader in;
 	private final PrintWriter out;
 	public final UserInput comms;
+	
 	private CustomerController customerController;
-	private CustomerServiceImpl customerService;
-	private CustomerRepositoryImpl customerRepository;
-
-	private AccountServiceImpl accountService;
-	private AccountRepositoryImpl accountRepository;
-
 	private TransactionController transactionController;
+	private LoanController loanController;
+	
+	private CustomerServiceImpl customerService;
+	private AccountServiceImpl accountService;
 	private TransactionService transactionService;
+	private LoanServiceImpl loanService;
+	
+	private CustomerRepositoryImpl customerRepository;
+	private AccountRepositoryImpl accountRepository;
+	private LoanRepositoryImpl loanRepository;
+	
 	// constructor
 
 	// each client has the same bank but different comms because of different
@@ -73,14 +78,19 @@ public class NewBankClientHandler extends Thread {
 		out = new PrintWriter(s.getOutputStream(), true);
 		comms = new UserInput(in, out);
 		bank = NewBank.getBank(); // static instance of the bank
-		// Initialise controllers
+		// Initialise repos
 		customerRepository = new CustomerRepositoryImpl(bank.getCustomers());
 		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
-
+		loanRepository = new LoanRepositoryImpl(bank.getLoanMarket(), bank.getLoans());
+		
+		//Initialise services
 		customerService = new CustomerServiceImpl(customerRepository);
-		accountService = new AccountServiceImpl(accountRepository);
+		accountService = new AccountServiceImpl(accountRepository,customerRepository);
+		loanService = new LoanServiceImpl(customerRepository,accountRepository,loanRepository);
+		
 		customerController = new CustomerController(customerService, accountService, comms);
 		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
+		loanController = new LoanController(customerService, accountService,loanService,comms);
 	}
 	
 	public AccountServiceImpl getAccountService() {

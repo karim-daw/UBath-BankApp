@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
-
+import se2.groupb.server.loan.LoanDTO;
+import se2.groupb.server.loan.Loan;
 
 public class NewBank {
 
@@ -13,12 +14,17 @@ public class NewBank {
 	
 	private HashMap<String, Customer> customers; //temp customer data store
 	private HashMap<String, Account> accounts; //temp account data store
-
+	private HashMap<String, LoanDTO> loanMarket; //temp loan offer data store
+	private HashMap<String, Loan> loans; //temp loan offer data store
+	
+	
 	// Constructor
 	private NewBank() {
 		// create temp data store
 		customers = new HashMap<>();
 		accounts = new HashMap<>();
+		loans = new HashMap<>();
+		loanMarket = new HashMap<>();
 		// adding data for debugging
 		addTestData();
 		//displayCustomers();
@@ -49,6 +55,9 @@ public class NewBank {
 		Account john_acct1 = new Account(john.getCustomerID(), "Current", "Main", BigDecimal.valueOf(250));
 		getAccounts().put(john_acct1.getAccountID().toString(), john_acct1);
 		john.addAccount(john_acct1);
+		
+		//add some dummy loan offers:
+		
 	}
 
 	public HashMap<String, Customer> getCustomers() {
@@ -57,6 +66,14 @@ public class NewBank {
 	
 	public HashMap<String, Account> getAccounts() {
 		return accounts;
+	}
+	
+	public HashMap<String, LoanDTO> getLoanMarket() {
+		return loanMarket;
+	}
+	
+	public HashMap<String, Loan> getLoans() {
+		return loans;
 	}
 	
 	/*

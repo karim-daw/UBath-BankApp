@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import se2.groupb.server.loan.Loan;
 
 import se2.groupb.server.account.Account;
 
@@ -15,6 +16,7 @@ public class Customer {
 	private String username;
 	private String password;
 	private ArrayList<Account> accounts;
+	private ArrayList<Loan> loans;
 	private boolean loggedInStatus;
 
 	// constructor 1
@@ -24,6 +26,7 @@ public class Customer {
 		this.password = password;
 		this.loggedInStatus = false;
 		accounts = new ArrayList<>();
+		loans = new ArrayList<>();
 	}
 
 	// constructor 2
@@ -33,6 +36,7 @@ public class Customer {
 		this.password = customerDto.getPassword();
 		this.loggedInStatus = false;
 		accounts = new ArrayList<>();
+		loans = new ArrayList<>();
 	}
 
 	// methods
@@ -82,7 +86,11 @@ public class Customer {
 	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
-
+	
+	public ArrayList<Loan> getLoans() {
+		return loans;
+	}
+	
 	public ArrayList<Account> getAccountsByType(String accountType) {
 		ArrayList<Account> accountsByType = new ArrayList<>();
 		for (Account a : accounts) {
