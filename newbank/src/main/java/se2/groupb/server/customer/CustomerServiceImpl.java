@@ -91,6 +91,16 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setloggedInStatus(false);
     }
 
+    @Override
+    public String displayPayees(UUID customerID) {
+        Customer customer = customerRepository.findByID(customerID);
+        if (customer.payeesToList().isEmpty()) {
+            return "You have no accounts to display.";
+        } else {
+            return customer.payeesToString();
+        }
+    }
+
     /**
      * method that changes the password
      * old password need to be enter

@@ -26,6 +26,7 @@ public class Customer {
 		this.password = password;
 		this.loggedInStatus = false;
 		accounts = new ArrayList<>();
+		payees = new ArrayList<>();
 	}
 
 	// constructor 2
@@ -35,6 +36,7 @@ public class Customer {
 		this.password = customerDto.getPassword();
 		this.loggedInStatus = false;
 		accounts = new ArrayList<>();
+		payees = new ArrayList<>();
 	}
 
 	// methods

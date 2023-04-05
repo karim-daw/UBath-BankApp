@@ -1,5 +1,6 @@
 package se2.groupb.server.account;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public class Payee {
@@ -7,15 +8,15 @@ public class Payee {
     private final UUID payeeID;
     private final UUID customerID; // id of the person paying
     private final String payeeName;
-    private final String accountNumber;
-    private final String accountBIC;
+    private final String payeeAccountNumber;
+    private final String payeeBIC;
 
-    public Payee(UUID payeeID, UUID customerID, String payeeName, String accountNumber, String accountBIC) {
+    public Payee(UUID payeeID, UUID customerID, String payeeName, String payeeAccountNumber, String payeeBIC) {
         this.payeeID = payeeID;
         this.customerID = customerID;
         this.payeeName = payeeName;
-        this.accountNumber = accountNumber;
-        this.accountBIC = accountBIC;
+        this.payeeAccountNumber = payeeAccountNumber;
+        this.payeeBIC = payeeBIC;
     }
 
     public UUID getPayeeID() {
@@ -30,11 +31,29 @@ public class Payee {
         return payeeName;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
+    public String getPayeeAccountNumber() {
+        return payeeAccountNumber;
     }
 
-    public String getAccountBIC() {
-        return accountBIC;
+    public String getPayeeBIC() {
+        return payeeBIC;
     }
+
+    // overrides default toString() method for Display objects
+	@Override
+	public String toString() {
+		// rounding balance down to 2 decimals
+		
+		String displayPayee = "\n" + displayChars('=', 52) + "\n" + payeeName + displayChars(' ', 3)+ payeeBIC +
+				displayChars(' ', 3) + payeeAccountNumber + "\n" +
+				displayChars('=', 52);
+		return displayPayee;
+	}
+
+	// Helper method for printing out the same characters multiple times
+	public String displayChars(char myChar, int number) {
+		char[] myChars = new char[number];
+		Arrays.fill(myChars, myChar);
+		return new String(myChars);
+	}
 }

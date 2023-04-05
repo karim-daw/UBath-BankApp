@@ -43,8 +43,10 @@ public class NewBank {
 		getAccounts().put(bhagy_acct2.getAccountID().toString(), bhagy_acct2);
 		bhagy.addAccount(bhagy_acct1);
 		bhagy.addAccount(bhagy_acct2);
-		//Payee bhagy_payee1 = new Payee(UUID.randomUUID(), bhagy.getCustomerID(), "Jean Doe", "012345", "OTHBAN");
-		//bhagy.addPayee(bhagy_payee1);
+		Payee bhagy_payee1 = new Payee(UUID.randomUUID(), bhagy.getCustomerID(), "Jean Doe", "012345", "OTHBAN");
+		bhagy.addPayee(bhagy_payee1);
+		Payee bhagy_payee2 = new Payee(UUID.randomUUID(), bhagy.getCustomerID(), "Robert Ham", "678910", "OTHBAN");
+		bhagy.addPayee(bhagy_payee2);
 		
 		Customer christina = new Customer("Christina", "1234");
 		getCustomers().put(christina.getCustomerID().toString(), christina);
@@ -65,6 +67,10 @@ public class NewBank {
 	
 	public HashMap<String, Account> getAccounts() {
 		return accounts;
+	}
+
+	public HashMap<String, Payee> getPayees() {
+		return payees;
 	}
 	
 	/*

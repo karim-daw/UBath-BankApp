@@ -41,12 +41,13 @@ public class NewBankClientHandler extends Thread {
 			"||      5. Pay Person/Company                     ||\n" +
 			"||      6. Change Password                        ||\n" +
 			"||      7. Logout                                 ||\n" +
+			"||      8. View Payees                            ||\n" +
 			"|| Enter the number corresponding to your choice  ||\n" +
 			"|| and press enter                                ||\n" +
 			"====================================================\n" +
 			"\nEnter Selection:";
 
-	private static final int mainMenuChoices = 7;
+	private static final int mainMenuChoices = 8;
 
 	// fields
 
@@ -159,6 +160,9 @@ public class NewBankClientHandler extends Thread {
 			case "7":
 			case "LOGOUT":
 				return customerController.userLogout(customerID);
+			case "8":
+			case "SHOWMYPAYEES":
+				return customerController.displayPayees(customerID);
 			default:
 				return "FAIL";
 		}
