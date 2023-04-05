@@ -49,11 +49,12 @@ public class CustomerController {
 		if (customer == null) {
 			systemResponse = "LOGIN FAIL. Invalid Credentials, please try again.";
 			comms.printSystemMessage(systemResponse);
+			return null;
 		} else {
 			systemResponse = "LOGIN SUCCESS. What do you want to do?";
 			comms.printSystemMessage(systemResponse);
+			return customer.getCustomerID();
 		}
-		return customer.getCustomerID();
 	}
 
 	/**
