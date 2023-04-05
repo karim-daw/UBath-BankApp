@@ -40,7 +40,7 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
      */
     @Override
     public Customer findByDTO(CustomerDTO customerDto) {
-        Customer customer = null;
+   
         String target_username = customerDto.getUsername();
         String target_password = customerDto.getPassword();
 
@@ -49,11 +49,10 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
             String cust_password = cust.getValue().getPassword();
             if ((cust_username.equals(target_username)) && (cust_password.equals(target_password))) {
                 cust.getValue().setloggedInStatus(true);
-                customer = cust.getValue();
-                break;
+                return cust.getValue();
             }
         }
-        return customer;
+        return null;
     }
 
     /**
