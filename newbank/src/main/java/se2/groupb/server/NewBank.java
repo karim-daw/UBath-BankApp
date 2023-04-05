@@ -2,7 +2,10 @@ package se2.groupb.server;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.UUID;
+
 import se2.groupb.server.account.Account;
+import se2.groupb.server.account.Payee;
 import se2.groupb.server.customer.Customer;
 
 
@@ -13,12 +16,15 @@ public class NewBank {
 	
 	private HashMap<String, Customer> customers; //temp customer data store
 	private HashMap<String, Account> accounts; //temp account data store
+	private HashMap<String, Payee> payees;
 
 	// Constructor
 	private NewBank() {
 		// create temp data store
 		customers = new HashMap<>();
 		accounts = new HashMap<>();
+		payees = new HashMap<>();
+
 		// adding data for debugging
 		addTestData();
 		//displayCustomers();
@@ -37,6 +43,8 @@ public class NewBank {
 		getAccounts().put(bhagy_acct2.getAccountID().toString(), bhagy_acct2);
 		bhagy.addAccount(bhagy_acct1);
 		bhagy.addAccount(bhagy_acct2);
+		//Payee bhagy_payee1 = new Payee(UUID.randomUUID(), bhagy.getCustomerID(), "Jean Doe", "012345", "OTHBAN");
+		//bhagy.addPayee(bhagy_payee1);
 		
 		Customer christina = new Customer("Christina", "1234");
 		getCustomers().put(christina.getCustomerID().toString(), christina);

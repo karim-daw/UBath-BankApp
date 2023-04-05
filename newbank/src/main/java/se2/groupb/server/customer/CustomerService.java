@@ -63,4 +63,12 @@ public interface CustomerService {
 
     public String changePassword(UUID customerID, String[] requestInputs);
 
+    /**
+     * returns a string representation in the form of a list of accounts and prints
+     * them
+     * 
+     * @param customerDTO
+     * @return
+     */
+    public String displayPayees(UUID customerID);
 }
