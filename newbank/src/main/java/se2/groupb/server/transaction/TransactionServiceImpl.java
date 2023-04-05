@@ -4,12 +4,8 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import se2.groupb.server.account.Account;
-import se2.groupb.server.account.AccountDTO;
-import se2.groupb.server.customer.Customer;
-import se2.groupb.server.customer.CustomerDTO;
 import se2.groupb.server.repository.AccountRepositoryImpl;
 import se2.groupb.server.repository.CustomerRepositoryImpl;
-import se2.groupb.server.repository.EntityRepository;
 import se2.groupb.server.repository.TransactionRepositoryImpl;
 
 public class TransactionServiceImpl implements TransactionService {
