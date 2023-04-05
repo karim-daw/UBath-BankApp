@@ -42,12 +42,13 @@ public class NewBankClientHandler extends Thread {
 			"||      6. Change Password                        ||\n" +
 			"||      7. Logout                                 ||\n" +
 			"||      8. View Payees                            ||\n" +
+			"||      9. Add a payee                            ||\n" +
 			"|| Enter the number corresponding to your choice  ||\n" +
 			"|| and press enter                                ||\n" +
 			"====================================================\n" +
 			"\nEnter Selection:";
 
-	private static final int mainMenuChoices = 8;
+	private static final int mainMenuChoices = 9;
 
 	// fields
 
@@ -163,6 +164,9 @@ public class NewBankClientHandler extends Thread {
 			case "8":
 			case "SHOWMYPAYEES":
 				return customerController.displayPayees(customerID);
+			case "9":
+			case "ADDAPAYEE":
+					return customerController.createPayee(customerID);
 			default:
 				return "FAIL";
 		}
