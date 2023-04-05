@@ -55,6 +55,7 @@ public class NewBankClientHandler extends Thread {
 	private final PrintWriter out;
 	public final UserInput comms;
 	private CustomerController customerController;
+	private AccountController accountController;
 	private CustomerServiceImpl customerService;
 	private CustomerRepositoryImpl customerRepository;
 
@@ -127,7 +128,7 @@ public class NewBankClientHandler extends Thread {
 			}
 		}
 	}
-	
+
 	public synchronized String processRequest(UUID customerID, String request) throws IOException {
 
 		switch (request) {
@@ -138,7 +139,7 @@ public class NewBankClientHandler extends Thread {
 				return "Select account to show Transactions";
 			case "3":
 			case "NEWACCOUNT":
-				return customerController.newAccount(customerID);
+				return accountController.newAccount(customerID);
 			case "4":
 			case "MOVE":
 				return transactionController.moveMoney(customerID);
@@ -148,9 +149,10 @@ public class NewBankClientHandler extends Thread {
 			 * case "PAY":
 			 * return transferMoney(customerID, requestInputs);
 			 * case "6":
-			 * case "CHANGEMYPASSWORD":
-			 * return changePassword(customerID,requestInputs);
 			 */
+			case "6":
+			case "CHANGEPASSWORD":
+				return customerController.changePassword(customerID);
 			// TODO: PUT in LOAN here
 			case "7":
 			case "LOGOUT":
@@ -159,5 +161,5 @@ public class NewBankClientHandler extends Thread {
 				return "FAIL";
 		}
 	}
-	
+
 }
