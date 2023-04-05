@@ -80,15 +80,43 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
      * saves new customer into database
      * 
      * @param customer
-     * @return
+     * @return true if customer is added successfully, false if customer already
+     *         exists or if there is an error
      */
     @Override
     public boolean save(Customer newCustomer) {
-        if (findByID(newCustomer.getCustomerID()) == null) {
-            theCustomers.put(newCustomer.getCustomerID().toString(), newCustomer);
-            return true;
+        try {
+            if (findByID(newCustomer.getCustomerID()) == null) {
+                theCustomers.put(newCustomer.getCustomerID().toString(), newCustomer);
+                return true;
+            } else {
+                return false; // customer already exists
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // error occurred
         }
-        return false;
+    }
+
+    /**
+     * updates the customer domain model
+     * 
+     * @param customer
+     * @return true if customer is updated successfully, false if customer is not
+     *         found or if there is an error
+     */
+    public boolean update(Customer newCustomer) {
+        try {
+            if (findByID(newCustomer.getCustomerID()) != null) {
+                theCustomers.put(newCustomer.getCustomerID().toString(), newCustomer);
+                return true; // customer updated successfully
+            } else {
+                return false; // customer not found
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // error occurred
+        }
     }
 
     /**
