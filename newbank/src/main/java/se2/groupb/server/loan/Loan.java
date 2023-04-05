@@ -6,40 +6,52 @@ import java.util.Calendar;
 import java.time.LocalDate;
 import java.sql.Date;
 import se2.groupb.server.account.AccountServiceImpl;
+import se2.groupb.server.customer.CustomerDTO;
 
 public class Loan {
 
     // Domain model for loan
 	private final UUID loanID;
-	private final UUID creatorID; //the customerID for the person who created this loan (could be lender or borrower)
+	private final UUID lenderID; //lender creates the loan: derived from lenderAccountID
+	private final UUID borrowerID; //the borrower
 	private final UUID lenderAccountID; // account to debit loan principal from and credit loan repayment to
 	private final UUID borrowerAccountID; // account to credit principal with and debit loan repayment from
 	private BigDecimal principalAmount; //the original amount
 	private BigDecimal interestRate;
-	private BigDecimal repaymentAmount; //amount due at the end date: derived from principal amount, interest rate and duration
-	private Integer term;
-	public boolean isAccepted; //if current date is between start date and end date
-	public boolean isFinished; //if the end date is in the past
-	private Date today = java.sql.Date.valueOf(LocalDate.now());
+	private Integer duration;
+	private String durationType; //days,weeks,months,years
+	private Integer installments;
+	private Integer minCreditScore;
+	public boolean isTaken; //a borrower has accepted it
 	
 	private AccountServiceImpl accountService;
 	
-	//Constructor
-	public Loan(UUID creatorID, UUID lenderAccountID,UUID borrowerAccountID, BigDecimal principalAmount,
+	//Constructor 1
+	public Loan(UUID lenderID, UUID lenderAccountID,UUID borrowerAccountID, BigDecimal principalAmount,
 			BigDecimal interestRate, Date startDate, Date endDate) {
 		
         this.loanID = UUID.randomUUID();
-        this.creatorID = creatorID;
+        this.lenderID = lenderID;
         this.lenderAccountID = lenderAccountID;
         this.borrowerAccountID = borrowerAccountID;
         this.principalAmount = principalAmount;
         this.interestRate = interestRate;
-        this.repaymentAmount = getRepaymentAmount();
-        this.startDate = startDate;
-        this.endDate = endDate;
-        credit(aBalance);
+        
+        this.installmentPayment = repaymentPlan();
+        this.totalInterest = totalInterestCalculation();
+        
     }
 	
+	//// constructor 2
+	public Loan(LoanDTO loanDto) {
+		this.loanID = UUID.randomUUID();
+		this.lenderID = loanDto.getLenderID();
+		this.lenderAccountID = loanDto.getLenderAccountID();
+		this.password = customerDto.getPassword();
+		this.loggedInStatus = false;
+		account
+		
+		
 	//Getters
 	
 	/**

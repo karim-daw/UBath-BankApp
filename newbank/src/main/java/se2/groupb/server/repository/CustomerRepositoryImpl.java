@@ -1,8 +1,10 @@
 package se2.groupb.server.repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerDTO;
 
@@ -11,9 +13,6 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
     // Temp HashMap Customer Repo
     private final HashMap<String, Customer> theCustomers;
 
-    public HashMap<String, Customer> getTheCustomers() {
-        return theCustomers;
-    }
 
     // private final HashMap<String, Account> theAccounts;
     // Temp constructor using HashMap as Customer Repo
@@ -105,5 +104,14 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
         }
         return false;
     }
-
+    
+    /**
+     * Returns a customer's accounts list
+     * @param customerID
+     * @return
+     */
+    public ArrayList<Account> findAccounts(UUID customerID) {
+    	Customer customer = findByID(customerID);
+    	return customer.getAccounts();
+    }
 }

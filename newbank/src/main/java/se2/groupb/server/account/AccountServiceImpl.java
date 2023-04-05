@@ -8,16 +8,19 @@ import java.util.Map;
 import java.util.UUID;
 
 import se2.groupb.server.repository.AccountRepositoryImpl;
+import se2.groupb.server.repository.CustomerRepositoryImpl;
 
 public class AccountServiceImpl implements AccountService {
 
 	private final AccountRepositoryImpl accountRepository;
+	private final CustomerRepositoryImpl customerRepository;
 	
 	Map<String, Integer> accountTypeLimits = Account.accountTypeLimits;
 
 	// Constructor
-	public AccountServiceImpl(AccountRepositoryImpl accountRepository) {
+	public AccountServiceImpl(AccountRepositoryImpl accountRepository,CustomerRepositoryImpl customerRepository) {
 		this.accountRepository = accountRepository;
+		this.customerRepository = customerRepository;
 
 	}
 
@@ -29,7 +32,7 @@ public class AccountServiceImpl implements AccountService {
 	 * @return
 	 */
 	public ArrayList<Account> getAccounts(UUID customerID) {
-		ArrayList<Account> accountList = accountRepository.findAccounts(customerID);
+		ArrayList<Account> accountList = customerRepository.findAccounts(customerID);
 		return accountList;
 
 	}

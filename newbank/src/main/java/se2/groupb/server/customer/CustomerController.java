@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 import se2.groupb.server.UserInput;
 import se2.groupb.server.account.*;
+import se2.groupb.server.loan.*;
 import java.math.BigDecimal;
 
 public class CustomerController {
@@ -11,12 +12,16 @@ public class CustomerController {
 
 	private final CustomerService customerService;
 	private final AccountService accountService;
+	private final LoanService loanService;
 	private UserInput comms;
 
 	// Constructor
-	public CustomerController(CustomerService customerService, AccountService accountService, UserInput comms) {
+	public CustomerController(CustomerService customerService, AccountService accountService, LoanService loanService,
+			UserInput comms) {
+		
 		this.customerService = customerService;
 		this.accountService = accountService;
+		this.loanService = loanService;
 		this.comms = comms;
 	}
 
@@ -197,6 +202,50 @@ public class CustomerController {
 		return response;
 	}
 
+	
+	
+	public String newLoanOffer(UUID customerID) {
+		
+		// Customer must specify the following:
+		// 1) a source account: by account number
+		// 2) a principal amount: must validate the balance is sufficient
+		// 3) an interest rate
+		// 4) a duration value: e.g. 5
+		// 5) a duration type: e.g. years
+		// 6) number of installments
+		// 7) minimum credit score required to accept offer
+		
+		// To string method displays each offer as:
+		// Lender name + Amount + Interest + Duration + Duration Type + Installments
+		// Bhagy 5,000 5% 5 years 12 700
+		
+		return "Your loan offer has been added to the MarketPlace";
+	}
+	
+	
+	public String viewLoanMarket(UUID customerID) {
+		String s="";
+		ArrayList<LoanOffer> loanOffers = loanService.getLoanOffers();
+		
+		for (LoanOffer l: loanOffers) {
+			s+=l.toString();
+		}
+		return s;
+		
+	}
+	
+	public String acceptLoanOffer(UUID customerID) {
+		// Customer must specify the following:
+		// 1) a source account: by account number
+		// 2) a principal amount: must validate the balance is sufficient
+		// 3) an interest rate
+		// 4) a duration type: e.g. years
+		// 5) a duration value: e.g. 5
+		// 6) number of installments
+		// 7) minimum credit score required to accept offer
+		return "Your loan offer has been added to the MarketPlace";
+	}
+	
 	/**
 	 *
 	 * Helper method for printing the contents of a HashMap<String,String>
