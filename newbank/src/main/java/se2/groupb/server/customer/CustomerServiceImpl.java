@@ -1,7 +1,9 @@
 package se2.groupb.server.customer;
 
-import java.util.*;
+import java.util.UUID;
+
 import se2.groupb.server.repository.CustomerRepositoryImpl;
+import se2.groupb.server.security.Authentication;
 
 public class CustomerServiceImpl implements CustomerService {
 
@@ -56,13 +58,48 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     /**
+     * returns the hashed password given a customerDTO
+     * 
+     * @param customerDTO
+     * @return
+     */
+    @Override
+    public String getUsername(CustomerDTO customerDTO) {
+        Customer c = customerRepository.findByDTO(customerDTO);
+        String username = c.getUsername();
+        return username;
+    }
+
+    /**
+     * returns the hashed password given a customerDTO
+     * 
+     * @param customerDTO
+     * @return
+     */
+    public String getHashedPassword(CustomerDTO customerDTO) {
+        Customer c = customerRepository.findByDTO(customerDTO);
+        String hashedPassword = c.getPassword();
+        return hashedPassword;
+    }
+
+    /**
      * Returns true if a new customer has been added to the Customer Data Store
      * 
      * @param customer
      * @return boolean
      */
     public boolean addNewCustomer(CustomerDTO customerDto) {
-        Customer newCustomer = new Customer(customerDto);
+
+        // get user name
+        String username = customerDto.getUsername();
+
+        // extract password and encrypt it
+        String plainTextPassword = customerDto.getPassword();
+
+        // set hashed password
+        String hashedPassword = Authentication.hashPassword(plainTextPassword);
+
+        Customer newCustomer = new Customer(username, hashedPassword);
         if (customerRepository.save(newCustomer)) {
             return true;
         }
@@ -104,6 +141,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean updatePassword(UUID customerID, String newPassword) {
 
+        // TODO: need to do this with hashed password
         Customer customer = getCustomerByID(customerID);
         customer.setPassword(newPassword);
         boolean success = customerRepository.update(customer);// update customer model
