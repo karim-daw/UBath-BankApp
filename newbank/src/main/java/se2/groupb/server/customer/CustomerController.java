@@ -49,11 +49,13 @@ public class CustomerController {
 		if (customer == null) {
 			systemResponse = "LOGIN FAIL. Invalid Credentials, please try again.";
 			comms.printSystemMessage(systemResponse);
+			return null;
 		} else {
 			systemResponse = "LOGIN SUCCESS. What do you want to do?";
 			comms.printSystemMessage(systemResponse);
+			return customer.getCustomerID();
 		}
-		return customer.getCustomerID();
+
 	}
 
 	/**
@@ -93,10 +95,10 @@ public class CustomerController {
 				String str = String.format("Registration succesfull. Please login to proceed.");
 				comms.printSystemMessage(str);
 				/*
-				Customer customer = customerService.getCustomerbyDTO(customerDto);
-				UUID customerID = customer.getCustomerID();
-				return customerID;
-				*/
+				 * Customer customer = customerService.getCustomerbyDTO(customerDto);
+				 * UUID customerID = customer.getCustomerID();
+				 * return customerID;
+				 */
 			} else {
 				String str = String.format("Database update failed. User not registered.");
 				comms.printSystemMessage(str);
@@ -154,7 +156,7 @@ public class CustomerController {
 					+ "\nEnter the number of your choice: ";
 			String userInput = comms.getUserMenuChoice(prompt, noOfChoices);
 			String accountType = newAcctOptions.get(userInput); // the choice of account type entered by the user
-			String str = "Create a new " + accountType +" account.\n";
+			String str = "Create a new " + accountType + " account.\n";
 			comms.printSystemMessage(str);
 
 			// check if customer already has an account type with that name
@@ -168,7 +170,7 @@ public class CustomerController {
 					comms.printSystemMessage("Account name taken. Please try again.");
 				}
 			} while (duplicateName);
-			
+
 			prompt = "Enter a positive opening balance (default is zero): \n";
 			BigDecimal openingBalance = comms.getOpeningBalance(prompt);
 
