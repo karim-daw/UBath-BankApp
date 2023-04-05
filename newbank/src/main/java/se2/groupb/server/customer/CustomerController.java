@@ -10,13 +10,11 @@ public class CustomerController {
 	// fields
 
 	private final CustomerService customerService;
-	private final AccountService accountService;
 	private UserInput comms;
 
 	// Constructor
 	public CustomerController(CustomerService customerService, AccountService accountService, UserInput comms) {
 		this.customerService = customerService;
-		this.accountService = accountService;
 		this.comms = comms;
 	}
 
@@ -138,80 +136,30 @@ public class CustomerController {
 	}
 
 	/**
-	 * NEWACCOUNT <Name>
-	 * e.g. NEWACCOUNT Savings
-	 * Returns SUCCESS or FAIL
-	 * 
-	 * @param customerID
-	 * @return
+	 * @return returns success if password was changed
 	 */
-	public String newAccount(UUID customerID) {
-		String response = ""; // the system response to the user's request
-		// UUID customerID = customer.getCustomerID();
-		HashMap<String, String> newAcctOptions = accountService.newAccountAvailableTypes(customerID);
+	public String changePassword(UUID customerID) {
+		String prompt = "Enter old password";
+		String oldPassword = comms.getUserString(prompt);
 
-		int noOfChoices = newAcctOptions.size(); // 0,1, or 2
-		if (noOfChoices > 0) {
-			String prompt = "Create a new account: \n" + mapToString(newAcctOptions)
-					+ "\nEnter the number of your choice: ";
-			String userInput = comms.getUserMenuChoice(prompt, noOfChoices);
-			String accountType = newAcctOptions.get(userInput); // the choice of account type entered by the user
-			String str = "Create a new " + accountType + " account.\n";
-			comms.printSystemMessage(str);
-
-			// check if customer already has an account type with that name
-			boolean duplicateName;
-			String accountName;
-			do {
-				prompt = "Enter an account name: ";
-				accountName = comms.getUserString(prompt);
-				duplicateName = accountService.hasAccount(customerID, accountType, accountName);
-				if (duplicateName) {
-					comms.printSystemMessage("Account name taken. Please try again.");
-				}
-			} while (duplicateName);
-
-			prompt = "Enter a positive opening balance (default is zero): \n";
-			BigDecimal openingBalance = comms.getOpeningBalance(prompt);
-
-			prompt = "Open a new " + accountType + " account: " + accountName + " with an opening balance of "
-					+ openingBalance
-					+ "?\nEnter 'y' for Yes or 'n' for No: \n";
-			boolean userConfirm = comms.confirm(prompt);
-
-			if (userConfirm) {
-
-				// adds new account to customer
-				AccountDTO accountDto = new AccountDTO(accountType, accountName, openingBalance);
-				Account newAccount = accountService.createAccount(customerID, accountDto);
-				Customer customer = customerService.getCustomerByID(customerID);
-				customer.addAccount(newAccount);
-
-				// Call NewBank method to add new customer account to bank's data store
-				response = "SUCCESS: Your " + accountType + " account has been created.\nReturning to Main Menu.";
-			} else {
-				response = "Account creation was cancelled.\nReturning to the Main Menu.";
-			}
-		} else {
-			response = "You have reached the maximum number of accounts.\nReturning to Main Menu.";
+		Customer customer = customerService.getCustomerByID(customerID);
+		String customerPassword = customer.getPassword();
+		if (!oldPassword.equals(customerPassword)) {
+			return "FAIL. The old password is incorrect."; // passwords dont match
 		}
-		return response;
-	}
 
-	/**
-	 *
-	 * Helper method for printing the contents of a HashMap<String,String>
-	 * 
-	 * @return a string of the contents
-	 */
-	public String mapToString(HashMap<String, String> map) {
-		String s = "";
-		if (map.size() > 0) {
-			for (HashMap.Entry<String, String> item : map.entrySet()) {
-				s += item.getKey() + " = " + item.getValue() + "\n";
-			}
+		prompt = "Enter new password";
+		String newPassword = comms.getUserString(prompt);
+
+		prompt = "Enter new password";
+		String newPassword2 = comms.getUserString(prompt);
+
+		if (!newPassword.equals(newPassword2)) {
+			return "FAIL. your password choice dont match"; // passwords dont match
 		}
-		return s;
-	}
 
+		customerService.updatePassword(customerID, newPassword);
+
+		return null;
+	}
 }
