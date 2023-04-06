@@ -31,4 +31,10 @@ public class TransactionRepositoryImpl implements EntityRepository<Transaction, 
         return null;
     }
 
+    @Override
+    public boolean update(Transaction entity) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
