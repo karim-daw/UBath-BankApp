@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerDTO;
+import se2.groupb.server.security.Authentication;
 
 public class CustomerRepositoryImpl implements EntityRepository<Customer, CustomerDTO> {
 
@@ -40,14 +41,26 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
      */
     @Override
     public Customer findByDTO(CustomerDTO customerDto) {
+
+        // unhash password to check
         Customer customer = null;
-        String target_username = customerDto.getUsername();
-        String target_password = customerDto.getPassword();
+        String username = customerDto.getUsername();
+        String plainTextPassword = customerDto.getPassword();
+
+        // hash password and compare to password in database
 
         for (HashMap.Entry<String, Customer> cust : theCustomers.entrySet()) {
             String cust_username = cust.getValue().getUsername();
-            String cust_password = cust.getValue().getPassword();
-            if ((cust_username.equals(target_username)) && (cust_password.equals(target_password))) {
+            String hashedPassword = cust.getValue().getPassword();
+
+            // boolean passwordIsCorrect =
+            // Authentication.authenticatePassword(plainTextPassword, hashedPassword);
+            // boolean passwordIsCorrect =
+            // Authentication.authenticatePassword(plainTextPassword, hashedPassword);
+            boolean usernameIsCorrect = (cust_username.equals(username));
+            boolean passwordIsCorrect = (hashedPassword.equals(plainTextPassword));
+
+            if (usernameIsCorrect && passwordIsCorrect) {
                 cust.getValue().setloggedInStatus(true);
                 customer = cust.getValue();
                 break;
