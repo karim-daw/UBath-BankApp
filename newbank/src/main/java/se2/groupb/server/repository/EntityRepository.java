@@ -34,4 +34,11 @@ public interface EntityRepository<Entity, EntityDTO> {
      */
     boolean save(Entity entity);
 
+    /**
+     * updates customer into database
+     * 
+     * @return
+     */
+    boolean update(Entity entity);
+
 }
