@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.*;
 import se2.groupb.server.UserInput;
 import se2.groupb.server.account.*;
+import se2.groupb.server.security.Authentication;
+
 import java.math.BigDecimal;
 
 public class CustomerController {
@@ -41,11 +43,31 @@ public class CustomerController {
 		String password = comms.getUserString("Enter Password");
 		CustomerDTO customerDto = new CustomerDTO(username, password);
 		comms.printSystemMessage("Please wait while we check your details");
+
+		// get hashed password with customer service
+		String customerUsername = customerService.getUsername(customerDto);
+		Boolean isUsernameCorrect = username.equals(customerUsername);
+		if (!isUsernameCorrect) {
+			systemResponse = "LOGIN FAIL. No user named: " + username + " in NewBank";
+			comms.printSystemMessage(systemResponse);
+			return null;
+		}
+
+		String hashedPassword = customerService.getHashedPassword(customerDto);
+		Boolean isPasswordCorrect = Authentication.authenticatePassword(password,
+				hashedPassword);
+		if (!isPasswordCorrect) {
+			systemResponse = "LOGIN FAIL. Password is not correct";
+			comms.printSystemMessage(systemResponse);
+			return null;
+		}
+
+		// get customer
 		Customer customer = customerService.getCustomerbyDTO(customerDto);
 
 		// Validate login details
 		if (customer == null) {
-			systemResponse = "LOGIN FAIL. Invalid Credentials, please try again.";
+			systemResponse = "LOGIN FAIL. Something went wrong with the login...";
 			comms.printSystemMessage(systemResponse);
 			return null;
 		} else {
@@ -61,6 +83,9 @@ public class CustomerController {
 	 * 
 	 * @return CustomerDTO
 	 */
+	// TODO: #40 need to implement a check to see if user hits "enter" instead of
+	// typing
+	// "Y" to confirm. If you hit enter it goes into an infinite loop and crashes
 	public UUID userRegistration() {
 		String username;
 		boolean duplicateUsername;
