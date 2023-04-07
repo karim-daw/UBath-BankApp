@@ -226,7 +226,7 @@ public class Customer {
 		return s;
 	}
 
-/*
+	/*
 	 * @return payees
 	 * TODO Set the list in alphabetical order
 	*/

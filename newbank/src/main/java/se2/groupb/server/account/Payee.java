@@ -44,9 +44,9 @@ public class Payee {
 	public String toString() {
 		// rounding balance down to 2 decimals
 		
-		String displayPayee = "\n" + displayChars('=', 52) + "\n" + payeeName + displayChars(' ', 3)+ payeeBIC +
-				displayChars(' ', 3) + payeeAccountNumber + "\n" +
-				displayChars('=', 52);
+		String displayPayee = /*"\n" + displayChars('=', 52) + "\n" + */payeeName + displayChars(' ', 3)+ payeeBIC +
+				displayChars(' ', 3) + payeeAccountNumber + "\n" /*+
+				displayChars('=', 52)*/;
 		return displayPayee;
 	}
 

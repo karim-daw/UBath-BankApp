@@ -41,14 +41,12 @@ public class NewBankClientHandler extends Thread {
 			"||      5. Pay Person/Company                     ||\n" +
 			"||      6. Change Password                        ||\n" +
 			"||      7. Logout                                 ||\n" +
-			"||      8. View Payees                            ||\n" +
-			"||      9. Add a payee                            ||\n" +
 			"|| Enter the number corresponding to your choice  ||\n" +
 			"|| and press enter                                ||\n" +
 			"====================================================\n" +
 			"\nEnter Selection:";
 
-	private static final int mainMenuChoices = 9;
+	private static final int mainMenuChoices = 7;
 
 	// fields
 
@@ -56,6 +54,7 @@ public class NewBankClientHandler extends Thread {
 	private final BufferedReader in;
 	private final PrintWriter out;
 	public final UserInput comms;
+	private Payee payees;
 	private CustomerController customerController;
 	private CustomerServiceImpl customerService;
 	private CustomerRepositoryImpl customerRepository;
@@ -82,7 +81,7 @@ public class NewBankClientHandler extends Thread {
 		customerService = new CustomerServiceImpl(customerRepository);
 		accountService = new AccountServiceImpl(accountRepository);
 		customerController = new CustomerController(customerService, accountService, comms);
-		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
+		transactionController = new TransactionController(customerService, customerController, accountService, transactionService, payees, comms);
 	}
 	
 	public AccountServiceImpl getAccountService() {
@@ -148,25 +147,19 @@ public class NewBankClientHandler extends Thread {
 			case "4":
 			case "MOVE":
 				return transactionController.moveMoney(customerID);
+			case "5":
+			case "PAY":
+				return transactionController.transferMoney(customerID);			
 			/*
 			 * /*
-			 * case "5":
-			 * case "PAY":
-			 * return transferMoney(customerID, requestInputs);
 			 * case "6":
 			 * case "CHANGEMYPASSWORD":
 			 * return changePassword(customerID,requestInputs);
 			 */
-			// TODO: PUT in LOAN here
+			// TO DO: PUT in LOAN here
 			case "7":
 			case "LOGOUT":
 				return customerController.userLogout(customerID);
-			case "8":
-			case "SHOWMYPAYEES":
-				return customerController.displayPayees(customerID);
-			case "9":
-			case "ADDAPAYEE":
-					return customerController.createPayee(customerID);
 			default:
 				return "FAIL";
 		}

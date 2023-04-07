@@ -71,4 +71,11 @@ public interface CustomerService {
      * @return
      */
     public String displayPayees(UUID customerID);
+
+    /**
+     * returns the payee of the customer
+     * @param customerDTO
+     * @return
+     */
+    public String getPayeeName(String payeeName);
 }
