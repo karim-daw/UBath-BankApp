@@ -47,24 +47,24 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
         String username = customerDto.getUsername();
         String plainTextPassword = customerDto.getPassword();
 
-        // hash password and compare to password in database
-
+        // get user name and hash password and compare to password in database
         for (HashMap.Entry<String, Customer> cust : theCustomers.entrySet()) {
             String cust_username = cust.getValue().getUsername();
             String hashedPassword = cust.getValue().getPassword();
 
             // boolean passwordIsCorrect =
             // Authentication.authenticatePassword(plainTextPassword, hashedPassword);
-            // boolean passwordIsCorrect =
-            // Authentication.authenticatePassword(plainTextPassword, hashedPassword);
-            boolean usernameIsCorrect = (cust_username.equals(username));
-            boolean passwordIsCorrect = (hashedPassword.equals(plainTextPassword));
+            // boolean passwordIsCorrect = (hashedPassword.equals(plainTextPassword));
 
+            // Authenticate
+            boolean passwordIsCorrect = Authentication.authenticatePassword(plainTextPassword, hashedPassword);
+            boolean usernameIsCorrect = (cust_username.equals(username));
             if (usernameIsCorrect && passwordIsCorrect) {
                 cust.getValue().setloggedInStatus(true);
                 customer = cust.getValue();
                 break;
             }
+
         }
         return customer;
     }
