@@ -58,42 +58,6 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     /**
-     * returns the hashed password given a customerDTO
-     * 
-     * @param customerDTO
-     * @return
-     */
-    @Override
-    public String getUsername(CustomerDTO customerDTO) {
-        Customer c = customerRepository.findByDTO(customerDTO);
-        if (c != null) {
-
-            String username = c.getUsername();
-            return username;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns the hashed password given a CustomerDTO.
-     * 
-     * @param customerDTO
-     * @return The hashed password, or an error message if the customer is not
-     *         found.
-     */
-    @Override
-    public String getHashedPassword(CustomerDTO customerDTO) {
-        Customer c = customerRepository.findByDTO(customerDTO);
-        if (c != null) {
-            String hashedPassword = c.getPassword();
-            return hashedPassword;
-        } else {
-            return null;// TODO: uspassword is not working correctly
-        }
-    }
-
-    /**
      * Returns true if a new customer has been added to the Customer Data Store
      * 
      * @param customer
