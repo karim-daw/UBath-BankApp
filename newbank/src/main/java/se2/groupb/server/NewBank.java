@@ -27,9 +27,11 @@ public class NewBank {
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
 	private void addTestData() {
-		Customer bhagy = new Customer("Bhagy", "password");
-		getCustomers().put(bhagy.getCustomerID().toString(), bhagy);
 
+		// password: "password"
+		Customer bhagy = new Customer("Bhagy", "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8");
+
+		getCustomers().put(bhagy.getCustomerID().toString(), bhagy);
 		Account bhagy_acct1 = new Account(bhagy.getCustomerID(), "Current", "Main", BigDecimal.valueOf(20000));
 		Account bhagy_acct2 = new Account(bhagy.getCustomerID(), "Savings", "Car", BigDecimal.valueOf(1000));
 		getAccounts().put(bhagy_acct1.getAccountID().toString(), bhagy_acct1);
@@ -37,13 +39,17 @@ public class NewBank {
 		bhagy.addAccount(bhagy_acct1);
 		bhagy.addAccount(bhagy_acct2);
 
-		Customer christina = new Customer("Christina", "1234");
+		// password: "1234"
+		Customer christina = new Customer("Christina",
+				"03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4");
+
 		getCustomers().put(christina.getCustomerID().toString(), christina);
 		Account christina_acct1 = new Account(christina.getCustomerID(), "Savings", "House", BigDecimal.valueOf(1500));
 		getAccounts().put(christina_acct1.getAccountID().toString(), christina_acct1);
 		christina.addAccount(christina_acct1);
 
-		Customer john = new Customer("John", "1111");
+		// password: "1111"
+		Customer john = new Customer("John", "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c");
 		getCustomers().put(john.getCustomerID().toString(), john);
 		Account john_acct1 = new Account(john.getCustomerID(), "Current", "Main", BigDecimal.valueOf(250));
 		getAccounts().put(john_acct1.getAccountID().toString(), john_acct1);
