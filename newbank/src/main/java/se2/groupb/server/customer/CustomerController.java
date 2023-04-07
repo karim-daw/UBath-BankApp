@@ -41,33 +41,17 @@ public class CustomerController {
 		String systemResponse = "";
 		String username = comms.getUserString("Enter Username");
 		String password = comms.getUserString("Enter Password");
+
+		// this dto has the plain text password
 		CustomerDTO customerDto = new CustomerDTO(username, password);
 		comms.printSystemMessage("Please wait while we check your details");
-
-		// get hashed password with customer service
-		String customerUsername = customerService.getUsername(customerDto);
-		Boolean isUsernameCorrect = username.equals(customerUsername);
-		if (!isUsernameCorrect) {
-			systemResponse = "LOGIN FAIL. No user named: " + username + " in NewBank";
-			comms.printSystemMessage(systemResponse);
-			return null;
-		}
-
-		String hashedPassword = customerService.getHashedPassword(customerDto);
-		Boolean isPasswordCorrect = Authentication.authenticatePassword(password,
-				hashedPassword);
-		if (!isPasswordCorrect) {
-			systemResponse = "LOGIN FAIL. Password is not correct";
-			comms.printSystemMessage(systemResponse);
-			return null;
-		}
 
 		// get customer
 		Customer customer = customerService.getCustomerbyDTO(customerDto);
 
 		// Validate login details
 		if (customer == null) {
-			systemResponse = "LOGIN FAIL. Something went wrong with the login...";
+			systemResponse = "LOGIN FAIL. No such credentials...";
 			comms.printSystemMessage(systemResponse);
 			return null;
 		} else {
