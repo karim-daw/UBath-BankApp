@@ -112,8 +112,10 @@ public class Account {
 	 */
 	public void deposit(BigDecimal amount) {
 		// BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
-		BigDecimal newBalance = currentBalance.add(amount);
-		currentBalance = newBalance;
+		BigDecimal balance = getBalance();
+
+		BigDecimal newBalance = balance.add(amount);
+		setBalance(newBalance);
 	}
 
 	/**
@@ -122,9 +124,10 @@ public class Account {
 	 * @param amount
 	 */
 	public void withdraw(BigDecimal amount) {
+		BigDecimal balance = getBalance();
 		// BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
-		BigDecimal newBalance = currentBalance.subtract(amount);
-		currentBalance = newBalance;
+		BigDecimal newBalance = balance.subtract(amount);
+		setBalance(newBalance);
 	}
 
 	public String getAccountType() {
@@ -149,6 +152,10 @@ public class Account {
 
 	public BigDecimal getBalance() {
 		return this.currentBalance;
+	}
+
+	private void setBalance(BigDecimal newBalance) {
+		this.currentBalance = newBalance;
 	}
 
 	/**
