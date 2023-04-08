@@ -27,6 +27,7 @@ public class AccountRepositoryImpl implements EntityRepository<Account, AccountD
         return theAccounts.get(accountID.toString());
     }
     
+    
     public UUID findCustomerByID(UUID accountID) {
     	return theAccounts.get(accountID.toString()).getCustomerID();
     }
@@ -40,38 +41,6 @@ public class AccountRepositoryImpl implements EntityRepository<Account, AccountD
             return true;
         }
         return false;
-    }
-
-    // get a list of Account objects by Customer ID
-    /**
-     * @param customerID
-     * @return
-     */
-    public ArrayList<Account> findAccounts(UUID customerID) {
-        ArrayList<Account> l = new ArrayList<>();
-        for (HashMap.Entry<String, Account> record : theAccounts.entrySet()) {
-            UUID recordCustomerID = record.getValue().getCustomerID();
-            if (recordCustomerID.equals(customerID)) {
-                l.add(record.getValue());
-            }
-        }
-        return l;
-    }
-
-    // get a list of Account objects by Customer ID and Account Type
-    /**
-     * @param customerID
-     * @param accountType
-     * @return
-     */
-    public ArrayList<Account> findAccountsByType(UUID customerID, String accountType) {
-        ArrayList<Account> l = new ArrayList<>();
-        for (Account a : findAccounts(customerID)) {
-            if (a.getAccountType().equals(accountType)) {
-                l.add(a);
-            }
-        }
-        return l;
     }
 
     @Override

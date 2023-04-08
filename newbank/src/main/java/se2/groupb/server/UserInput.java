@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class UserInput {
 
@@ -20,11 +21,28 @@ public class UserInput {
 	public void printSystemMessage(String message) {
 		out.println(message);
 	}
-
+	
+	/**
+	 *
+	 * Helper method for printing the contents of a HashMap<String,String>
+	 * 
+	 * @return a string of the contents
+	 */
+	public String mapToString(Map<String,String> map) {
+		String s = "";
+		if (map.size() > 0) {
+			for (Map.Entry<String, String> item : map.entrySet()) {
+				s += item.getKey() + " = " + item.getValue() + "\n";
+			}
+		}
+		return s;
+	}
+	
+	
 	/**
 	 * reads next line from BufferedReader
 	 * 
-	 * @return
+	 * @return the string: could be null if user didn't enter anything or "error" if IO Exception occurred
 	 */
 	private String readNextLine() {
 		try {
@@ -40,7 +58,7 @@ public class UserInput {
 	 * keeps prompting the user for input if they haven't entered any
 	 * 
 	 * @param prompt
-	 * @return
+	 * @return non-null string or "error" if IOException
 	 */
 	public String getUserString(String prompt) {
 		String userInput = null;
@@ -79,16 +97,33 @@ public class UserInput {
 	 * @param userInput
 	 * @return
 	 */
-	public int convertStringToInt(String userInput) {
+	public Integer convertStringToInt(String userInput) {
 		try {
-			int inputAsInt = Integer.parseInt(userInput);
+			Integer inputAsInt = Integer.parseInt(userInput);
 			return inputAsInt;
 		} catch (NumberFormatException e) {
 			printSystemMessage("Input isn't an integer.");
 			return -1;
 		}
 	}
-
+	
+	
+	public Integer getUserIntegerInput(String prompt) {
+		
+		String userString;
+		Integer userInteger = -1;
+		boolean valid = false;
+		
+		while (!valid) {
+			userString = getUserString(prompt); // non-null string - could be "error"
+			userInteger = convertStringToInt(userString); //if userString= "error" then userInteger=-1
+			if (userInteger >= 0) {
+				valid = true;
+			}
+		}
+		return userInteger;
+	}
+	
 	// TODO: need to add interaction for when user wants to transfer money to
 	// another person
 
@@ -150,6 +185,9 @@ public class UserInput {
 		do {
 			printSystemMessage(prompt);
 			userInput = readNextLine();
+			if (userInput=="error") {
+				return false;
+			}
 			valid = ((userInput.charAt(0) == 'y') || (userInput.charAt(0) == 'Y') || (userInput.charAt(0) == 'n')
 					|| (userInput.charAt(0) == 'N'));
 		} while (!valid);
@@ -159,4 +197,5 @@ public class UserInput {
 			return false;
 		}
 	}
+	
 }

@@ -1,9 +1,12 @@
 package se2.groupb.server.customer;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import se2.groupb.server.loanOffer.LoanOffer;
 import se2.groupb.server.loan.Loan;
 
 import se2.groupb.server.account.Account;
@@ -15,17 +18,33 @@ public class Customer {
 	private final UUID customerID;
 	private String username;
 	private String password;
-	private ArrayList<Account> accounts;
-	private ArrayList<Loan> loans;
 	private boolean loggedInStatus;
+	private Integer creditScore;
+	private ArrayList<Account> accounts;
+	private ArrayList<LoanOffer> loanOffers;
+	private ArrayList<Loan> loans;
 
+	//public static final Map<String, String> creditScoresOld = Map.of("1", "Poor", "2", "Fair", "3", "Good", "4", "Very Good", "5", "Excellent");
+	
+	public static Map<String, String> creditScores;
+	static{
+		creditScores = new TreeMap<String,String>();
+		creditScores.put("1","Poor");
+		creditScores.put("2","Fair");
+		creditScores.put("3","Good");
+		creditScores.put("4","Very Good");
+		creditScores.put("5","Excellent");
+	}
+	    
 	// constructor 1
 	public Customer(String username, String password) {
 		this.customerID = UUID.randomUUID();
 		this.username = username;
 		this.password = password;
 		this.loggedInStatus = false;
+		this.creditScore = 2; //default credit score
 		accounts = new ArrayList<>();
+		loanOffers = new ArrayList<>();
 		loans = new ArrayList<>();
 	}
 
@@ -35,7 +54,9 @@ public class Customer {
 		this.username = customerDto.getUsername();
 		this.password = customerDto.getPassword();
 		this.loggedInStatus = false;
+		this.creditScore = 2; //default credit score
 		accounts = new ArrayList<>();
+		loanOffers = new ArrayList<>();
 		loans = new ArrayList<>();
 	}
 
@@ -82,15 +103,48 @@ public class Customer {
 	public void setloggedInStatus(boolean status) {
 		this.loggedInStatus = status;
 	}
+	
+	/**
+	 * Gets the customer's credit score
+	 * @return Integer
+	 */
+	public Integer getCreditScore() {
+		return this.creditScore;
+	}
 
+	/**
+	 * Changes the Customer's credit score
+	 * @param score
+	 */
+	public void setCreditScore(Integer score) {
+		this.creditScore = score;
+	}
+	
 	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
 	
+	/**
+	 * Gets the Customer's loan offers
+	 * @return
+	 */
+	public ArrayList<LoanOffer> getLoanOffers() {
+		return loanOffers;
+	}
+	
+	/**
+	 * Gets the Customer's loans
+	 * @return
+	 */
 	public ArrayList<Loan> getLoans() {
 		return loans;
 	}
 	
+	/**
+	 * Returns the Customer's accounts filtered by Account Type: Current, Savings
+	 * @param accountType
+	 * @return list of Account
+	 */
 	public ArrayList<Account> getAccountsByType(String accountType) {
 		ArrayList<Account> accountsByType = new ArrayList<>();
 		for (Account a : accounts) {
@@ -102,9 +156,9 @@ public class Customer {
 	}
 
 	/**
-	 * @return a string of an account
+	 * Returns a string of customer's accounts list for display
+	 * @return a String
 	 */
-
 	public String accountsToString() {
 		String s = "";
 		for (Account a : accounts) {
@@ -112,7 +166,20 @@ public class Customer {
 		}
 		return s;
 	}
-
+	
+	
+	/**
+	 * Returns a string of customer's loans list for display
+	 * @return a string
+	 */
+	public String loansToString() {
+		String s = "";
+		for (Loan l : loans) {
+			s += l.toString();
+		}
+		return s;
+	}
+	
 	/**
 	 * display the accounts content into a list
 	 * 
@@ -147,7 +214,26 @@ public class Customer {
 	public void addAccount(Account account) {
 		accounts.add(account);
 	}
-
+	
+	/**
+	 * adds Loan Offer to the Customer's list of offers
+	 * 
+	 * @param account
+	 */
+	public void addLoanOffer(LoanOffer offer) {
+		loanOffers.add(offer);
+	}
+	
+	/**
+	 * adds Loan to the Customer's list of loans
+	 * 
+	 * @param account
+	 */
+	public void addLoan(Loan loan) {
+		loans.add(loan);
+	}
+	
+	
 	/**
 	 * @param accountName
 	 * @return
@@ -228,5 +314,10 @@ public class Customer {
 			s += item.getKey() + " = " + item.getValue() + "\n";
 		}
 		return s;
+	}
+	
+	@Override
+	public String toString() {
+		return customerID.toString() + " " +username;
 	}
 }

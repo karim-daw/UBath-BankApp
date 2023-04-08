@@ -3,6 +3,8 @@ package se2.groupb.server.loan;
 import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.Calendar;
+import java.util.Map;
+import java.util.TreeMap;
 import java.time.LocalDate;
 import java.sql.Date;
 import se2.groupb.server.account.AccountServiceImpl;
@@ -12,6 +14,7 @@ public class Loan {
 
     // Domain model for loan
 	private final UUID loanID;
+	private final UUID loanOfferID;
 	private final UUID lenderID; //lender creates the loan: derived from lenderAccountID
 	private final UUID borrowerID; //the borrower
 	private final UUID lenderAccountID; // account to debit loan principal from and credit loan repayment to
@@ -21,35 +24,49 @@ public class Loan {
 	private Integer duration;
 	private String durationType; //days,weeks,months,years
 	private Integer installments;
-	private Integer minCreditScore;
-	public boolean isTaken; //a borrower has accepted it
+	private String minCreditScore;
+	private boolean isActive; //a borrower has accepted it
+	private final LocalDate startDate = LocalDate.now();
 	
-	private AccountServiceImpl accountService;
-	
+	//public static final Map<String, String> loanDurationsOld = Map.of("1", "Days", "2", "Weeks","3","Months","4","Years");
+		
+	public static Map<String, String> loanDurations;
+	static{
+		loanDurations = new TreeMap<String,String>();
+		loanDurations.put("1", "Days");
+		loanDurations.put("2", "Weeks");
+		loanDurations.put("3","Months");
+		loanDurations.put("4","Years");
+	}
+		
 	//Constructor 1
-	public Loan(UUID lenderID, UUID lenderAccountID,UUID borrowerAccountID, BigDecimal principalAmount,
-			BigDecimal interestRate, Date startDate, Date endDate) {
+	public Loan(UUID loanOfferID, UUID lenderID, UUID borrowerID, UUID lenderAccountID,UUID borrowerAccountID, 
+			BigDecimal principalAmount,BigDecimal interestRate, Integer duration, String durationType, 
+			Integer installments, String minCreditScore) {
 		
         this.loanID = UUID.randomUUID();
+        this.loanOfferID = loanOfferID;
         this.lenderID = lenderID;
+        this.borrowerID = borrowerID;
         this.lenderAccountID = lenderAccountID;
         this.borrowerAccountID = borrowerAccountID;
         this.principalAmount = principalAmount;
         this.interestRate = interestRate;
-        
+		this.duration = duration;
+		this.durationType = durationType;
+		this.installments = installments;
+		this.minCreditScore = minCreditScore;
+		this.isActive = true;
         this.installmentPayment = repaymentPlan();
-        this.totalInterest = totalInterestCalculation();
-        
+
     }
 	
 	//// constructor 2
 	public Loan(LoanDTO loanDto) {
-		this.loanID = UUID.randomUUID();
-		this.lenderID = loanDto.getLenderID();
-		this.lenderAccountID = loanDto.getLenderAccountID();
-		this.password = customerDto.getPassword();
-		this.loggedInStatus = false;
-		account
+		
+	}
+		
+		
 		
 		
 	//Getters
@@ -161,6 +178,10 @@ public class Loan {
         return accountService.getCustomer(borrowerAccountID);
     }
 
+    
+    
+    
+    
     /**
      * Transfers principal from the lender's account to the borrower's account.
      *

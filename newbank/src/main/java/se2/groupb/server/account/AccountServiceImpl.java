@@ -1,5 +1,6 @@
 package se2.groupb.server.account;
 
+import java.math.BigDecimal;
 //import se2.groupb.server.repository.AccountRepository;
 //import se2.groupb.server.repository.CustomerRepository;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import se2.groupb.server.customer.Customer;
 import se2.groupb.server.repository.AccountRepositoryImpl;
 import se2.groupb.server.repository.CustomerRepositoryImpl;
 
@@ -25,9 +27,20 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	// methods
-
-	// get a list of Account objects by Customer ID
+	
 	/**
+	 * Returns Customer's UUID from their Account UUID
+	 * @param accountID
+	 * @return Customer UUID
+	 */
+	public UUID getCustomer(UUID accountID) {
+		return accountRepository.findByID(accountID).getCustomerID();
+	}
+	
+	
+	/**
+	 * The Customer's Accounts list
+	 * Account list filtered
 	 * @param customerID
 	 * @return
 	 */
@@ -37,22 +50,19 @@ public class AccountServiceImpl implements AccountService {
 
 	}
 	
-	public UUID getCustomer(UUID accountID) {
-		return accountRepository.findByID(accountID).getCustomerID();
-	}
-	
-	
-	// get a list of Account objects by Customer ID and Account Type
 	/**
+	 * The Customer's Accounts list filtered by Account Type
 	 * @param customerID
 	 * @param accountType
 	 * @return
 	 */
 	public ArrayList<Account> getAccountsByType(UUID customerID, String accountType) {
-		ArrayList<Account> accountList = accountRepository.findAccountsByType(customerID, accountType);
+		ArrayList<Account> accountList = customerRepository.findAccountsByType(customerID, accountType);
 		return accountList;
 	}
-
+	
+	
+		
 	/**
 	 * checks if the desired account name already exists in the customers list of
 	 * accounts by type
@@ -64,7 +74,7 @@ public class AccountServiceImpl implements AccountService {
 	 *         specified type
 	 */
 	public boolean hasAccount(UUID customerID, String accountType, String accountName) {
-		ArrayList<Account> accountList = accountRepository.findAccountsByType(customerID, accountType);
+		ArrayList<Account> accountList = customerRepository.findAccountsByType(customerID, accountType);
 		for (Account a : accountList) {
 			if (a.getAccountName().equals(accountName)) {
 				return true;
@@ -72,7 +82,66 @@ public class AccountServiceImpl implements AccountService {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * Return the Account Balance if Customer has Account with the specified Account Number
+	 * @param customerID
+	 * @param accountNumber
+	 * @return the Account Balance
+	 */
+	public Account getAccountByNumber(UUID customerID, String accountNumber) {
+		return customerRepository.findAccountByNumber(customerID,accountNumber);
+	}
+	
+	/**
+     * Return true if Customer has Account with the specified Account Number
+     * @param customerID
+     * @param accountNumber
+     * @return true if customer has account number, else false
+     */
+	public boolean hasAccountNumber(UUID customerID, String accountNumber) {
+		if (getAccountByNumber(customerID,accountNumber)==null){
+    		return false;
+    	}
+    	return true;
+	}
+	
+	/**
+	 * Return the Account Balance if Customer has Account with the specified Account Number
+	 * @param customerID
+	 * @param accountNumber
+	 * @return the Account Balance
+	 */
+	public BigDecimal getAccountBalance(UUID customerID, String accountNumber) {
+		if (hasAccountNumber(customerID,accountNumber)) {
+			return getAccountByNumber(customerID,accountNumber).getBalance();
+		}
+		else {
+			return null;
+		}
+	}
+	
+	
+	/**
+     * displays accounts as a list
+     * 
+     * @param customerID
+     * @return String list of the Customer's Accounts
+     */
+    public String displayAccounts(UUID customerID) {
+    
+        if (getAccounts(customerID).isEmpty()) {
+            return "You have no accounts to display.";
+        } else {
+        	String s = "";
+    		for (Account a : getAccounts(customerID)) {
+    			s += a.toString();
+    		}
+    		return s;
+        }
+    }
+    
+    
 	// get the number of accounts of a specific Account Type for the Customer ID
 	/**
 	 * @param customerID
@@ -80,7 +149,7 @@ public class AccountServiceImpl implements AccountService {
 	 * @return
 	 */
 	public Integer noAccountsByType(UUID customerID, String accountType) {
-		ArrayList<Account> accountList = accountRepository.findAccountsByType(customerID, accountType);
+		ArrayList<Account> accountList = customerRepository.findAccountsByType(customerID, accountType);
 		return accountList.size();
 	}
 

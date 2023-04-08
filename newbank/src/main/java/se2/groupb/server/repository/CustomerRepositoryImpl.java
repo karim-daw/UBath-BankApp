@@ -7,19 +7,20 @@ import java.util.UUID;
 import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerDTO;
+import se2.groupb.server.loanOffer.LoanOffer;
 
 public class CustomerRepositoryImpl implements EntityRepository<Customer, CustomerDTO> {
 
     // Temp HashMap Customer Repo
     private final HashMap<String, Customer> theCustomers;
 
-
-    // private final HashMap<String, Account> theAccounts;
-    // Temp constructor using HashMap as Customer Repo
+    //Constructor
     public CustomerRepositoryImpl(HashMap<String, Customer> customers) {
         this.theCustomers = customers;
     }
-
+    
+    
+    //Methods for Customer info:
     /**
      * Searches the Customer Data Store by CustomerID
      * 
@@ -105,13 +106,70 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
         return false;
     }
     
+    
+    //Methods that return lists of Accounts for the Customer filtered by various criteria:
+    
     /**
-     * Returns a customer's accounts list
+     * Returns a list of the customer's accounts
      * @param customerID
      * @return
      */
     public ArrayList<Account> findAccounts(UUID customerID) {
     	Customer customer = findByID(customerID);
+    	//System.out.println(customer.getAccounts().toString());
     	return customer.getAccounts();
+    }
+    
+    /**
+     * Returns a list of Account objects filtered by Customer ID and Account Type
+     * @param customerID
+     * @param accountType
+     * @return
+     */
+    public ArrayList<Account> findAccountsByType(UUID customerID, String accountType) {
+        ArrayList<Account> l = new ArrayList<>();
+        for (Account a : findAccounts(customerID)) {
+            if (a.getAccountType().equals(accountType)) {
+                l.add(a);
+            }
+        }
+        return l;
+    }
+    
+    
+    /**
+     * Return Account corresponding to Customer and Account Number specified
+     * @param accountNumber
+     * @return Account
+     */
+    public Account findAccountByNumber(UUID customerID, String accountNumber) {
+    	for (Account a : findAccounts(customerID)) {
+            if (a.getAccountNumber().equals(accountNumber)) {
+                return a;
+            }
+        }
+    	return null;
+    }
+    
+    
+  //Methods that return lists of Loan Offers for the Customer filtered by various criteria:
+    /**
+     * Returns a list of the customer's Loan Offers
+     * @param customerID
+     * @return Array List of Loan Offers
+     */
+    public ArrayList<LoanOffer> findLoanOffers(UUID customerID) {
+    	Customer customer = findByID(customerID);
+    	return customer.getLoanOffers();
+    }
+    
+    
+    public LoanOffer findLoanOfferByName(UUID customerID,String offerName) {
+    	for (LoanOffer offer : findLoanOffers(customerID)) {
+            if (offer.getOfferName().equals(offerName)) {
+                return offer;
+            }
+        }
+    	return null;
     }
 }

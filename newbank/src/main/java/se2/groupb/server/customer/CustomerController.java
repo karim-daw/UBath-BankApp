@@ -1,6 +1,5 @@
 package se2.groupb.server.customer;
 
-import java.io.IOException;
 import java.util.*;
 import se2.groupb.server.UserInput;
 import se2.groupb.server.account.*;
@@ -10,16 +9,15 @@ import java.math.BigDecimal;
 public class CustomerController {
 	// fields
 
-	private final CustomerService customerService;
-	private final AccountService accountService;
+	private final CustomerServiceImpl customerService;
+	private final AccountServiceImpl accountService;
 	private UserInput comms;
 
 	// Constructor
-	public CustomerController(CustomerService customerService, AccountService accountService,UserInput comms) {
+	public CustomerController(CustomerServiceImpl customerService, AccountServiceImpl accountService,UserInput comms) {
 		
 		this.customerService = customerService;
 		this.accountService = accountService;
-		this.loanService = loanService;
 		this.comms = comms;
 	}
 
@@ -96,11 +94,6 @@ public class CustomerController {
 			if (customerService.addNewCustomer(customerDto)) {
 				String str = String.format("Registration succesfull. Please login to proceed.");
 				comms.printSystemMessage(str);
-				/*
-				Customer customer = customerService.getCustomerbyDTO(customerDto);
-				UUID customerID = customer.getCustomerID();
-				return customerID;
-				*/
 			} else {
 				String str = String.format("Database update failed. User not registered.");
 				comms.printSystemMessage(str);
@@ -129,16 +122,7 @@ public class CustomerController {
 		return systemResponse;
 	}
 
-	/**
-	 * displays the customers accounts as a list
-	 * 
-	 * @param customerDTO
-	 * @return
-	 */
-	public String displayAccounts(UUID customerID) {
-		return customerService.displayAccounts(customerID);
-	}
-
+	
 	/**
 	 * NEWACCOUNT <Name>
 	 * e.g. NEWACCOUNT Savings

@@ -10,13 +10,13 @@ import se2.groupb.server.customer.*;
 import se2.groupb.server.account.*;
 import se2.groupb.server.repository.*;
 import se2.groupb.server.transaction.*;
-import se2.groupb.server.loan.*;
+//import se2.groupb.server.loan.*;
+import se2.groupb.server.loanOffer.*;
 
 public class NewBankClientHandler extends Thread {
 
 	// statics
-
-	private static final String welcomeMessage = "\n" +
+	private static final String welcomeMenu = "\n" +
 			"====================================================\n" +
 			"||           *** WELCOME TO NEWBANK ***           ||\n" +
 			"====================================================\n" +
@@ -27,26 +27,56 @@ public class NewBankClientHandler extends Thread {
 			"|| and press enter                                ||\n" +
 			"====================================================\n" +
 			"\nEnter Selection:";
-	private static final int welcomeChoices = 2;
+	private static final int welcomeMenuChoices = 2;
 
-	private static final String requestMenu = "\n" +
+	
+	private static final String mainmenu = "\n" +
 			"====================================================\n" +
 			"||           *** NEWBANK MAIN MENU ***            ||\n" +
 			"====================================================\n" +
 			"|| Please select one of the following options:    ||\n" +
-			"||      1. View Accounts                          ||\n" +
+			"||      1. BANKING MENU                           ||\n" +
+			"||      2. LOAN MARKET MENU                       ||\n" +
+			"||      3. LOGOUT                                 ||\n" +
+			"|| Enter the number corresponding to your choice  ||\n" +
+			"|| and press enter                                ||\n" +
+			"====================================================\n" +
+			"\nEnter Selection:";
+	private static final int mainMenuChoices = 3;
+
+	
+	private static final String bankMenu = "\n" +
+			"====================================================\n" +
+			"||      *** NEWBANK BANKING MENU ***              ||\n" +
+			"====================================================\n" +
+			"|| Please select one of the following options:    ||\n" +
+			"||      1. View All Accounts                      ||\n" +
 			"||      2. Select Account to View Transactions    ||\n" +
 			"||      3. Create New Account                     ||\n" +
 			"||      4. Move Money                             ||\n" +
 			"||      5. Pay Person/Company                     ||\n" +
 			"||      6. Change Password                        ||\n" +
-			"||      7. Logout                                 ||\n" +
+			"||      7. Return                                 ||\n" +
 			"|| Enter the number corresponding to your choice  ||\n" +
 			"|| and press enter                                ||\n" +
 			"====================================================\n" +
 			"\nEnter Selection:";
-
-	private static final int mainMenuChoices = 7;
+	private static final int bankMenuChoices = 7;
+	
+	private static final String loanMarketMenu = "\n" +
+			"====================================================\n" +
+			"||      *** NEWBANK LOAN MARKET MENU ***          ||\n" +
+			"====================================================\n" +
+			"|| Please select one of the following options:    ||\n" +
+			"||      1. View Your Loan Offers                  ||\n" +
+			"||      2. View All Loan Offers                   ||\n" +
+			"||      3. Create New Loan Offer                  ||\n" +
+			"||      4. Return                                 ||\n" +
+			"||      5.                                        ||\n" +
+			"====================================================\n" +
+			"\nEnter Selection:";
+	private static final int loanMarketMenuChoices = 4;
+	
 
 	// fields
 
@@ -56,17 +86,21 @@ public class NewBankClientHandler extends Thread {
 	public final UserInput comms;
 	
 	private CustomerController customerController;
+	private AccountController accountController;
 	private TransactionController transactionController;
-	private LoanController loanController;
+	//private LoanController loanController;
+	private LoanOfferController loanOfferController;
 	
 	private CustomerServiceImpl customerService;
 	private AccountServiceImpl accountService;
 	private TransactionService transactionService;
-	private LoanServiceImpl loanService;
+	//private LoanServiceImpl loanService;
+	private LoanOfferServiceImpl loanOfferService;
 	
 	private CustomerRepositoryImpl customerRepository;
 	private AccountRepositoryImpl accountRepository;
-	private LoanRepositoryImpl loanRepository;
+	//private LoanRepositoryImpl loanRepository;
+	private LoanOfferRepositoryImpl loanOfferRepository;
 	
 	// constructor
 
@@ -81,16 +115,21 @@ public class NewBankClientHandler extends Thread {
 		// Initialise repos
 		customerRepository = new CustomerRepositoryImpl(bank.getCustomers());
 		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
-		loanRepository = new LoanRepositoryImpl(bank.getLoanMarket(), bank.getLoans());
+		//loanRepository = new LoanRepositoryImpl(bank.getLoans());
+		loanOfferRepository = new LoanOfferRepositoryImpl(bank.getLoanMarket());
 		
 		//Initialise services
 		customerService = new CustomerServiceImpl(customerRepository);
 		accountService = new AccountServiceImpl(accountRepository,customerRepository);
-		loanService = new LoanServiceImpl(customerRepository,accountRepository,loanRepository);
+		//loanService = new LoanServiceImpl(customerRepository,accountRepository,loanRepository);
+		loanOfferService = new LoanOfferServiceImpl(customerRepository,accountRepository,loanOfferRepository);
 		
 		customerController = new CustomerController(customerService, accountService, comms);
+		accountController = new AccountController(accountService, comms);
 		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
-		loanController = new LoanController(customerService, accountService,loanService,comms);
+		//loanController = new LoanController(accountController, customerService, accountService,loanService,comms);
+		loanOfferController = new LoanOfferController(customerController, accountController, loanOfferService,comms);
+		
 	}
 	
 	public AccountServiceImpl getAccountService() {
@@ -101,30 +140,45 @@ public class NewBankClientHandler extends Thread {
 		// keep getting requests from the client and processing them
 		// The User is not logged into the system yet so CustomerID is null
 		// CustomerID customerID = null;
-		String request = "";
+		String initialRequest;
+		String mainRequest;
+		String bankRequest;
+		String loanRequest;
+		
 		String response = "";
 		UUID customerID = null;
 		try {
 			while (true) {
 				if (customerID == null) {
 					// welcome message and choice
-					request = comms.getUserMenuChoice(welcomeMessage, welcomeChoices);
-					// Processes the user's response: 1=LOGIN or 2=REGISTER
-					if (request.equals("1")) {
+					initialRequest = comms.getUserMenuChoice(welcomeMenu, welcomeMenuChoices);
+					if (initialRequest.equals("1")) { //1=LOGIN
 						customerID = customerController.userLogin();
-					} else {
+					} else { //2=REGISTER
 						customerID = customerController.userRegistration();
 					}
-				} else {
-					// show menu choices
-					request = comms.getUserMenuChoice(requestMenu, mainMenuChoices);
+				} else { // if customer is Logged in
 					Customer customer = customerController.getCustomer(customerID);
-					comms.printSystemMessage("Request from: " + customer.getUsername());
-					// process menu choice request
-					response = processRequest(customerID, request);
-					comms.printSystemMessage(response);
-					boolean logedInStatus = customer.getloggedInStatus();
-					if (!logedInStatus) {
+					mainRequest = comms.getUserMenuChoice(mainmenu, mainMenuChoices);
+					
+					if (mainRequest.equals("1")) { // 1= Banking Menu
+						do {
+							bankRequest = comms.getUserMenuChoice(bankMenu, bankMenuChoices); //return = 7
+							comms.printSystemMessage("Request from: " + customer.getUsername());
+							response = processBankingRequest(customerID, bankRequest);
+							comms.printSystemMessage(response);
+						}while (!bankRequest.equals("7"));
+					}
+					else if (mainRequest.equals("2")) { // 2= Loan Market Menu
+						do {
+							comms.printSystemMessage("Request from: " + customer.getUsername());
+							loanRequest = comms.getUserMenuChoice(loanMarketMenu, loanMarketMenuChoices); //return = 4
+							response = processLoanMarketRequest(customerID, loanRequest);
+							comms.printSystemMessage(response);
+						}while (!loanRequest.equals("4"));
+					}
+					else { //logout
+						customerController.userLogout(customerID);
 						customerID = null;
 					}
 				}
@@ -142,12 +196,19 @@ public class NewBankClientHandler extends Thread {
 		}
 	}
 	
-	public synchronized String processRequest(UUID customerID, String request) throws IOException {
+	
+	public synchronized String processBankingRequest(UUID customerID, String request) throws IOException{
 
+		//Customer customer = customerRepository.findByID(customerID);
+		//out.println(customer.toString());
+		//out.println(customer.accountsToString());
 		switch (request) {
 			case "1":
 			case "SHOWMYACCOUNTS":
-				return customerController.displayAccounts(customerID);
+				return accountController.displayAccounts(customerID);
+				
+				//return customer.accountsToString();
+				//return customerRepository.findByID(customerID).accountsToString();
 			case "2":
 				return "Select account to show Transactions";
 			case "3":
@@ -167,8 +228,23 @@ public class NewBankClientHandler extends Thread {
 			 */
 			// TODO: PUT in LOAN here
 			case "7":
-			case "LOGOUT":
-				return customerController.userLogout(customerID);
+				return "Returning you to Main Menu";
+			default:
+				return "FAIL";
+		}
+	}
+	
+	
+	public synchronized String processLoanMarketRequest(UUID customerID, String request) {
+		switch (request) {
+			case "1":
+				return loanOfferController.displayLoanOffers(customerID);
+			case "2":
+				return loanOfferController.displayLoanOfferMarket();
+			case "3":
+				return loanOfferController.newLoanOffer(customerID);
+			case "4":
+				return "Returning you to Main Menu";
 			default:
 				return "FAIL";
 		}

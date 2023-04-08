@@ -85,6 +85,20 @@ public class CustomerServiceImpl implements CustomerService {
             return customer.accountsToString();
         }
     }
+    
+    /**
+     * Display the Customer's Loans as a list
+     * @param customerID
+     * @return
+     */
+    public String displayLoans(UUID customerID) {
+        Customer customer = customerRepository.findByID(customerID);
+        if (customer.getLoans().isEmpty()) {
+            return "You have no loans to display.";
+        } else {
+            return customer.loansToString();
+        }
+    }
 
     @Override
     public void userLogout(UUID customerID) {

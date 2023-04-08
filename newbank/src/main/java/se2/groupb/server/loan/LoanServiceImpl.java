@@ -1,5 +1,14 @@
 package se2.groupb.server.loan;
 
+import se2.groupb.server.customer.*;
+
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.UUID;
+
+import se2.groupb.server.account.*;
+import se2.groupb.server.repository.*;
+
 public class LoanServiceImpl implements LoanService {
     
 	
@@ -7,7 +16,6 @@ public class LoanServiceImpl implements LoanService {
 	private final AccountRepositoryImpl accountRepository;
 	private final LoanRepositoryImpl loanRepository;
 	
-	//Map<String, Integer> accountTypeLimits = Account.accountTypeLimits;
 
 	// Constructor
 	public LoanServiceImpl(CustomerRepositoryImpl customerRepository, AccountRepositoryImpl accountRepository,
@@ -19,6 +27,13 @@ public class LoanServiceImpl implements LoanService {
 	}
 	
 	
-	
-	
-}
+	public LoanDTO newLoanOffer(UUID customerID, LoanDTO loanDto) {
+		boolean success = loanRepository.saveLoanOffer(loanDto);
+		if (success) {
+			return loanDto;
+		}
+		return null;
+	}
+
+}	
+
