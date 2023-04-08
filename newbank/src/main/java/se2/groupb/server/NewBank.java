@@ -2,8 +2,10 @@ package se2.groupb.server;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+
 import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
+import se2.groupb.server.transaction.Transaction;
 
 public class NewBank {
 
@@ -12,12 +14,14 @@ public class NewBank {
 
 	private HashMap<String, Customer> customers; // temp customer data store
 	private HashMap<String, Account> accounts; // temp account data store
+	private HashMap<String, Transaction> transactions;
 
 	// Constructor
 	private NewBank() {
 		// create temp data store
 		customers = new HashMap<>();
 		accounts = new HashMap<>();
+		transactions = new HashMap<>();
 		// adding data for debugging
 		addTestData();
 		// displayCustomers();
@@ -62,6 +66,10 @@ public class NewBank {
 
 	public HashMap<String, Account> getAccounts() {
 		return accounts;
+	}
+
+	public HashMap<String, Transaction> getTransactions() {
+		return transactions;
 	}
 
 	public static NewBank getBank() {

@@ -11,6 +11,7 @@ import se2.groupb.server.account.*;
 import se2.groupb.server.repository.*;
 import se2.groupb.server.transaction.TransactionController;
 import se2.groupb.server.transaction.TransactionService;
+import se2.groupb.server.transaction.TransactionServiceImpl;
 
 public class NewBankClientHandler extends Thread {
 
@@ -55,16 +56,16 @@ public class NewBankClientHandler extends Thread {
 	private final PrintWriter out;
 	public final UserInput comms;
 	private CustomerController customerController;
-	private AccountController accountController;
-	private CustomerServiceImpl customerService;
+	private CustomerService customerService;
 	private CustomerRepositoryImpl customerRepository;
 
-	private AccountServiceImpl accountService;
+	private AccountController accountController;
+	private AccountService accountService;
 	private AccountRepositoryImpl accountRepository;
 
 	private TransactionController transactionController;
 	private TransactionService transactionService;
-	// constructor
+	private TransactionRepositoryImpl transactionRepository;
 
 	// each client has the same bank but different comms because of different
 	// sockets
@@ -76,12 +77,19 @@ public class NewBankClientHandler extends Thread {
 		bank = NewBank.getBank(); // static instance of the bank
 		// Initialise controllers
 		customerRepository = new CustomerRepositoryImpl(bank.getCustomers());
-		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
-
 		customerService = new CustomerServiceImpl(customerRepository);
-		accountService = new AccountServiceImpl(accountRepository);
 		customerController = new CustomerController(customerService, accountService, comms);
+
+		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
+		accountService = new AccountServiceImpl(accountRepository);
+
+		transactionRepository = new TransactionRepositoryImpl(bank.getTransactions());
+		transactionService = new TransactionServiceImpl(accountRepository, transactionRepository, customerRepository);
 		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
+		// TODO: continue from here!!!!!!!!
+
+	};
+
 	}
 
 	public void run() {
