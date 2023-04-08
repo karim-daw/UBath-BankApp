@@ -141,7 +141,9 @@ public class NewBankClientHandler extends Thread {
 			case "1":
 			case "SHOWMYACCOUNTS":
 				return customerController.displayAccounts(customerID);
+			// case "2":
 			case "2":
+			case "SHOWTRANSACTIONS":
 				return "Select account to show Transactions";
 			case "3":
 			case "NEWACCOUNT":
