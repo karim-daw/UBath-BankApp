@@ -198,11 +198,11 @@ public class Customer {
 	 * 
 	 * @return a map containing numbered Account Names
 	 */
-	public HashMap<String, String> destinationAcctsMap(String sourceAcct) {
+	public HashMap<String, String> destinationAcctsMap(String sourceAccountName) {
 		HashMap<String, String> map = new HashMap<String, String>();
 		int i = 0;
 		for (Account a : accounts) {
-			if (!(a.getAccountName().equals(sourceAcct))) {
+			if (!(a.getAccountName().equals(sourceAccountName))) {
 				i++;
 				String key = Integer.toString(i);
 				map.put(key, a.toString());
