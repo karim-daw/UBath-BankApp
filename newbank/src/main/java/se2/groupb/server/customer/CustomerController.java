@@ -1,12 +1,9 @@
 package se2.groupb.server.customer;
 
-import java.io.IOException;
-import java.util.*;
-import se2.groupb.server.UserInput;
-import se2.groupb.server.account.*;
-import se2.groupb.server.security.Authentication;
+import java.util.UUID;
 
-import java.math.BigDecimal;
+import se2.groupb.server.UserInput;
+import se2.groupb.server.account.AccountService;
 
 public class CustomerController {
 	// fields
