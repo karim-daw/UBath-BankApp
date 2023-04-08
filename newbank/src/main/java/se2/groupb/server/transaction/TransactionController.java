@@ -2,6 +2,7 @@ package se2.groupb.server.transaction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,22 +44,36 @@ public class TransactionController {
         List<Account> customerAccounts = customer.getAccounts();
         int noOfAccts = customerAccounts.size();
 
-        Map<String, String> sourceAccts = customer.sourceAcctsMap();
+        HashMap<String, String> sourceAccts = customer.sourceAcctsMap();
         int noOfSourceAccts = sourceAccts.size();
+        // System.out.println("Number of source accounts: " + noOfSourceAccts);
 
         if (noOfSourceAccts < 1 || noOfAccts < 2) {
             return "You need two or more accounts.\nRequest denied.\nReturning to Main Menu.";
         }
 
+        // need to show user the possible source accounts
+        String sourceAccountList = customer.mapToString(sourceAccts);
+        comms.printSystemMessage(sourceAccountList);
+
+        // this gets the account table display as a string
+
+        // THere is a problem with the below code, valid name isnt being returned
         String sourceAcctName = selectAccount("Select source account:", sourceAccts);
+
         Account sourceAccount = customer.getAccountByName(sourceAcctName);
 
-        Map<String, String> destAccts = customer.destinationAcctsMap(sourceAcctName);
+        HashMap<String, String> destAccts = customer.destinationAcctsMap(sourceAcctName);
         int noOfDestAccts = destAccts.size();
+        // System.out.println("Number of destination accounts: " + noOfDestAccts);
 
         if (noOfDestAccts < 1) {
             return "No destination account available.\nReturning to Main Menu.";
         }
+
+        // need to show user the possible destination accounts
+        String destAccountList = customer.mapToString(destAccts);
+        comms.printSystemMessage(destAccountList);
 
         String destAcctName = selectAccount("Select destination account:", destAccts);
         Account destinationAccount = customer.getAccountByName(destAcctName);
@@ -69,6 +84,7 @@ public class TransactionController {
             return "Move transaction was cancelled.\nReturning to the Main Menu.";
         }
 
+        // TODO: the bug is occuring here> need to fix this
         boolean isSuccessfullyMoved = transactionService.executeMove(sourceAccount.getAccountID(),
                 destinationAccount.getAccountID(), transferAmount);
 
@@ -79,10 +95,26 @@ public class TransactionController {
         }
     }
 
+    /**
+     * @param prompt
+     * @param accounts
+     * @return
+     */
     private String selectAccount(String prompt, Map<String, String> accounts) {
-        String userInput = comms.getUserMenuChoice(prompt, accounts.size());
-        String accountBalance = accounts.get(userInput);
-        return accountBalance.split(":")[0];
+        String selectionNumber = comms.getUserMenuChoice(prompt, accounts.size());
+        String accountBalanceString = accounts.get(selectionNumber);
+        System.out.println(accountBalanceString);
+        System.out.println("Selecting account...");
+
+        // Define the regular expression pattern to match the account name
+        String accountName = extractWord(accountBalanceString);
+        if (accountName != null) {
+            System.out.println("Selected account: " + accountName);
+            return accountName;
+        } else {
+            System.out.println("Unable to extract account name: ");
+            return null;
+        }
     }
 
     private BigDecimal getTransferAmount(BigDecimal limit) {
@@ -95,6 +127,25 @@ public class TransactionController {
                 destAcctName
                 + "?\nEnter 'y' for Yes or 'n' for No: \n";
         return comms.confirm(prompt);
+    }
+
+    public static String extractWord(String input) {
+        String[] lines = input.split("\n");
+        int start = 0;
+        if (lines.length > 0 && lines[0].isEmpty()) {
+            start = 1;
+        }
+        if (lines.length > start + 1) {
+            String firstLine = lines[start + 1];
+            int idx = firstLine.indexOf("(");
+            if (idx >= 0) {
+                String extracted = firstLine.substring(0, idx).trim();
+                if (!extracted.isEmpty()) {
+                    return extracted;
+                }
+            }
+        }
+        return null;
     }
 
     /**
