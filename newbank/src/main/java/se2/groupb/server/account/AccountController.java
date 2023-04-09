@@ -14,18 +14,18 @@ import se2.groupb.server.repository.AccountRepository;
 */
 import se2.groupb.server.UserInput;
 import se2.groupb.server.customer.Customer;
-import se2.groupb.server.customer.CustomerServiceImpl;
+import se2.groupb.server.customer.CustomerService;
 
 // Presentation layer: Takes user inputs and displays system response
 public class AccountController {
 
     // fields
-    private final AccountServiceImpl accountService;
-    private final CustomerServiceImpl customerService;
+    private final AccountService accountService;
+    private final CustomerService customerService;
     public UserInput comms;
 
     // constructor
-    public AccountController(AccountServiceImpl accountService, CustomerServiceImpl customerService, UserInput comms) {
+    public AccountController(AccountService accountService, CustomerService customerService, UserInput comms) {
         this.accountService = accountService; // business logic
         this.customerService = customerService; // business logic
         this.comms = comms;
