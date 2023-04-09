@@ -29,23 +29,30 @@ public class AccountRepositoryImpl implements EntityRepository<Account, AccountD
 
     /**
      * @param newAccount
-     * @return true if account is added succesfully, false if account is not found
-     *         or if there is an error
+     * @return true if account is added successfully, false if account is not found,
+     *         if there is an error or if all parameters are null
      */
     @Override
     public boolean save(Account newAccount) {
+
+        // return false if input is null or all parameters are null
+        if (newAccount == null || (newAccount.getCustomerID() == null && newAccount.getAccountType() == null
+                && newAccount.getAccountName() == null)) {
+            return false;
+        }
+
         try {
             // check if account exists in repo
             if (findByID(newAccount.getAccountID()) == null) {
-                // if doesnt exist put it in store
+                // if doesn't exist put it in store
                 theAccounts.put(newAccount.getAccountID().toString(), newAccount);
-                return true; // account update is sucessful
+                return true; // account update is successful
             } else {
                 return false; // account not found
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return false; // error occureed
+            return false; // error occurred
         }
     }
 
