@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import se2.groupb.server.UserInput;
 import se2.groupb.server.account.AccountService;
+import se2.groupb.server.security.Authentication;
 
 public class CustomerController {
 	// fields
@@ -150,7 +151,11 @@ public class CustomerController {
 
 		Customer customer = customerService.getCustomerByID(customerID);
 		String customerPassword = customer.getPassword();
-		if (!oldPassword.equals(customerPassword)) {
+
+		// check hashed password
+		boolean passwordIsMatched = Authentication.authenticatePassword(oldPassword, customerPassword);
+
+		if (!passwordIsMatched) {
 			return "FAIL. The old password is incorrect."; // passwords dont match
 		}
 
