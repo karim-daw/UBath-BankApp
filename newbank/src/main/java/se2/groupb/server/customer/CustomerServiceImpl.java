@@ -17,7 +17,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     // methods
 
-    // returns the Customer object corresponding to the CustomerID provided
     /**
      * returns Customer object from DataStore with the required ID
      * 
@@ -116,9 +115,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean updatePassword(UUID customerID, String newPassword) {
 
-        // TODO: need to do this with hashed password
         Customer customer = getCustomerByID(customerID);
-        customer.setPassword(newPassword);
+
+        // hash password
+        String hashedPassword = Authentication.hashPassword(newPassword);
+        customer.setPassword(hashedPassword);
+
+        // update customer in map
         boolean success = customerRepository.update(customer);// update customer model
         if (success) {
             return true;
