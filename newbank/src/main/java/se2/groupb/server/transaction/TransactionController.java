@@ -84,7 +84,6 @@ public class TransactionController {
             return "Move transaction was cancelled.\nReturning to the Main Menu.";
         }
 
-        // TODO: the bug is occuring here> need to fix this
         boolean isSuccessfullyMoved = transactionService.executeMove(sourceAccount.getAccountID(),
                 destinationAccount.getAccountID(), transferAmount);
 
@@ -170,7 +169,7 @@ public class TransactionController {
         String customerName = customer.getUsername();
 
         // Prompt user to for NewBank member name to PAY to
-        String prompt = "Enter NewBank member name you want to PAY money to\nEnter an amount: ";
+        String prompt = "Enter NewBank member name you want to PAY money to: ";
         String payeeName = comms.getUserString(prompt); // user input
 
         // Check if the customer is trying to pay himself.
@@ -205,9 +204,14 @@ public class TransactionController {
         // get payee account as customer
         ArrayList<Account> payeeAccounts = payee.getAccounts();
         Account payeeFirstAccount = payeeAccounts.get(0); // first account
-        UUID payeeID = payeeFirstAccount.getAccountID();
+        UUID payeeAccountID = payeeFirstAccount.getAccountID();
 
-        boolean isSuccessfullyPay = transactionService.executePay(customerID, payeeID, transactionAmount);
+        // needs to get customers account id
+        ArrayList<Account> customerAccounts = customer.getAccounts();
+        Account customerFirstAccount = customerAccounts.get(0); // first account
+        UUID customerAccountID = customerFirstAccount.getAccountID();
+
+        boolean isSuccessfullyPay = transactionService.executePay(customerAccountID, payeeAccountID, transactionAmount);
         if (isSuccessfullyPay) {
             return "PAY transaction was successful.";
         } else {
