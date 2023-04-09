@@ -82,11 +82,11 @@ public class NewBankClientHandler extends Thread {
 
 		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
 		accountService = new AccountServiceImpl(accountRepository);
+		accountController = new AccountController(accountService, customerService, comms);
 
 		transactionRepository = new TransactionRepositoryImpl(bank.getTransactions());
 		transactionService = new TransactionServiceImpl(accountRepository, transactionRepository, customerRepository);
 		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
-		// TODO: continue from here!!!!!!!!
 
 	};
 
@@ -151,13 +151,9 @@ public class NewBankClientHandler extends Thread {
 			case "4":
 			case "MOVE":
 				return transactionController.moveMoney(customerID);
-			/*
-			 * /*
-			 * case "5":
-			 * case "PAY":
-			 * return transferMoney(customerID, requestInputs);
-			 * case "6":
-			 */
+			case "5":
+			case "PAY":
+				return transactionController.transferMoney(customerID);
 			case "6":
 			case "CHANGEPASSWORD":
 				return customerController.changePassword(customerID);
