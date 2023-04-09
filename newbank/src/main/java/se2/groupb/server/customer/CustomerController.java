@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import se2.groupb.server.UserInput;
 import se2.groupb.server.account.AccountService;
+import se2.groupb.server.account.Payee;
 import se2.groupb.server.security.Authentication;
 
 public class CustomerController {
@@ -57,7 +58,6 @@ public class CustomerController {
 			comms.printSystemMessage(systemResponse);
 			return customer.getCustomerID();
 		}
-
 	}
 
 	/**
@@ -173,4 +173,52 @@ public class CustomerController {
 
 		return null;
 	}
+
+	/**
+	 * displays the customers payees as a list
+	 * 
+	 * @param customerDTO
+	 * @return
+	 */
+	public String displayPayees(UUID customerID) {
+		return customerService.displayPayees(customerID);
+	}
+
+	/**
+	 * @param customerID
+	 * @return
+	 */
+	public String createPayee(UUID customerID) {
+		String response = ""; // the system response to the user's request
+		String prompt = "Add a new payee: \n";
+		prompt = "Enter the payee name: \n";
+		boolean duplicateName;
+		String payeeName = comms.getUserString(prompt);
+		// Check if the payee already exists duplicateName =
+		// accountService.alreadyExists(payeeID, payeeName);
+		// while (duplicateName);
+
+		prompt = "Enter payee's number account: \n";
+		String payeeAccountNumber = comms.getUserString(prompt);
+
+		prompt = "Enter payee's BIC: \n";
+		String payeeBIC = comms.getUserString(prompt);
+
+		prompt = "Add " + payeeName + " as a new payee?\nEnter 'y' for Yes or 'n' for No: \n";
+		boolean userConfirm = comms.confirm(prompt);
+
+		if (userConfirm) {
+			Customer customer = getCustomer(customerID);
+			Payee newPayee = new Payee(UUID.randomUUID(), customer.getCustomerID(), payeeName, payeeAccountNumber,
+					payeeBIC);
+
+			customer.addPayee(newPayee); // adds new payee to the customer
+
+			response = "SUCCESS: The payee " + payeeName + " has been added.\nReturning to Main Menu.";
+		} else {
+			response = "Payee addition was cancelled.\nReturning to the Main Menu.";
+		}
+		return response;
+	}
+
 }

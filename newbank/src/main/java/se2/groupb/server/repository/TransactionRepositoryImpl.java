@@ -29,6 +29,14 @@ public class TransactionRepositoryImpl implements EntityRepository<Transaction, 
         return theTransactions.get(transactionID.toString());
     }
 
+    public UUID findSourceAccountByID(UUID sourceAccountID) {
+        return theTransactions.get(sourceAccountID.toString()).getSourceAccountID();
+    }
+
+    public UUID findDestinationAccountByID(UUID targetAccountID) {
+        return theTransactions.get(targetAccountID.toString()).getTargetAccountID();
+    }
+
     @Override
     public Transaction findByDTO(TransactionDTO transactionDTO) {
         // TODO Auto-generated method stub

@@ -12,11 +12,11 @@ import se2.groupb.server.repository.AccountRepositoryImpl;
 public class AccountServiceImpl implements AccountService {
 
 	private final AccountRepositoryImpl accountRepository;
+	
 	Map<String, Integer> accountTypeLimits = Account.accountTypeLimits;
 
 	// Constructor
 	public AccountServiceImpl(AccountRepositoryImpl accountRepository) {
-		// this.theCustomers = customers;
 		this.accountRepository = accountRepository;
 
 	}
@@ -33,7 +33,12 @@ public class AccountServiceImpl implements AccountService {
 		return accountList;
 
 	}
-
+	
+	public UUID getCustomer(UUID accountID) {
+		return accountRepository.findByID(accountID).getCustomerID();
+	}
+	
+	
 	// get a list of Account objects by Customer ID and Account Type
 	/**
 	 * @param customerID

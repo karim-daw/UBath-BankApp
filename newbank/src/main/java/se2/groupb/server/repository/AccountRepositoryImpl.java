@@ -18,13 +18,24 @@ public class AccountRepositoryImpl implements EntityRepository<Account, AccountD
 
     @Override
     public Account findByDTO(AccountDTO accountDTO) {
-
         return null;
     }
 
+    /**
+     * @param accountID
+     * @return
+     */
     @Override
     public Account findByID(UUID accountID) {
         return theAccounts.get(accountID.toString());
+    }
+
+    /**
+     * @param accountID
+     * @return
+     */
+    public UUID findCustomerByID(UUID accountID) {
+        return theAccounts.get(accountID.toString()).getCustomerID();
     }
 
     /**
@@ -61,6 +72,7 @@ public class AccountRepositoryImpl implements EntityRepository<Account, AccountD
      * @return true if account is updated succesfully, false if account is not found
      *         or if there is an error
      */
+    @Override
     public boolean update(Account newAccount) {
         try {
             // check if account exists in repo

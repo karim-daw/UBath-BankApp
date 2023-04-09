@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import se2.groupb.server.account.Account;
+import se2.groupb.server.account.Payee;
 
 //Customer Domain
 public class Customer {
@@ -15,6 +16,7 @@ public class Customer {
 	private String username;
 	private String password;
 	private ArrayList<Account> accounts;
+	private ArrayList<Payee> payees;
 	private boolean loggedInStatus;
 
 	// constructor 1
@@ -24,6 +26,7 @@ public class Customer {
 		this.password = password;
 		this.loggedInStatus = false;
 		accounts = new ArrayList<>();
+		payees = new ArrayList<>();
 	}
 
 	// constructor 2
@@ -33,6 +36,7 @@ public class Customer {
 		this.password = customerDto.getPassword();
 		this.loggedInStatus = false;
 		accounts = new ArrayList<>();
+		payees = new ArrayList<>();
 	}
 
 	// methods
@@ -221,4 +225,83 @@ public class Customer {
 		}
 		return s;
 	}
+
+	/*
+	 * @return payees
+	 * TODO Set the list in alphabetical order
+	*/
+
+	public ArrayList<Payee> getPayees() {
+		return payees;
+	} 
+
+	/**
+	 * @return a string of a payee
+	 */
+
+	 public String payeesToString() {
+		String s = "";
+		for (Payee p : payees) {
+			s += p.toString();
+		}
+		return s;
+	}
+
+	/**
+	 * display the payees content into a list
+	 * 
+	 * @return a list containing Payees
+	 */
+	public List<String> payeesToList() {
+		ArrayList<String> l = new ArrayList<String>();
+		for (Payee p : payees) {
+			l.add(p.toString());
+		}
+		return l;
+	}
+
+	/**
+	 * adds a payee to the list of payees
+	 * 
+	 * @param payee
+	 */
+	public void addPayee(Payee payee) {
+		payees.add(payee);
+	}
+
+	/**
+	 * @param payeeName
+	 * @return
+	 */
+	public Payee getPayeesByName(String payeeName) {
+		for (Payee payee : payees) {
+			if (payee.getPayeeName().equals(payeeName)) {
+				return payee;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @return a string of an account
+	 */
+
+	/**
+	 * checks if the desired account name already exists in the customers list of
+	 * accounts
+	 * 
+	 * @param payeeName
+	 * @return true false if account name exists in customers accounts
+	 */
+	public boolean alreadyExists(String payeeName) {
+		for (Payee payee : payees) {
+			if (payee.getPayeeName().equals(payeeName)) {
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+
 }

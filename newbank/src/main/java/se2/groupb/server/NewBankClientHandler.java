@@ -55,6 +55,7 @@ public class NewBankClientHandler extends Thread {
 	private final BufferedReader in;
 	private final PrintWriter out;
 	public final UserInput comms;
+	private Payee payees;
 	private CustomerController customerController;
 	private CustomerService customerService;
 	private CustomerRepositoryImpl customerRepository;
@@ -87,8 +88,7 @@ public class NewBankClientHandler extends Thread {
 		transactionRepository = new TransactionRepositoryImpl(bank.getTransactions());
 		transactionService = new TransactionServiceImpl(accountRepository, transactionRepository, customerRepository);
 		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
-
-	};
+	}
 
 	public void run() {
 		// keep getting requests from the client and processing them
