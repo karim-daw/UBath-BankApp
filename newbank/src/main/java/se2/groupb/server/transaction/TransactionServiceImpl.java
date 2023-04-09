@@ -44,7 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
         boolean success = transactionRepository.save(moveTransaction);
 
         // TODO: update date base
-        success = true;
+        // success = true;
 
         // if transaction was successfully save this should return a boolean
         if (success) {
