@@ -5,6 +5,13 @@ import java.security.NoSuchAlgorithmException;
 
 public class Authentication {
 
+    /**
+     * Checks to see where the password matches the hashed password
+     * 
+     * @param plainPassword
+     * @param hashedPassword
+     * @return true or false
+     */
     public static boolean authenticatePassword(String plainPassword, String hashedPassword) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
