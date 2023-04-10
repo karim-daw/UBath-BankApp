@@ -147,42 +147,41 @@ public class TransactionController {
                     }
                     //comparing the input with the index of the table.
                     else { 
-                        for( int j=0; j<listOfPayees.size(); j++){
-                            if (userInput.equals("1")){// TO DO: modify this to compare the input with the index of the table
-                            //pick the PayeeId that matches with the selected payee.
-                            ArrayList<Payee> customerPayees = customer.getPayees();
-                            UUID payeeID = customerPayees.get(0).getPayeeID();
+                            //The user chose a payee
+                            if (userInput.equals("1")){// TO DO: modify this to compare the input with the index of the table in order to make the 
+                                // customer choose the payee.
+                                //pick the PayeeId that matches with the selected payee.
+                                ArrayList<Payee> customerPayees = customer.getPayees();
+                                UUID payeeID = customerPayees.get(0).getPayeeID(); // TO DO : modifying the 0 to make the index matches with the choice.
                             //choose a source account
                             //
-                            ArrayList<String> listOfAccounts = new ArrayList<String>();
-                            List<String> accountsList = customer.accountsToList();
-		                    /*for (int k=0; k<accountsList.size();k++) {
-			                    listOfAccounts.add("\n"+ (k+1)+". " +listOfAccounts.get(k));
-		                    }*/
-                            prompt = "\nChoose an account." + listOfAccounts.toString();
-                            userInput = comms.getUserString(prompt);
-                            if (userInput.equals("1")){// TO DO: modify this to compare the input with the index of the table
-                                //pick the PayeeId that matches with the selected payee.
-                                    ArrayList<Account> customerAccounts = customer.getAccounts();
-                                    UUID accountID = customerAccounts.get(0).getAccountID();
+                                ArrayList<String> listOfAccounts = new ArrayList<String>();
+                                List<String> accountsList = customer.accountsToList();
+		                        for (int k=0; k<accountsList.size();k++) {
+			                    listOfAccounts.add("\n"+ (k+1)+accountsList.get(k)); // TO DO: Display only the account name and the balance of the account
                                 }
+                                prompt = "\nChoose an account." + listOfAccounts.toString()+ "\nEnter Selection.";
+                                userInput = comms.getUserString(prompt);
+                                if (userInput.equals("1")){// TO DO: modify this to compare the input with the index of the table in order to make the customer
+                                // choose the account.
+                                //pick the PayeeId that matches with the selected payee.
+                                ArrayList<Account> customerAccounts = customer.getAccounts();
+                                UUID accountID = customerAccounts.get(0).getAccountID(); // TO DO : modifying the 0 to make the index matches with the choice.
+                                    
                             
-                            //enter the amount of the payment
-                            prompt = "Enter an amount.";
-                            userInput = comms.getUserString(prompt);
-                            double transactionAmount = Double.parseDouble(userInput);
-                            
-                            
+                                //enter the amount of the payment
+                                    prompt = "Enter an amount.";
+                                    userInput = comms.getUserString(prompt);
+                                    double transactionAmount = Double.parseDouble(userInput);
+                                    
+                                    return "done";//check
+                                }
 
-                            return "Check";//check
+                                    
+                            }
                             
-                        }
                         }
                     }
-                //If payee doesn't exist, add a payee, call the createPayee
-                //If the payee exists! proceed
-                    return "ok";
-                }
             if (userInput.equals("2")){
                 return customerController.displayPayees(customerID);
             }
