@@ -58,10 +58,10 @@ public interface CustomerService {
      * 
      * @param customerID
      * @param requestInputs
-     * @return
+     * @return true or false if successful
      */
 
-    public String changePassword(UUID customerID, String[] requestInputs);
+    public boolean updatePassword(UUID customerID, String newPassword);
 
     /**
      * returns a string representation in the form of a list of accounts and prints
@@ -72,10 +72,4 @@ public interface CustomerService {
      */
     public String displayPayees(UUID customerID);
 
-    /**
-     * returns the payee of the customer
-     * @param customerDTO
-     * @return
-     */
-    public String getPayeeName(String payeeName);
 }

@@ -7,10 +7,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.*;
 import se2.groupb.server.customer.*;
+import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.account.*;
 import se2.groupb.server.repository.*;
 import se2.groupb.server.transaction.TransactionController;
 import se2.groupb.server.transaction.TransactionService;
+import se2.groupb.server.transaction.TransactionServiceImpl;
 
 public class NewBankClientHandler extends Thread {
 
@@ -56,15 +58,16 @@ public class NewBankClientHandler extends Thread {
 	public final UserInput comms;
 	private Payee payees;
 	private CustomerController customerController;
-	private CustomerServiceImpl customerService;
+	private CustomerService customerService;
 	private CustomerRepositoryImpl customerRepository;
 
-	private AccountServiceImpl accountService;
+	private AccountController accountController;
+	private AccountService accountService;
 	private AccountRepositoryImpl accountRepository;
 
 	private TransactionController transactionController;
 	private TransactionService transactionService;
-	// constructor
+	private TransactionRepositoryImpl transactionRepository;
 
 	// each client has the same bank but different comms because of different
 	// sockets
@@ -76,18 +79,19 @@ public class NewBankClientHandler extends Thread {
 		bank = NewBank.getBank(); // static instance of the bank
 		// Initialise controllers
 		customerRepository = new CustomerRepositoryImpl(bank.getCustomers());
-		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
-
 		customerService = new CustomerServiceImpl(customerRepository);
-		accountService = new AccountServiceImpl(accountRepository);
 		customerController = new CustomerController(customerService, accountService, comms);
-		transactionController = new TransactionController(customerService, customerController, accountService, transactionService, payees, comms);
+
+		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
+		accountService = new AccountServiceImpl(accountRepository);
+		accountController = new AccountController(accountService, customerService, comms);
+
+		transactionRepository = new TransactionRepositoryImpl(bank.getTransactions());
+		transactionService = new TransactionServiceImpl(accountRepository, transactionRepository, customerRepository);
+		transactionController = new TransactionController(customerService, accountService, transactionService, payees,
+				comms);
 	}
-	
-	public AccountServiceImpl getAccountService() {
-		return this.accountService;
-	}
-	
+
 	public void run() {
 		// keep getting requests from the client and processing them
 		// The User is not logged into the system yet so CustomerID is null
@@ -132,31 +136,30 @@ public class NewBankClientHandler extends Thread {
 			}
 		}
 	}
-	
+
 	public synchronized String processRequest(UUID customerID, String request) throws IOException {
 
 		switch (request) {
 			case "1":
 			case "SHOWMYACCOUNTS":
 				return customerController.displayAccounts(customerID);
+			// case "2":
 			case "2":
+			case "SHOWTRANSACTIONS":
 				return "Select account to show Transactions";
 			case "3":
 			case "NEWACCOUNT":
-				return customerController.newAccount(customerID);
+				return accountController.newAccount(customerID);
 			case "4":
 			case "MOVE":
 				return transactionController.moveMoney(customerID);
 			case "5":
 			case "PAY":
-				return transactionController.transferMoney(customerID);			
-			/*
-			 * /*
-			 * case "6":
-			 * case "CHANGEMYPASSWORD":
-			 * return changePassword(customerID,requestInputs);
-			 */
-			// TO DO: PUT in LOAN here
+				return transactionController.transferMoney(customerID);
+			case "6":
+			case "CHANGEPASSWORD":
+				return customerController.changePassword(customerID);
+			// TODO: PUT in LOAN here
 			case "7":
 			case "LOGOUT":
 				return customerController.userLogout(customerID);
@@ -164,5 +167,5 @@ public class NewBankClientHandler extends Thread {
 				return "FAIL";
 		}
 	}
-	
+
 }

@@ -46,7 +46,7 @@ public class Account {
 		this.accountName = accountName;
 		this.accountNumber = accountNumberGenerator();
 		this.currentBalance = BigDecimal.ZERO;
-		this.overdraftLimit = getOverdraftLimit();
+		this.overdraftLimit = BigDecimal.ZERO;
 		transactions = new ArrayList<>();
 	}
 
@@ -112,8 +112,10 @@ public class Account {
 	 */
 	public void deposit(BigDecimal amount) {
 		// BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
-		BigDecimal newBalance = currentBalance.add(amount);
-		currentBalance = newBalance;
+		BigDecimal balance = getBalance();
+
+		BigDecimal newBalance = balance.add(amount);
+		setBalance(newBalance);
 	}
 
 	/**
@@ -122,9 +124,10 @@ public class Account {
 	 * @param amount
 	 */
 	public void withdraw(BigDecimal amount) {
+		BigDecimal balance = getBalance();
 		// BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
-		BigDecimal newBalance = currentBalance.subtract(amount);
-		currentBalance = newBalance;
+		BigDecimal newBalance = balance.subtract(amount);
+		setBalance(newBalance);
 	}
 
 	public String getAccountType() {
@@ -151,6 +154,27 @@ public class Account {
 		return this.currentBalance;
 	}
 
+	private void setBalance(BigDecimal newBalance) {
+		this.currentBalance = newBalance;
+	}
+
+	/**
+	 * @param deduction
+	 * @return
+	 */
+	public boolean hasInsufficientFunds(BigDecimal deduction) {
+
+		BigDecimal overDraftLimit = getOverdraftLimit();
+		BigDecimal currentBalance = getBalance();
+		BigDecimal totalTransferLimit = overDraftLimit.add(currentBalance);
+
+		// check if totalTransferlimit is smaller than deduction
+		if (totalTransferLimit.compareTo(deduction) == -1) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * adds transaction to list of transactions
 	 * 
@@ -166,18 +190,6 @@ public class Account {
 	public ArrayList<Transaction> getTransactions() {
 		return transactions;
 	}
-
-	// public void credit(BigDecimal amount) {
-	// // TO DO: create a new transaction for the credit
-	// transactions.add(new Transaction("credit", amount));
-	// this.openingBalance.add(amount);
-	// }
-
-	// public void debit(BigDecimal amount) {
-	// // TO DO: create a new transaction for the debit
-	// transactions.add(new Transaction("debit", amount));
-	// this.openingBalance.subtract(amount);
-	// }
 
 	public BigDecimal getOverdraftLimit() {
 		return this.overdraftLimit;

@@ -56,7 +56,7 @@ public class UserInput {
 	 * 
 	 * @param prompt
 	 * @param choiceNo
-	 * @return
+	 * @return a number as a string
 	 */
 	public String getUserMenuChoice(String prompt, int choiceNo) {
 		String selection = "error";
@@ -142,7 +142,7 @@ public class UserInput {
 	 * gets user's confirmation: 'y' or cancels by entering 'n'
 	 * 
 	 * @param prompt
-	 * @return
+	 * @return true if "y" and false if "n"
 	 */
 	public boolean confirm(String prompt) {
 		String userInput = null;

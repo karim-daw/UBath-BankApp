@@ -2,37 +2,37 @@ package se2.groupb.server.repository;
 
 import java.util.UUID;
 
-import se2.groupb.server.loan.Loan;
-import se2.groupb.server.loan.LoanDTO;
+import se2.groupb.server.Payee.Payee;
+import se2.groupb.server.Payee.PayeeDTO;
 
-public class LoanRepositoryImpl implements EntityRepository<Loan, LoanDTO> {
+public class PayeeRepositoryImpl implements EntityRepository<Payee, PayeeDTO> {
 
     @Override
-    public Loan findByDTO(LoanDTO entityDTO) {
+    public Payee findByDTO(PayeeDTO payeeDTO) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Loan findByID(UUID entityID) {
+    public Payee findByID(UUID payeeID) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Loan findByName(String entityName) {
+    public Payee findByName(String payeeName) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public boolean save(Loan entity) {
+    public boolean save(Payee payee) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public boolean update(Loan entity) {
+    public boolean update(Payee payee) {
         // TODO Auto-generated method stub
         return false;
     }
