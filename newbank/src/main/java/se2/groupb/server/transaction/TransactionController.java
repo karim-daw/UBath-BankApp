@@ -166,15 +166,26 @@ public class TransactionController {
                                 // choose the account.
                                 //pick the PayeeId that matches with the selected payee.
                                 ArrayList<Account> customerAccounts = customer.getAccounts();
-                                UUID accountID = customerAccounts.get(0).getAccountID(); // TO DO : modifying the 0 to make the index matches with the choice.
-                                    
+                                UUID sourceAccountID = customerAccounts.get(0).getAccountID(); // TO DO : modifying the 0 to make the index matches with the choice.
+                                BigDecimal sourceAccountBalance = customerAccounts.get(0).getBalance();    
                             
                                 //enter the amount of the payment
                                     prompt = "Enter an amount.";
-                                    userInput = comms.getUserString(prompt);
-                                    double transactionAmount = Double.parseDouble(userInput);
+                                    BigDecimal transactionAmount = comms.getAmount(prompt,sourceAccountBalance);
                                     
-                                    return "done";//check
+                                    // confirmation of the transfert/
+                                    String payeeName = customerPayees.get(0).getPayeeName();
+                                    prompt = transactionAmount + " will be transfered to " + payeeName + "\n Confirm ? Y/N ";
+                                    boolean transferConfirmed = comms.confirm(prompt);
+                                    if (!transferConfirmed){
+                                        return "Move transaction was cancelled.\nReturning to the Main Menu.";
+                                    }
+                                    else 
+                                    {
+                                        Transaction transfertTransaction = new Transaction(sourceAccountID, payeeID, transactionAmount);
+                                        return "Transfert done.";//check  
+                                    }
+                                    
                                 }
 
                                     
