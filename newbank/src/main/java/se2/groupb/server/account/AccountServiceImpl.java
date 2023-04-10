@@ -12,7 +12,7 @@ import se2.groupb.server.repository.AccountRepositoryImpl;
 public class AccountServiceImpl implements AccountService {
 
 	private final AccountRepositoryImpl accountRepository;
-	
+
 	Map<String, Integer> accountTypeLimits = Account.accountTypeLimits;
 
 	// Constructor
@@ -33,12 +33,11 @@ public class AccountServiceImpl implements AccountService {
 		return accountList;
 
 	}
-	
+
 	public UUID getCustomer(UUID accountID) {
 		return accountRepository.findByID(accountID).getCustomerID();
 	}
-	
-	
+
 	// get a list of Account objects by Customer ID and Account Type
 	/**
 	 * @param customerID
@@ -161,55 +160,5 @@ public class AccountServiceImpl implements AccountService {
 		}
 		return null;
 	}
-
-	/*
-	 * 
-	 * @Override
-	 * public boolean credit(UUID accountID, double amount) {
-	 * 
-	 * // get the Account from db using id
-	 * // create new transaction with amount
-	 * //
-	 * return false;
-	 * }
-	 */
-
-	/*
-	 * @Override
-	 * public boolean debit(UUID accountID, double amount) {
-	 * return false;
-	 * }
-	 */
-
-	/*
-	 * public boolean exceedsOverdraft() {
-	 * if ((getBalance().compareTo(BigDecimal.ZERO)<0) &&
-	 * (getBalance().abs().compareTo(this.overdraftLimit)>0)){
-	 * return true;
-	 * }
-	 * else {
-	 * return false;
-	 * }
-	 * }
-	 */
-
-	/**
-	 * checks if a deduction would result in the account exceeding pre-arranged
-	 * overdraft
-	 * 
-	 * @param account
-	 * @param deduction
-	 * @return true or false if overdraft
-	 */
-	/*
-	 * public boolean exceedsOverdraft(BigDecimal deduction) {
-	 * BigDecimal availableBalance = this.openingBalance.add(this.overdraftLimit);
-	 * 
-	 * if (availableBalance.compareTo(deduction) < 0) {
-	 * return true;
-	 * }
-	 * return false;
-	 * }
-	 */
 
 }
