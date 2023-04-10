@@ -142,13 +142,14 @@ public class TransactionController {
 			            listOfPayees.add("\n"+ (i+1)+". " +payeesList.get(i));
 		            }
                     prompt="Choose your payee" + listOfPayees.toString() + "\n 0. Add a payee. \nEnter Selection.";
-                    userInput= comms.getUserMenuChoice(prompt, listOfPayees.size());
+                    userInput= comms.getUserString(prompt);
                     int userInputInt = comms.convertStringToInt(userInput);
                     if (userInputInt == 0){
-                        return customerController.createPayee(customerID);// THIS DOESN'T WORK
+                        customerController.createPayee(customerID);
+                        return "Payee added";
                     }
                     //comparing the input with the index of the table.
-                    else { 
+                    else {
                             //The user chose a payee
                             for (int l=0; l<listOfPayees.size(); l++){
                                 if (userInputInt - 1 == l){
@@ -198,7 +199,6 @@ public class TransactionController {
                                     
                                 }
                             }
-                            
                         }
                     }
             else if (userInput.equals("2")){
