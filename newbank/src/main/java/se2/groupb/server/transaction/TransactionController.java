@@ -174,6 +174,8 @@ public class TransactionController {
                                         //extract the PayeeId that matches with the selected payee.
                                         ArrayList<Account> customerAccounts = customer.getAccounts();
                                         UUID sourceAccountID = customerAccounts.get(userInputInt-1).getAccountID();
+                                        //Extract the source account in order to set the new balance after the transfer
+                                        Account sourceAccount = customerAccounts.get(userInputInt-1);
                                         //extract the balance of the selected account
                                         BigDecimal sourceAccountBalance = customerAccounts.get(userInputInt-1).getBalance();     
                                     
@@ -191,7 +193,10 @@ public class TransactionController {
                                             else 
                                             {
                                                 Transaction transfertTransaction = new Transaction(sourceAccountID, payeeID, transactionAmount);
-                                                return "Transfert done.";//check  
+                                                // set a new balance for the account
+                                                sourceAccount.withdraw(transactionAmount);
+                                                
+                                                return "Transfert done. Your balance account is now : " + sourceAccount.getBalance();//check  
                                             }
                                             
                                         }
