@@ -12,10 +12,9 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
     // Temp HashMap Customer Repo
     private final HashMap<String, Customer> theCustomers;
 
-    // private final HashMap<String, Account> theAccounts;
     // Temp constructor using HashMap as Customer Repo
-    public CustomerRepositoryImpl(HashMap<String, Customer> customers) {
-        this.theCustomers = customers;
+    public CustomerRepositoryImpl(HashMap<String, Customer> theCustomers) {
+        this.theCustomers = theCustomers;
     }
 
     // getter
