@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.account.Account;
+import se2.groupb.server.transaction.Transaction;
 
 //Customer Domain
 public class Customer {
