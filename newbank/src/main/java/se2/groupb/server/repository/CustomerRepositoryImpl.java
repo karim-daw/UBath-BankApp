@@ -53,10 +53,6 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
             String cust_username = cust.getValue().getUsername();
             String hashedPassword = cust.getValue().getPassword();
 
-            // boolean passwordIsCorrect =
-            // Authentication.authenticatePassword(plainTextPassword, hashedPassword);
-            // boolean passwordIsCorrect = (hashedPassword.equals(plainTextPassword));
-
             // Authenticate
             boolean passwordIsCorrect = Authentication.authenticatePassword(plainTextPassword, hashedPassword);
             boolean usernameIsCorrect = (cust_username.equals(username));

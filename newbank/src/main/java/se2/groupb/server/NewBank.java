@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.UUID;
 
+import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.account.Account;
-import se2.groupb.server.account.Payee;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.transaction.Transaction;
 

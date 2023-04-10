@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.*;
 import se2.groupb.server.customer.*;
+import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.account.*;
 import se2.groupb.server.repository.*;
 import se2.groupb.server.transaction.TransactionController;
@@ -87,7 +88,8 @@ public class NewBankClientHandler extends Thread {
 
 		transactionRepository = new TransactionRepositoryImpl(bank.getTransactions());
 		transactionService = new TransactionServiceImpl(accountRepository, transactionRepository, customerRepository);
-		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
+		transactionController = new TransactionController(customerService, accountService, transactionService, payees,
+				comms);
 	}
 
 	public void run() {

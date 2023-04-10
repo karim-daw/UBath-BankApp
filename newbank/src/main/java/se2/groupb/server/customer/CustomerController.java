@@ -3,8 +3,8 @@ package se2.groupb.server.customer;
 import java.util.UUID;
 
 import se2.groupb.server.UserInput;
+import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.account.AccountService;
-import se2.groupb.server.account.Payee;
 import se2.groupb.server.security.Authentication;
 
 public class CustomerController {
@@ -198,7 +198,7 @@ public class CustomerController {
 		// accountService.alreadyExists(payeeID, payeeName);
 		// while (duplicateName);
 
-		prompt = "Enter payee's number account: \n";
+		prompt = "Enter payee's account number: \n";
 		String payeeAccountNumber = comms.getUserString(prompt);
 
 		prompt = "Enter payee's BIC: \n";
@@ -209,7 +209,7 @@ public class CustomerController {
 
 		if (userConfirm) {
 			Customer customer = getCustomer(customerID);
-			Payee newPayee = new Payee(UUID.randomUUID(), customer.getCustomerID(), payeeName, payeeAccountNumber,
+			Payee newPayee = new Payee(customer.getCustomerID(), payeeName, payeeAccountNumber,
 					payeeBIC);
 
 			customer.addPayee(newPayee); // adds new payee to the customer

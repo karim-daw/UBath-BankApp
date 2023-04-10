@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.account.Account;
-import se2.groupb.server.account.Payee;
 
 //Customer Domain
 public class Customer {
@@ -229,17 +229,17 @@ public class Customer {
 	/*
 	 * @return payees
 	 * TODO Set the list in alphabetical order
-	*/
+	 */
 
 	public ArrayList<Payee> getPayees() {
 		return payees;
-	} 
+	}
 
 	/**
 	 * @return a string of a payee
 	 */
 
-	 public String payeesToString() {
+	public String payeesToString() {
 		String s = "";
 		for (Payee p : payees) {
 			s += p.toString();
@@ -302,6 +302,5 @@ public class Customer {
 		return false;
 
 	}
-
 
 }
