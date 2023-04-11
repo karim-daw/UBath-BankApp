@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import se2.groupb.server.UserInput;
 import se2.groupb.server.Payee.Payee;
+import se2.groupb.server.Payee.PayeeController;
 import se2.groupb.server.Payee.PayeeService;
 import se2.groupb.server.account.Account;
 import se2.groupb.server.account.AccountService;
@@ -20,9 +21,11 @@ public class TransactionController {
     private final CustomerService customerService;
     private final AccountService accountService;
     private final TransactionService transactionService;
-    private final PayeeService payeeService;
+    private PayeeService payeeService;
     private UserInput comms;
 
+    // transactionController = new TransactionController(customerService,
+    // accountService, transactionService, comms);
     public TransactionController(CustomerService customerService, AccountService accountService,
             TransactionService transactionService, UserInput comms) {
         this.customerService = customerService;
@@ -251,7 +254,7 @@ public class TransactionController {
             userInput = comms.getUserString(prompt);
             int userInputInt = comms.convertStringToInt(userInput);
             if (userInputInt == 0) {
-                customerController.createPayee(customerID);
+                payeeService.createPayee(customerID);
                 return "Payee added";
             }
             // comparing the input with the index of the table.
@@ -325,12 +328,17 @@ public class TransactionController {
 
         }
 
-    }
-}
-// If payee doesn't exist, add a payee, call the createPayee
-// If the payee exists! proceed
-return"ok";}if(userInput.equals("2")){return customerController.displayPayees(customerID);}if(userInput.equals("3")){return customerController.createPayee(customerID);}return"FAIL";
+        // If payee doesn't exist, add a payee, call the createPayee
+        // If the payee exists! proceed
+        if (userInput.equals("2")) {
+            return payeeService.displayPayees(customerID);
+        }
 
-}
+        if (userInput.equals("3")) {
+            return payeeService.createPayee(customerID);
+        }
+        return "FAIL";
+
+    }
 
 }
