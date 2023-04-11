@@ -42,12 +42,6 @@ public class PayeeServiceImpl implements PayeeService {
     }
 
     @Override
-    public String createPayee(UUID customerID) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public String displayPayees(UUID customerID) {
         // TODO Auto-generated method stub
         return null;

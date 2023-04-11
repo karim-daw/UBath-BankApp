@@ -18,5 +18,4 @@ public interface PayeeService {
 
     public String displayPayees(UUID customerID);
 
-    public String createPayee(UUID customerID);
 }
