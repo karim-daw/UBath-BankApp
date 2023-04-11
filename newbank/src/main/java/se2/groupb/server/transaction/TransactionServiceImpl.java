@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import se2.groupb.server.account.Account;
+import se2.groupb.server.account.AccountService;
 import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.repository.AccountRepositoryImpl;
 import se2.groupb.server.repository.CustomerRepositoryImpl;
@@ -64,7 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         // get source and target account
         Account sourceAccount = accountRepository.findByID(fromAccountID);
-        
+
         Payee payee = payeeRepository.findByID(toPayeeID);
         String payeeAccountNumber = payee.getPayeeAccountNumber();
         Account payeeAccount = accountRepository.findByAccountNumber(payeeAccountNumber);
@@ -74,6 +75,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
         
         Transaction moveTransaction = new Transaction(fromAccountID, toPayeeID, amount,reference);
+
 
         // check if source account has enough funds
         boolean insufficient = sourceAccount.hasInsufficientFunds(amount);
@@ -94,6 +96,7 @@ public class TransactionServiceImpl implements TransactionService {
         	
         }
        
+
         // save transaction to transaction store
         boolean success = transactionRepository.save(moveTransaction);
 

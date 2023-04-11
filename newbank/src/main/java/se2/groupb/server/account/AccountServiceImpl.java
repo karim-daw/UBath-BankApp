@@ -15,11 +15,11 @@ public class AccountServiceImpl implements AccountService {
 
 	private final AccountRepositoryImpl accountRepository;
 	private final CustomerRepositoryImpl customerRepository;
-	
+
 	Map<String, Integer> accountTypeLimits = Account.accountTypeLimits;
 
 	// Constructor
-	public AccountServiceImpl(AccountRepositoryImpl accountRepository,CustomerRepositoryImpl customerRepository) {
+	public AccountServiceImpl(AccountRepositoryImpl accountRepository, CustomerRepositoryImpl customerRepository) {
 		this.accountRepository = accountRepository;
 		this.customerRepository = customerRepository;
 	}
@@ -28,6 +28,7 @@ public class AccountServiceImpl implements AccountService {
 
 	/**
 	 * Returns Customer's UUID from their Account UUID
+	 * 
 	 * @param accountID
 	 * @return Customer UUID
 	 */
@@ -48,11 +49,11 @@ public class AccountServiceImpl implements AccountService {
 		return accountList;
 
 	}
-	
-	
+
 	/**
 	 * The Customer's Accounts list filtered by Account Type
 	 * get a list of Account objects by Customer ID and Account Type
+	 * 
 	 * @param customerID
 	 * @param accountType
 	 * @return
@@ -61,9 +62,7 @@ public class AccountServiceImpl implements AccountService {
 		ArrayList<Account> accountList = customerRepository.findAccountsByType(customerID, accountType);
 		return accountList;
 	}
-	
-	
-		
+
 	/**
 	 * checks if the desired account name already exists in the customers list of
 	 * accounts by type
@@ -83,73 +82,75 @@ public class AccountServiceImpl implements AccountService {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Return the Account Balance if Customer has Account with the specified Account Number
+	 * Return the Account Balance if Customer has Account with the specified Account
+	 * Number
+	 * 
 	 * @param customerID
 	 * @param accountNumber
 	 * @return the Account Balance
 	 */
 	public Account getAccountByNumber(UUID customerID, String accountNumber) {
-		return customerRepository.findAccountByNumber(customerID,accountNumber);
+		return customerRepository.findAccountByNumber(customerID, accountNumber);
 	}
-	
+
 	/**
-     * Return true if Customer has Account with the specified Account Number
-     * @param customerID
-     * @param accountNumber
-     * @return true if customer has account number, else false
-     */
+	 * Return true if Customer has Account with the specified Account Number
+	 * 
+	 * @param customerID
+	 * @param accountNumber
+	 * @return true if customer has account number, else false
+	 */
 	public boolean hasAccountNumber(UUID customerID, String accountNumber) {
-		if (getAccountByNumber(customerID,accountNumber)==null){
-    		return false;
-    	}
-    	return true;
+		if (getAccountByNumber(customerID, accountNumber) == null) {
+			return false;
+		}
+		return true;
 	}
-	
+
 	public boolean isOverdrawn(UUID customerID, String accountNumber) {
-		if (hasAccountNumber(customerID,accountNumber)){
-			return getAccountByNumber(customerID,accountNumber).isOverDrawn();
-    	}
-    	return true;
+		if (hasAccountNumber(customerID, accountNumber)) {
+			return getAccountByNumber(customerID, accountNumber).isOverDrawn();
+		}
+		return true;
 	}
-	
-	
+
 	/**
-	 * Return the Account Balance if Customer has Account with the specified Account Number
+	 * Return the Account Balance if Customer has Account with the specified Account
+	 * Number
+	 * 
 	 * @param customerID
 	 * @param accountNumber
 	 * @return the Account Balance
 	 */
 	public BigDecimal getAccountBalance(UUID customerID, String accountNumber) {
-		if (hasAccountNumber(customerID,accountNumber)) {
-			return getAccountByNumber(customerID,accountNumber).getBalance();
-		}
-		else {
+		if (hasAccountNumber(customerID, accountNumber)) {
+			return getAccountByNumber(customerID, accountNumber).getBalance();
+		} else {
 			return null;
 		}
 	}
-	
-	
+
 	/**
-     * displays accounts as a list
-     * 
-     * @param customerID
-     * @return String list of the Customer's Accounts
-     */
-    public String displayAccounts(UUID customerID) {
-    
-        if (getAccounts(customerID).isEmpty()) {
-            return "You have no accounts to display.";
-        } else {
-        	String s = "";
-    		for (Account a : getAccounts(customerID)) {
-    			s += a.toString();
-    		}
-    		return s;
-        }
-    }
-    
+	 * displays accounts as a list
+	 * 
+	 * @param customerID
+	 * @return String list of the Customer's Accounts
+	 */
+	public String displayAccounts(UUID customerID) {
+
+		if (getAccounts(customerID).isEmpty()) {
+			return "You have no accounts to display.";
+		} else {
+			String s = "";
+			for (Account a : getAccounts(customerID)) {
+				s += a.toString();
+			}
+			return s;
+		}
+	}
+
 	// get the number of accounts of a specific Account Type for the Customer ID
 	/**
 	 * get the number of accounts of a specific Account Type for the Customer ID
