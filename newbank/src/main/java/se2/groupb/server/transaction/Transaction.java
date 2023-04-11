@@ -10,13 +10,12 @@ public class Transaction {
 
     private final UUID sourceAccountID;
     private final UUID targetAccountID; // payee id
-    private Payee payee;
     private String sourceName;
     private String targetName; // payee id
     private final UUID transactionID;
     private final BigDecimal ammount;
-    private Date date;
-    private String description;
+    private final Date date;
+    private String reference;
 
     /**
      * this contructor would be for a transaction between two accounts of the same
@@ -42,34 +41,28 @@ public class Transaction {
      * target name as well as a description, say for "rent" or "water bill"
      * 
      * @param sourceAccountID
-     * @param targetAccountID
-     * @param sourceName
+     * @param payeeID
+     * @param payeeName
      * @param targetName
      * @param ammount
-     * @param description
+     * @param reference
      */
-    public Transaction(UUID sourceAccountID, UUID targetAccountID, Payee payee,
-            BigDecimal ammount, String description) {
+    public Transaction(UUID sourceAccountID, UUID payeeID, BigDecimal ammount, String reference) {
         this.sourceAccountID = sourceAccountID;
-        this.targetAccountID = targetAccountID;
+        this.targetAccountID = payeeID;
         this.ammount = ammount;
         this.transactionID = UUID.randomUUID(); // Generate a unique ID for the transaction.
         this.date = new Date(); // Set the date of the transaction to the current date and time.
-        this.description = description;
-        this.payee = payee;
-
+        this.reference = reference;
     }
 
-    public Payee getPayee() {
-        return payee;
-    }
 
     public Date getDate() {
         return date;
     }
 
-    public String getDescription() {
-        return description;
+    public String getReference() {
+        return reference;
     }
 
     public BigDecimal getAmmount() {
@@ -99,8 +92,8 @@ public class Transaction {
     @Override
     public String toString() {
         return "Transaction [sourceAccountID=" + sourceAccountID + ", targetAccountID=" + targetAccountID
-                + ", transactionID=" + transactionID + ", ammount=" + ammount + ", date=" + date + ", description="
-                + description + "]";
+                + ", transactionID=" + transactionID + ", ammount=" + ammount + ", date=" + date + ", reference="
+                + reference + "]";
     }
 
 }

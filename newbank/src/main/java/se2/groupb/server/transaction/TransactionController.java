@@ -2,6 +2,7 @@ package se2.groupb.server.transaction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +28,9 @@ public class TransactionController {
     private final Payee payees;
     private UserInput comms;
     
-    private static final String payeeMenu = "\n" +
+    private static final String payeesMenu = "\n" +
     		"====================================================\n" +
-            "||           **TRANSFER MONEY MENU**              ||\n" +
+            "||         *** TRANSFER MONEY MENU ***            ||\n" +
             "|| Please select one of the following options:    ||\n" +
             "||      1. PAY AN EXISTING PAYEE                  ||\n" +
             "||      2. PAY A NEW PAYEE                        ||\n" +
@@ -39,7 +40,20 @@ public class TransactionController {
             "====================================================\n" +
             "\nEnter Selection:";
     
-    private static final int payeeMenuChoices = 3;
+    private static final int payeesMenuChoices = 3;
+    
+    private static final String noPayeesMenu = "\n" +
+    		"====================================================\n" +
+            "||         *** NO EXISTING PAYEES ***             ||\n" +
+            "|| Please select one of the following options:    ||\n" +
+            "||      1. PAY A NEW PAYEE                        ||\n" +
+            "||      2. CANCEL PAY & RETURN TO MAIN MENU       ||\n" +
+            "|| Enter the number corresponding to your choice  ||\n" +
+            "|| and press enter                                ||\n" +
+            "====================================================\n" +
+            "\nEnter Selection:";
+    
+    private static final int noPayeesMenuChoices = 2;
     
     public TransactionController(CustomerService customerService, CustomerController customerController, 
     		AccountController accountController, AccountService accountService,
@@ -127,7 +141,120 @@ public class TransactionController {
         }
     }
     
-    // MOVE Function: Karim's version:
+    
+    
+
+    private BigDecimal getTransferAmount(BigDecimal limit) {
+        String prompt = "Transfer amount must be positive and not exceed the Source Account's balance.\nEnter an amount: ";
+        return comms.getAmount(prompt, limit);
+    }
+    
+    private String getTransferReference() {
+        String prompt = "Enter a Reference for this Transaction: \n";
+        return comms.getUserString(prompt);
+    }
+
+    
+    private boolean confirmTransaction(BigDecimal transferAmount, String sourceAcctName, String destAcctName) {
+        String prompt = "Move " + transferAmount + " from " + sourceAcctName + " to " +
+                destAcctName
+                + "?\nEnter 'y' for Yes or 'n' for No: \n";
+        return comms.confirm(prompt);
+    }
+
+    
+
+    /**
+     * 
+     * PAY <Person/Company> <Ammount>
+     * e.g. PAY John 100
+     * Returns SUCCESS or FAIL
+     * 
+     * @param customerID
+     * @return
+     */
+    public String transferMoney(UUID customerID) {
+        Customer customer = customerService.getCustomerByID(customerID);
+        List<Account> customerAccounts = customer.getAccounts();
+        int noOfAccts = customerAccounts.size();
+        
+        // The Customer's Source Accounts as an ordered numbered Map:
+        Map<String, Account> sourceAccts = customer.sourceAcctsMap();
+        int noOfSourceAccts = sourceAccts.size();
+        if (noOfSourceAccts == 0) {
+            return "No valid Source Accounts found.\nRequest denied.\nReturning to Main Menu.";
+        }
+        
+      //Display all potential Source Accounts to the customer:
+        String prompt = "Select a Source Account from: \n" + customer.accountMapToString(sourceAccts) +
+        		"Enter your choice: \n";
+        //Get user's choice of Source Account:
+ 		String userInput = comms.getUserMenuChoice(prompt, noOfSourceAccts); //gets user's choice
+ 		Account sourceAccount = sourceAccts.get(userInput);
+        UUID sourceAcctID = sourceAccount.getAccountID();
+        
+ 		//Payees Map
+ 		Map<String, Payee> payees = customer.payeesMap();
+ 		int noOfPayees = payees.size();
+ 		String mainRequest = comms.getUserMenuChoice(payeesMenu, payeesMenuChoices);
+ 		
+ 		//If the customer chose to pay an existing Payee but they have none:
+		if ((mainRequest=="1") && (noOfPayees==0)){
+			prompt = "Invalid request. You have no existing Payees.\n";
+			prompt += "You must choose from the following options: \n";
+			comms.printSystemMessage(prompt);
+			String subRequest = comms.getUserMenuChoice(noPayeesMenu, noPayeesMenuChoices);
+			Integer subRequestInt = Integer.parseInt(subRequest)+1;
+			mainRequest = subRequestInt.toString();
+		}
+		
+		
+		switch (mainRequest) {
+		
+			case "1": // Pay an existing Payee
+				prompt = "Select a Payee from: \n" + customer.payeeMapToString(payees) +
+        		"Enter your choice: \n";
+				userInput = comms.getUserMenuChoice(prompt, noOfPayees); //gets user's choice
+		 		Payee payee = payees.get(userInput);
+		 		UUID payeeID = payee.getPayeeID();
+		        String payeeName = sourceAccount.getAccountName();
+		        String payeeAccount = payee.getPayeeAccountNumber();
+		        String payeeBIC = payee.getPayeeBIC();
+		        
+		        //Get the user's input Amount:
+		        BigDecimal transferAmount = getTransferAmount(sourceAccount.getBalance());
+		        
+		        //Get the user's reference for the transaction:
+		        String transferReference = getTransferReference();
+		        
+		        // Create Transaction: sourceAccountID, targetAccountID, payee, ammount, description
+		        Transaction newTransaction = new Transaction(sourceAcctID,payeeID,transferAmount,transferReference);
+		        
+		        //Seek confirmation:
+		        //Add transaction to Customer's account:
+		        sourceAccount.addTransaction(newTransaction);
+		        
+		        //Add transaction to database:
+		        
+		    
+			case "2": //Pay a new Payee: create a new payee and then do transfer
+				customerController.createPayee(customerID);
+				
+				
+			case "3"://Cancel PAY request and return to Main Menu
+				return "PAY request cancelled. Returning to Main Menu.";
+		}
+ 		
+    }
+ 		
+ 		
+ 		
+ 		
+ 		
+ 		
+ 		
+ 	    
+ // MOVE Function: Karim's version:
     /* 
     public String moveMoney(UUID customerID) {
         Customer customer = customerService.getCustomerByID(customerID);
@@ -185,7 +312,6 @@ public class TransactionController {
      */
     
     //Map<String, String> loanDurations = new TreeMap<String,String>();
-		
     private String selectAccount(String prompt, Map<String, String> accounts) {
     	//e.g. selectAccount("Select source account:", sourceAccts);
     	
@@ -205,19 +331,6 @@ public class TransactionController {
         }
     }
     
-
-    private BigDecimal getTransferAmount(BigDecimal limit) {
-        String prompt = "Transfer amount must be positive and not exceed the Source Account's balance.\nEnter an amount: ";
-        return comms.getAmount(prompt, limit);
-    }
-
-    private boolean confirmTransaction(BigDecimal transferAmount, String sourceAcctName, String destAcctName) {
-        String prompt = "Move " + transferAmount + " from " + sourceAcctName + " to " +
-                destAcctName
-                + "?\nEnter 'y' for Yes or 'n' for No: \n";
-        return comms.confirm(prompt);
-    }
-
     private static String extractWord(String input) {
         String[] lines = input.split("\n");
         int start = 0;
@@ -235,203 +348,6 @@ public class TransactionController {
             }
         }
         return null;
-    }
-
-    /**
-     * 
-     * PAY <Person/Company> <Ammount>
-     * e.g. PAY John 100
-     * Returns SUCCESS or FAIL
-     * 
-     * @param customerID
-     * @return
-     */
-    public String transferMoney(UUID customerID) {
-        Customer customer = customerService.getCustomerByID(customerID);
-        List<Account> customerAccounts = customer.getAccounts();
-        int noOfAccts = customerAccounts.size();
-        
-        // The Customer's Source Accounts as an ordered numbered Map:
-        Map<String, Account> sourceAccts = customer.sourceAcctsMap();
-        int noOfSourceAccts = sourceAccts.size();
-        if (noOfSourceAccts == 0) {
-            return "No valid Source Accounts found.\nRequest denied.\nReturning to Main Menu.";
-        }
-        
-      //Display all potential Source Accounts to the customer:
-        String prompt = "Select a Source Account from: \n" + customer.accountMapToString(sourceAccts) +
-        		"Enter your choice: \n";
-        //Get user's choice of Source Account:
- 		String userInput = comms.getUserMenuChoice(prompt, noOfSourceAccts); //gets user's choice
- 		Account sourceAccount = sourceAccts.get(userInput);
-        String sourceAcctName = sourceAccount.getAccountName();
-        
- 		//Payees Map
- 		Map<String, Payee> payees = customer.payeesMap();
- 		int noOfPayees = payees.size();
- 		String userRequest = comms.getUserMenuChoice(payeeMenu, payeeMenuChoices);
- 		boolean validRequest = false;
- 		
- 		
- 		if ((userRequest=="1") && (noOfPayees==0)
- 		
- 		if (userRequest=="1") { //Pay an existing Payee
- 			if (noOfPayees==0) { //If they don't have any Payees:
- 				
- 				prompt = "You have no Payees."
- 			}
- 			else { //If they have existing Payees:
- 				validRequest = true;
-	 			prompt = "Select a Payee from: \n" + customer.payeeMapToString(payees) +
-	            		"Enter your choice: \n";
-	 			userInput = comms.getUserMenuChoice(prompt, noOfPayees); //gets user's choice
-	 			
-	 	 		Payee payee = payees.get(userInput);
-	 	        String payeeName = sourceAccount.getAccountName();
- 			}
- 			
- 		}
- 		else if (userRequest=="2"){ //Pay a new Payee: create a new payee and then do transfer
- 			validRequest = true;
- 		}
- 		else { //Cancel PAY request and return to Main Menu
- 			validRequest = true;
- 			
- 		}
- 		
- 		
- 		
- 		
- 		
- 		if (noOfPayees==0) {
- 			prompt = "You have no Payees. Would you like to PAY a new Payee?\n" +
- 					"Enter 'y' to continue or 'n' to Return to Main Menu: \n";
- 			boolean userConfirm = comms.confirm(prompt);
- 			
- 			if (!userConfirm) { //User with no Payees cancelled PAY request
- 				return "PAY request cancelled.\nReturning to Main Menu";
- 			}
- 			else { //User with no Payees chose to create new Payee
- 				String request = "2";
- 			}
- 		}
- 		
- 		
- 		
- 		
- 		
- 
-        
-        
-        
-        
-        
-        
-        
-       
-        
-        
-        
-        
-        String userInput = comms.getUserMenuChoice(prompt,3);
-            if (userInput.equals("1")){           
-                ArrayList<String> listOfPayees = new ArrayList<String>();
-                List<String> payeesList = customer.payeesToList();
-		            for (int i=0; i<payeesList.size();i++) {
-			            listOfPayees.add("\n"+ (i+1)+". " +payeesList.get(i));
-		            }
-                    prompt="Choose your payee" + listOfPayees.toString() + "\n 0. Add a payee. \nEnter Selection.";
-                    userInput= comms.getUserString(prompt);
-                    int userInputInt = comms.convertStringToInt(userInput);
-                    if (userInputInt == 0){
-                        customerController.createPayee(customerID);
-                        return "Payee added";
-                    }
-                    //comparing the input with the index of the table.
-                    else {
-                            //The user chose a payee
-                            for (int l=0; l<listOfPayees.size(); l++){
-                                if (userInputInt - 1 == l){
-                                    //pick the selected payee
-                                    ArrayList<Payee> customerPayees = customer.getPayees();
-                                    UUID payeeID = customerPayees.get(userInputInt-1).getPayeeID();
-                                    String payeeName = customerPayees.get(userInputInt-1).getPayeeName(); 
-                                    //choose a source account
-                            
-                                    ArrayList<String> listOfAccounts = new ArrayList<String>();
-                                    List<String> accountsList = customer.accountsToList();
-                                    //display the account list
-                                    for (int k=0; k<accountsList.size();k++) {
-                                        listOfAccounts.add("\n"+ (k+1)+accountsList.get(k)); // TO DO: Display only the account name and the balance of the account
-                                    }
-                                    prompt = "\nChoose an account." + listOfAccounts.toString()+ "\nEnter Selection.";
-                                    userInput= comms.getUserMenuChoice(prompt, listOfAccounts.size());
-                                    userInputInt = comms.convertStringToInt(userInput);
-
-                                    for (int m =0; m<listOfAccounts.size(); m++){
-                                        if (userInputInt-1 == m){
-                                        //extract the PayeeId that matches with the selected payee.
-                                        ArrayList<Account> customerAccounts = customer.getAccounts();
-                                        UUID sourceAccountID = customerAccounts.get(userInputInt-1).getAccountID();
-                                        //Extract the source account in order to set the new balance after the transfer
-                                        Account sourceAccount = customerAccounts.get(userInputInt-1);
-                                        //extract the balance of the selected account
-                                        BigDecimal sourceAccountBalance = customerAccounts.get(userInputInt-1).getBalance();     
-                                    
-                                        //enter the amount of the payment
-                                            prompt = "Enter an amount.";
-                                            BigDecimal transactionAmount = comms.getAmount(prompt,sourceAccountBalance);
-                                            
-                                            // confirmation of the transfert/
-                                            
-                                            prompt = transactionAmount + " will be transfered to " + payeeName + "\n Confirm ? Y/N ";
-                                            boolean transferConfirmed = comms.confirm(prompt);
-                                            if (!transferConfirmed){
-                                                return "Move transaction was cancelled.\nReturning to the Main Menu.";
-                                            }
-                                            else 
-                                            {
-                                                Transaction transfertTransaction = new Transaction(sourceAccountID, payeeID, transactionAmount);
-                                                // set a new balance for the account
-                                                sourceAccount.withdraw(transactionAmount);
-                                                
-                                                return "Transfert done. Your balance account is now : " + sourceAccount.getBalance();//check  
-                                            }
-                                            
-                                        }
-                                    }
-                                    
-                                }
-                            }
-
-                        }
-
-                        // enter the amount of the payment
-                        prompt = "Enter an amount.";
-                        userInput = comms.getUserString(prompt);
-                        double transactionAmount = Double.parseDouble(userInput);
-
-                        return "Check";// check
-
-                    }
-
-                }
-            }
-            // If payee doesn't exist, add a payee, call the createPayee
-            // If the payee exists! proceed
-            return "ok";
-        }
-        
-        
-        
-        if (userInput.equals("2")) {
-            return customerController.displayPayees(customerID);
-        }
-        if (userInput.equals("3")) {
-            return customerController.createPayee(customerID);
-        }
-        return "FAIL";
-
     }
     
     /*

@@ -6,7 +6,7 @@ import java.util.UUID;
 public class Payee {
 
     private final UUID payeeID;
-    private final UUID customerID; // id of the person paying
+    private final UUID customerID; // id of the customer whose payee it is
     private final String payeeName;
     private final String payeeAccountNumber;
     private final String payeeBIC;

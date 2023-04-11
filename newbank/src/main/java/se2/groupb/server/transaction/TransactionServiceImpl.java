@@ -4,23 +4,27 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import se2.groupb.server.account.Account;
+import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.repository.AccountRepositoryImpl;
 import se2.groupb.server.repository.CustomerRepositoryImpl;
 import se2.groupb.server.repository.TransactionRepositoryImpl;
+import se2.groupb.server.repository.PayeeRepositoryImpl;
 
 public class TransactionServiceImpl implements TransactionService {
 
     private final AccountRepositoryImpl accountRepository;
     private final TransactionRepositoryImpl transactionRepository;
     private final CustomerRepositoryImpl customerRepository;
+    private final PayeeRepositoryImpl payeeRepository;
 
     public TransactionServiceImpl(
-            AccountRepositoryImpl accountRepository,
+            AccountRepositoryImpl accountRepository, PayeeRepositoryImpl payeeRepository,
             TransactionRepositoryImpl transactionRepository,
             CustomerRepositoryImpl customerRepository) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
         this.customerRepository = customerRepository;
+        this.payeeRepository = payeeRepository;
     }
 
     @Override
@@ -33,11 +37,11 @@ public class TransactionServiceImpl implements TransactionService {
 
         // subtract money from the sourceAccount by the amount
         // create transaction and add it to source account transactions list
-        sourceAccount.withdraw(amount);
+        sourceAccount.debit(amount);
         sourceAccount.addTransaction(moveTransaction);
 
         // add money to the target account by the amount
-        targetAccount.deposit(amount);
+        targetAccount.credit(amount);
         targetAccount.addTransaction(moveTransaction);
 
         // save transaction to transaction store
@@ -56,12 +60,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public boolean executePay(UUID fromAccountID, UUID toAccountID, BigDecimal amount) {
+    public boolean executePay(UUID fromAccountID, UUID toPayeeID, BigDecimal amount, String reference) {
 
         // get source and target account
         Account sourceAccount = accountRepository.findByID(fromAccountID);
-        Account targetAccount = accountRepository.findByID(toAccountID);
-        Transaction moveTransaction = new Transaction(fromAccountID, toAccountID, amount);
+        
+        Payee payee = payeeRepository.findByID(toPayeeID);
+        Transaction moveTransaction = new Transaction(fromAccountID, toPayeeID, amount,reference);
 
         // check if source account has enough funds
         boolean insufficient = sourceAccount.hasInsufficientFunds(amount);
@@ -72,12 +77,12 @@ public class TransactionServiceImpl implements TransactionService {
 
         // subtract money from the sourceAccount by the amount
         // create transaction and add it to source account transactions list
-        sourceAccount.withdraw(amount);
+        sourceAccount.debit(amount);
         sourceAccount.addTransaction(moveTransaction);
 
         // add money to the target account by the amount
-        targetAccount.deposit(amount);
-        targetAccount.addTransaction(moveTransaction);
+        payee.credit(amount);
+        payee.addTransaction(moveTransaction);
 
         // save transaction to transaction store
         boolean success = transactionRepository.save(moveTransaction);

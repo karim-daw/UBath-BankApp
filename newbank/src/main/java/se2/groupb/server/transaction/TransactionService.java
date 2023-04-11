@@ -35,6 +35,6 @@ public interface TransactionService {
      * @param amount
      * @return boolean
      */
-    public boolean executePay(UUID fromAccountID, UUID toAccountID, BigDecimal amount);
+    public boolean executePay(UUID fromAccountID, UUID toAccountID, BigDecimal amount,String reference);
 
 }
