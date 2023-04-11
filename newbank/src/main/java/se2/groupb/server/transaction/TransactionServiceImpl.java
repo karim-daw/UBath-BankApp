@@ -91,6 +91,7 @@ public class TransactionServiceImpl implements TransactionService {
         if (isNewBankAccount) {
         	payeeAccount.credit(amount);
         	payeeAccount.addTransaction(moveTransaction);
+        	
         }
        
         // save transaction to transaction store
