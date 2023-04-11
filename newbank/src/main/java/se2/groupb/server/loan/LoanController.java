@@ -11,15 +11,15 @@ import se2.groupb.server.customer.*;
 public class LoanController {
 	
 	//initialise the various services required
-	private final CustomerServiceImpl customerService;
+	private final CustomerService customerService;
 	private final AccountController accountController;
-	private final AccountServiceImpl accountService;
+	private final AccountService accountService;
 	private final LoanServiceImpl loanService;
 	private UserInput comms;
 
 	// Constructor
-	public LoanController(AccountController accountController, CustomerServiceImpl customerService, 
-			AccountServiceImpl accountService, LoanServiceImpl loanService, UserInput comms) {
+	public LoanController(AccountController accountController, CustomerService customerService, 
+			AccountService accountService, LoanServiceImpl loanService, UserInput comms) {
 		
 		this.customerService = customerService;
 		this.accountController = accountController;

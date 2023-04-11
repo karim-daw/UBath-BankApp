@@ -44,7 +44,34 @@ public interface AccountService {
          *         specified type
          */
         public boolean hasAccount(UUID customerID, String accountType, String accountName);
-
+        
+        
+        /**
+         * displays accounts as a list
+         * 
+         * @param customerID
+         * @return String list of the Customer's Accounts
+         */
+        public String displayAccounts(UUID customerID);
+        
+        
+        /**
+    	 * Return the Account Balance if Customer has Account with the specified Account Number
+    	 * @param customerID
+    	 * @param accountNumber
+    	 * @return the Account Balance
+    	 */
+    	public Account getAccountByNumber(UUID customerID, String accountNumber);
+    	
+    	
+        /**
+         * Return true if Customer has Account with the specified Account Number
+         * @param customerID
+         * @param accountNumber
+         * @return true if customer has account number, else false
+         */
+    	public boolean hasAccountNumber(UUID customerID, String accountNumber);
+        
         /**
          * adds money to account
          * 

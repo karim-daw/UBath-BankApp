@@ -2,6 +2,8 @@ package se2.groupb.server;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.UUID;
+
 import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
@@ -43,14 +45,23 @@ public class NewBank {
 	private void addTestData() {
 		// password: "password" = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
 		Customer bhagy = new Customer("Bhagy", "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8");
+		
 		Account bhagy_acct1 = new Account(bhagy.getCustomerID(), "Current", "Main", BigDecimal.valueOf(20000));
-		Account bhagy_acct2 = new Account(bhagy.getCustomerID(), "Savings", "Car", BigDecimal.valueOf(1000));
+		Account bhagy_acct2 = new Account(bhagy.getCustomerID(), "Savings", "Car", BigDecimal.valueOf(30000));
 		bhagy.addAccount(bhagy_acct1);
 		bhagy.addAccount(bhagy_acct2);
+		
 		Payee bhagy_payee1 = new Payee(bhagy.getCustomerID(), "Jean Doe", "012345", "OTHBAN");
 		Payee bhagy_payee2 = new Payee(bhagy.getCustomerID(), "Robert Ham", "678910", "OTHBAN");
 		bhagy.addPayee(bhagy_payee1);
 		bhagy.addPayee(bhagy_payee2);
+		
+		LoanOffer bhagy_offer1 = new LoanOffer(bhagy.getCustomerID(), bhagy.getUsername(), "Offer1",bhagy_acct1.getAccountID(), 
+				BigDecimal.valueOf(10000), BigDecimal.valueOf(15), 1, "Years", 12, "Good");
+		LoanOffer bhagy_offer2 = new LoanOffer(bhagy.getCustomerID(), bhagy.getUsername(), "Offer2",bhagy_acct2.getAccountID(), 
+				BigDecimal.valueOf(20000), BigDecimal.valueOf(10), 2, "Years", 24, "Good");
+		bhagy.addLoanOffer(bhagy_offer1);
+		bhagy.addLoanOffer(bhagy_offer2);
 		
 		//Add Bhagy's Customer, Accounts and Payees to Database:
 		getCustomers().put(bhagy.getCustomerID().toString(), bhagy);
@@ -58,17 +69,23 @@ public class NewBank {
 		getAccounts().put(bhagy_acct2.getAccountID().toString(), bhagy_acct2);
 		getPayees().put(bhagy_payee1.getPayeeID().toString(), bhagy_payee1);
 		getPayees().put(bhagy_payee2.getPayeeID().toString(), bhagy_payee2);
-
-		
+		getLoanMarket().put(bhagy_offer1.getLoanOfferID().toString(), bhagy_offer1);
+		getLoanMarket().put(bhagy_offer2.getLoanOfferID().toString(), bhagy_offer2);
 		
 		// password: "1234" = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"
 		Customer christina = new Customer("Christina",
 				"03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4");
-		Account christina_acct1 = new Account(christina.getCustomerID(), "Savings", "House", BigDecimal.valueOf(1500));
+		Account christina_acct1 = new Account(christina.getCustomerID(), "Savings", "House", BigDecimal.valueOf(50000));
 		christina.addAccount(christina_acct1);
+		LoanOffer christina_offer1 = new LoanOffer(christina.getCustomerID(), christina.getUsername(), "Offer1",
+				christina_acct1.getAccountID(), BigDecimal.valueOf(10000), BigDecimal.valueOf(10), 1, "Years", 12, "Good");
+		christina.addLoanOffer(christina_offer1);
+		
+		
 		//Add Christina's Customer, Accounts and Payees to Database:
 		getCustomers().put(christina.getCustomerID().toString(), christina);
 		getAccounts().put(christina_acct1.getAccountID().toString(), christina_acct1);
+		getLoanMarket().put(christina_offer1.getLoanOfferID().toString(), christina_offer1);
 		
 		// password: "1111" = "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c"
 		Customer john = new Customer("John", "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c");
@@ -76,8 +93,6 @@ public class NewBank {
 		john.addAccount(john_acct1);
 		getCustomers().put(john.getCustomerID().toString(), john);
 		getAccounts().put(john_acct1.getAccountID().toString(), john_acct1);
-		
-		//add some dummy loan offers:
 		
 	}
 
