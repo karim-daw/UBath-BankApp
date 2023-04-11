@@ -1,6 +1,5 @@
 package se2.groupb.server.repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -112,6 +111,15 @@ public class LoanOfferRepositoryImpl implements EntityRepository<LoanOffer, Loan
     @Override
     public LoanOffer findByName(String entityName) {
     	return null;
+    }
+    
+    /**
+     * updates customer into database
+     * 
+     * @return
+     */
+    public boolean update(LoanOffer offer) {
+    	return false;
     }
 
 }

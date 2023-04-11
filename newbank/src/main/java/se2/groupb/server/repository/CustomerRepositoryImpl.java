@@ -5,21 +5,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
-
 import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerDTO;
 import se2.groupb.server.loanOffer.LoanOffer;
 import se2.groupb.server.loan.Loan;
+import se2.groupb.server.security.Authentication;
+
 
 public class CustomerRepositoryImpl implements EntityRepository<Customer, CustomerDTO> {
 
     // Temp HashMap Customer Repo
     private final HashMap<String, Customer> theCustomers;
 
-    //Constructor
-    public CustomerRepositoryImpl(HashMap<String, Customer> customers) {
-        this.theCustomers = customers;
+    // Temp constructor using HashMap as Customer Repo
+    public CustomerRepositoryImpl(HashMap<String, Customer> theCustomers) {
+        this.theCustomers = theCustomers;
+    }
+
+    // getter
+    public HashMap<String, Customer> getTheCustomers() {
+        return theCustomers;
     }
     
     
@@ -43,26 +49,35 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
      */
     @Override
     public Customer findByDTO(CustomerDTO customerDto) {
-   
-        String target_username = customerDto.getUsername();
-        String target_password = customerDto.getPassword();
 
+        // unhash password to check
+        Customer customer = null;
+        String username = customerDto.getUsername();
+        String plainTextPassword = customerDto.getPassword();
+
+        // get user name and hash password and compare to password in database
         for (HashMap.Entry<String, Customer> cust : theCustomers.entrySet()) {
             String cust_username = cust.getValue().getUsername();
-            String cust_password = cust.getValue().getPassword();
-            if ((cust_username.equals(target_username)) && (cust_password.equals(target_password))) {
+            String hashedPassword = cust.getValue().getPassword();
+
+            // Authenticate
+            boolean passwordIsCorrect = Authentication.authenticatePassword(plainTextPassword, hashedPassword);
+            boolean usernameIsCorrect = (cust_username.equals(username));
+            if (usernameIsCorrect && passwordIsCorrect) {
                 cust.getValue().setloggedInStatus(true);
-                return cust.getValue();
+                customer = cust.getValue();
+                break;
             }
+
         }
-        return null;
+        return customer;
     }
 
     /**
      * Searches the Customer Data Store by Username & Password
      * 
      * @param customerDto
-     * @return customer from database
+     * @return customer from database, if not found returns null
      */
     @Override
     public Customer findByName(String target_username) {
@@ -82,15 +97,43 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
      * saves new customer into database
      * 
      * @param customer
-     * @return
+     * @return true if customer is added successfully, false if customer already
+     *         exists or if there is an error
      */
     @Override
     public boolean save(Customer newCustomer) {
-        if (findByID(newCustomer.getCustomerID()) == null) {
-            theCustomers.put(newCustomer.getCustomerID().toString(), newCustomer);
-            return true;
+        try {
+            if (findByID(newCustomer.getCustomerID()) == null) {
+                theCustomers.put(newCustomer.getCustomerID().toString(), newCustomer);
+                return true;
+            } else {
+                return false; // customer already exists
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // error occurred
         }
-        return false;
+    }
+
+    /**
+     * updates the customer domain model
+     * 
+     * @param customer
+     * @return true if customer is updated successfully, false if customer is not
+     *         found or if there is an error
+     */
+    public boolean update(Customer newCustomer) {
+        try {
+            if (findByID(newCustomer.getCustomerID()) != null) {
+                theCustomers.put(newCustomer.getCustomerID().toString(), newCustomer);
+                return true; // customer updated successfully
+            } else {
+                return false; // customer not found
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // error occurred
+        }
     }
 
     /**

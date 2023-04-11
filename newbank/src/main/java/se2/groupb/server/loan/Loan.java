@@ -41,7 +41,7 @@ public class Loan {
 		
 	//Constructor 1
 	public Loan(UUID loanOfferID, UUID lenderID, String lenderName, UUID borrowerID, String borrowerName, UUID lenderAccountID,
-			UUID borrowerAccountID, BigDecimal principalAmount,BigDecimal interestRate, Integer duration, String durationType, 
+			UUID borrowerAccountID,BigDecimal principalAmount,BigDecimal interestRate, Integer duration, String durationType, 
 			Integer installments, String minCreditScore) {
 		
         this.loanID = UUID.randomUUID();

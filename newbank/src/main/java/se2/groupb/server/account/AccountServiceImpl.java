@@ -1,14 +1,10 @@
 package se2.groupb.server.account;
 
 import java.math.BigDecimal;
-//import se2.groupb.server.repository.AccountRepository;
-//import se2.groupb.server.repository.CustomerRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import se2.groupb.server.customer.Customer;
 import se2.groupb.server.repository.AccountRepositoryImpl;
 import se2.groupb.server.repository.CustomerRepositoryImpl;
 
@@ -27,6 +23,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	// methods
+
 	
 	/**
 	 * Returns Customer's UUID from their Account UUID
@@ -36,7 +33,6 @@ public class AccountServiceImpl implements AccountService {
 	public UUID getCustomer(UUID accountID) {
 		return accountRepository.findByID(accountID).getCustomerID();
 	}
-	
 	
 	/**
 	 * The Customer's Accounts list
@@ -233,55 +229,5 @@ public class AccountServiceImpl implements AccountService {
 		}
 		return null;
 	}
-
-	/*
-	 * 
-	 * @Override
-	 * public boolean credit(UUID accountID, double amount) {
-	 * 
-	 * // get the Account from db using id
-	 * // create new transaction with amount
-	 * //
-	 * return false;
-	 * }
-	 */
-
-	/*
-	 * @Override
-	 * public boolean debit(UUID accountID, double amount) {
-	 * return false;
-	 * }
-	 */
-
-	/*
-	 * public boolean exceedsOverdraft() {
-	 * if ((getBalance().compareTo(BigDecimal.ZERO)<0) &&
-	 * (getBalance().abs().compareTo(this.overdraftLimit)>0)){
-	 * return true;
-	 * }
-	 * else {
-	 * return false;
-	 * }
-	 * }
-	 */
-
-	/**
-	 * checks if a deduction would result in the account exceeding pre-arranged
-	 * overdraft
-	 * 
-	 * @param account
-	 * @param deduction
-	 * @return true or false if overdraft
-	 */
-	/*
-	 * public boolean exceedsOverdraft(BigDecimal deduction) {
-	 * BigDecimal availableBalance = this.openingBalance.add(this.overdraftLimit);
-	 * 
-	 * if (availableBalance.compareTo(deduction) < 0) {
-	 * return true;
-	 * }
-	 * return false;
-	 * }
-	 */
 
 }

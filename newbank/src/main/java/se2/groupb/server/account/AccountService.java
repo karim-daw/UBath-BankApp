@@ -1,9 +1,5 @@
 package se2.groupb.server.account;
 
-import se2.groupb.server.customer.Customer;
-import se2.groupb.server.customer.CustomerDTO;
-
-import java.math.BigDecimal;
 import java.util.*;
 
 //Business Logic: makes changes to Domain, sends results to Controller

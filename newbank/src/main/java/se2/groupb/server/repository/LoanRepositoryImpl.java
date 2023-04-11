@@ -50,5 +50,10 @@ public class LoanRepositoryImpl implements EntityRepository<Loan, LoanDTO>{
         }
         return false;
     }
- 
+    
+    @Override
+    public boolean update(Loan entity) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

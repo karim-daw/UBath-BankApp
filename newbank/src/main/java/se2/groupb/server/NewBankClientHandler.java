@@ -8,10 +8,14 @@ import java.net.Socket;
 import java.util.*;
 import se2.groupb.server.customer.*;
 import se2.groupb.server.account.*;
-import se2.groupb.server.repository.*;
+import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.transaction.*;
 import se2.groupb.server.loan.*;
 import se2.groupb.server.loanOffer.*;
+import se2.groupb.server.repository.*;
+
+
+
 
 public class NewBankClientHandler extends Thread {
 
@@ -80,64 +84,67 @@ public class NewBankClientHandler extends Thread {
 	
 
 	// fields
-
 	private NewBank bank;
 	private final BufferedReader in;
 	private final PrintWriter out;
 	public final UserInput comms;
+	private Payee payees;
 	
+	//Controllers:
 	private CustomerController customerController;
 	private AccountController accountController;
 	private TransactionController transactionController;
 	private LoanController loanController;
 	private LoanOfferController loanOfferController;
 	
-	private CustomerServiceImpl customerService;
-	private AccountServiceImpl accountService;
+	//Services:
+	//private CustomerServiceImpl customerService;
+	//private AccountServiceImpl accountService;
+	private CustomerService customerService;
+	private AccountService accountService;
 	private TransactionService transactionService;
 	private LoanServiceImpl loanService;
 	private LoanOfferServiceImpl loanOfferService;
 	
+	//Repos:
 	private CustomerRepositoryImpl customerRepository;
 	private AccountRepositoryImpl accountRepository;
+	private TransactionRepositoryImpl transactionRepository;
 	private LoanRepositoryImpl loanRepository;
 	private LoanOfferRepositoryImpl loanOfferRepository;
 	
+	
 	// constructor
-
-	// each client has the same bank but different comms because of different
-	// sockets
-
 	public NewBankClientHandler(Socket s) throws IOException {
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
+		// each client has the same bank but different comms because of different sockets
 		comms = new UserInput(in, out);
 		bank = NewBank.getBank(); // static instance of the bank
 		// Initialise repos
 		customerRepository = new CustomerRepositoryImpl(bank.getCustomers());
 		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
+		transactionRepository = new TransactionRepositoryImpl(bank.getTransactions());
 		loanRepository = new LoanRepositoryImpl(bank.getLoans());
 		loanOfferRepository = new LoanOfferRepositoryImpl(bank.getLoanMarket());
 		
 		//Initialise services
 		customerService = new CustomerServiceImpl(customerRepository);
 		accountService = new AccountServiceImpl(accountRepository,customerRepository);
+		transactionService = new TransactionServiceImpl(accountRepository, transactionRepository, customerRepository);
 		loanService = new LoanServiceImpl(customerRepository,loanRepository);
 		loanOfferService = new LoanOfferServiceImpl(customerRepository,accountRepository,loanOfferRepository);
 		
+		//Initialise controllers:
 		customerController = new CustomerController(customerService, accountService, comms);
-		accountController = new AccountController(accountService, comms);
-		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
+		accountController = new AccountController(accountService, customerService, comms);
+		transactionController = new TransactionController(customerService,customerController,accountService, 
+				transactionService, payees,comms);
 		loanController = new LoanController(accountController, customerService, accountService,loanService,comms);
-		
 		loanOfferController = new LoanOfferController(customerController, accountController, loanController,
 				loanOfferService,comms);
 	}
-	
-	public AccountServiceImpl getAccountService() {
-		return this.accountService;
-	}
-	
+
 	public void run() {
 		// keep getting requests from the client and processing them
 		// The User is not logged into the system yet so CustomerID is null
@@ -200,32 +207,25 @@ public class NewBankClientHandler extends Thread {
 	
 	
 	public synchronized String processBankingRequest(UUID customerID, String request) throws IOException{
-
-		//Customer customer = customerRepository.findByID(customerID);
-		//out.println(customer.toString());
-		//out.println(customer.accountsToString());
 		switch (request) {
 			case "1":
 			case "SHOWMYACCOUNTS":
 				return accountController.displayAccounts(customerID);
 			case "2":
+			case "SHOWTRANSACTIONS":
 				return "Select account to show Transactions";
 			case "3":
 			case "NEWACCOUNT":
-				return customerController.newAccount(customerID);
+				return accountController.newAccount(customerID);
 			case "4":
 			case "MOVE":
 				return transactionController.moveMoney(customerID);
-			/*
-			 * /*
-			 * case "5":
-			 * case "PAY":
-			 * return transferMoney(customerID, requestInputs);
-			 * case "6":
-			 * case "CHANGEMYPASSWORD":
-			 * return changePassword(customerID,requestInputs);
-			 */
-			// TODO: PUT in LOAN here
+			case "5":
+			case "PAY":
+				return transactionController.transferMoney(customerID);
+			case "6":
+			case "CHANGEPASSWORD":
+				return customerController.changePassword(customerID);
 			case "7":
 				return "Returning you to Main Menu";
 			default:
@@ -252,5 +252,5 @@ public class NewBankClientHandler extends Thread {
 				return "FAIL";
 		}
 	}
-	
+
 }

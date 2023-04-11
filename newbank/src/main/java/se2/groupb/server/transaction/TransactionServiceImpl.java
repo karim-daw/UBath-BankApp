@@ -4,12 +4,8 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import se2.groupb.server.account.Account;
-import se2.groupb.server.account.AccountDTO;
-import se2.groupb.server.customer.Customer;
-import se2.groupb.server.customer.CustomerDTO;
 import se2.groupb.server.repository.AccountRepositoryImpl;
 import se2.groupb.server.repository.CustomerRepositoryImpl;
-import se2.groupb.server.repository.EntityRepository;
 import se2.groupb.server.repository.TransactionRepositoryImpl;
 
 public class TransactionServiceImpl implements TransactionService {
@@ -47,6 +43,9 @@ public class TransactionServiceImpl implements TransactionService {
         // save transaction to transaction store
         boolean success = transactionRepository.save(moveTransaction);
 
+        // TODO: update date base
+        // success = true;
+
         // if transaction was successfully save this should return a boolean
         if (success) {
             return true;
@@ -58,8 +57,38 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public boolean executePay(UUID fromAccountID, UUID toAccountID, BigDecimal amount) {
-        // TODO Auto-generated method stub
-        return false;
+
+        // get source and target account
+        Account sourceAccount = accountRepository.findByID(fromAccountID);
+        Account targetAccount = accountRepository.findByID(toAccountID);
+        Transaction moveTransaction = new Transaction(fromAccountID, toAccountID, amount);
+
+        // check if source account has enough funds
+        boolean insufficient = sourceAccount.hasInsufficientFunds(amount);
+
+        if (insufficient) {
+            return false;
+        }
+
+        // subtract money from the sourceAccount by the amount
+        // create transaction and add it to source account transactions list
+        sourceAccount.withdraw(amount);
+        sourceAccount.addTransaction(moveTransaction);
+
+        // add money to the target account by the amount
+        targetAccount.deposit(amount);
+        targetAccount.addTransaction(moveTransaction);
+
+        // save transaction to transaction store
+        boolean success = transactionRepository.save(moveTransaction);
+
+        // if transaction was successfully save this should return a boolean
+        if (success) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     // TODO: generate UUID for every type of transaction

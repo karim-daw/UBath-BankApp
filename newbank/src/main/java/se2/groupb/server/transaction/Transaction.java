@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
+import se2.groupb.server.Payee.Payee;
+
 public class Transaction {
 
     private final UUID sourceAccountID;
     private final UUID targetAccountID; // payee id
+    private Payee payee;
     private String sourceName;
     private String targetName; // payee id
     private final UUID transactionID;
@@ -45,7 +48,7 @@ public class Transaction {
      * @param ammount
      * @param description
      */
-    public Transaction(UUID sourceAccountID, UUID targetAccountID, String sourceName, String targetName,
+    public Transaction(UUID sourceAccountID, UUID targetAccountID, Payee payee,
             BigDecimal ammount, String description) {
         this.sourceAccountID = sourceAccountID;
         this.targetAccountID = targetAccountID;
@@ -53,9 +56,20 @@ public class Transaction {
         this.transactionID = UUID.randomUUID(); // Generate a unique ID for the transaction.
         this.date = new Date(); // Set the date of the transaction to the current date and time.
         this.description = description;
-        this.sourceName = sourceName;
-        this.targetName = targetName;
+        this.payee = payee;
 
+    }
+
+    public Payee getPayee() {
+        return payee;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public BigDecimal getAmmount() {

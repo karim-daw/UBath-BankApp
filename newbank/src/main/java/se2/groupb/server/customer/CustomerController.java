@@ -1,21 +1,26 @@
 package se2.groupb.server.customer;
 
+
 import java.util.*;
 import se2.groupb.server.UserInput;
 import se2.groupb.server.account.*;
 import se2.groupb.server.loan.*;
 import java.math.BigDecimal;
+import se2.groupb.server.Payee.Payee;
+import se2.groupb.server.account.AccountService;
+import se2.groupb.server.security.Authentication;
 
 public class CustomerController {
 	// fields
 
-	private final CustomerServiceImpl customerService;
-	private final AccountServiceImpl accountService;
+	//private final CustomerServiceImpl customerService;
+	//private final AccountServiceImpl accountService;
+	private final CustomerService customerService;
+	private final AccountService accountService;
 	private UserInput comms;
 
 	// Constructor
-	public CustomerController(CustomerServiceImpl customerService, AccountServiceImpl accountService,UserInput comms) {
-		
+	public CustomerController(CustomerService customerService, AccountService accountService, UserInput comms) {
 		this.customerService = customerService;
 		this.accountService = accountService;
 		this.comms = comms;
@@ -42,13 +47,17 @@ public class CustomerController {
 		String systemResponse = "";
 		String username = comms.getUserString("Enter Username");
 		String password = comms.getUserString("Enter Password");
+
+		// this dto has the plain text password
 		CustomerDTO customerDto = new CustomerDTO(username, password);
 		comms.printSystemMessage("Please wait while we check your details");
+
+		// get customer
 		Customer customer = customerService.getCustomerbyDTO(customerDto);
 
 		// Validate login details
 		if (customer == null) {
-			systemResponse = "LOGIN FAIL. Invalid Credentials, please try again.";
+			systemResponse = "LOGIN FAIL. No such credentials...";
 			comms.printSystemMessage(systemResponse);
 			return null;
 		} else {
@@ -63,6 +72,9 @@ public class CustomerController {
 	 * 
 	 * @return CustomerDTO
 	 */
+	// TODO: #40 need to implement a check to see if user hits "enter" instead of
+	// typing
+	// "Y" to confirm. If you hit enter it goes into an infinite loop and crashes
 	public UUID userRegistration() {
 		String username;
 		boolean duplicateUsername;
@@ -124,64 +136,35 @@ public class CustomerController {
 
 	
 	/**
-	 * NEWACCOUNT <Name>
-	 * e.g. NEWACCOUNT Savings
-	 * Returns SUCCESS or FAIL
-	 * 
-	 * @param customerID
-	 * @return
+	 * @return returns success if password was changed
 	 */
-	public String newAccount(UUID customerID) {
-		String response = ""; // the system response to the user's request
-		// UUID customerID = customer.getCustomerID();
-		HashMap<String, String> newAcctOptions = accountService.newAccountAvailableTypes(customerID);
+	public String changePassword(UUID customerID) {
+		String prompt = "Enter old password";
+		String oldPassword = comms.getUserString(prompt);
 
-		int noOfChoices = newAcctOptions.size(); // 0,1, or 2
-		if (noOfChoices > 0) {
-			String prompt = "Create a new account: \n" + mapToString(newAcctOptions)
-					+ "\nEnter the number of your choice: ";
-			String userInput = comms.getUserMenuChoice(prompt, noOfChoices);
-			String accountType = newAcctOptions.get(userInput); // the choice of account type entered by the user
-			String str = "Create a new " + accountType +" account.\n";
-			comms.printSystemMessage(str);
+		Customer customer = customerService.getCustomerByID(customerID);
+		String customerPassword = customer.getPassword();
 
-			// check if customer already has an account type with that name
-			boolean duplicateName;
-			String accountName;
-			do {
-				prompt = "Enter an account name: ";
-				accountName = comms.getUserString(prompt);
-				duplicateName = accountService.hasAccount(customerID, accountType, accountName);
-				if (duplicateName) {
-					comms.printSystemMessage("Account name taken. Please try again.");
-				}
-			} while (duplicateName);
-			
-			prompt = "Enter a positive opening balance (default is zero): \n";
-			BigDecimal openingBalance = comms.getOpeningBalance(prompt);
+		// check hashed password
+		boolean passwordIsMatched = Authentication.authenticatePassword(oldPassword, customerPassword);
 
-			prompt = "Open a new " + accountType + " account: " + accountName + " with an opening balance of "
-					+ openingBalance
-					+ "?\nEnter 'y' for Yes or 'n' for No: \n";
-			boolean userConfirm = comms.confirm(prompt);
-
-			if (userConfirm) {
-
-				// adds new account to customer
-				AccountDTO accountDto = new AccountDTO(accountType, accountName, openingBalance);
-				Account newAccount = accountService.createAccount(customerID, accountDto);
-				Customer customer = customerService.getCustomerByID(customerID);
-				customer.addAccount(newAccount);
-
-				// Call NewBank method to add new customer account to bank's data store
-				response = "SUCCESS: Your " + accountType + " account has been created.\nReturning to Main Menu.";
-			} else {
-				response = "Account creation was cancelled.\nReturning to the Main Menu.";
-			}
-		} else {
-			response = "You have reached the maximum number of accounts.\nReturning to Main Menu.";
+		if (!passwordIsMatched) {
+			return "FAIL. The old password is incorrect."; // passwords dont match
 		}
-		return response;
+
+		prompt = "Enter new password";
+		String newPassword = comms.getUserString(prompt);
+
+		prompt = "Enter new password";
+		String newPassword2 = comms.getUserString(prompt);
+
+		if (!newPassword.equals(newPassword2)) {
+			return "FAIL. your password choice dont match"; // passwords dont match
+		}
+
+		customerService.updatePassword(customerID, newPassword);
+
+		return null;
 	}
 
 	
@@ -189,19 +172,50 @@ public class CustomerController {
 	
 	
 	/**
-	 *
-	 * Helper method for printing the contents of a HashMap<String,String>
+	 * displays the customers payees as a list
 	 * 
-	 * @return a string of the contents
+	 * @param customerDTO
+	 * @return
 	 */
-	public String mapToString(HashMap<String, String> map) {
-		String s = "";
-		if (map.size() > 0) {
-			for (HashMap.Entry<String, String> item : map.entrySet()) {
-				s += item.getKey() + " = " + item.getValue() + "\n";
-			}
+	public String displayPayees(UUID customerID) {
+		return customerService.displayPayees(customerID);
+	}
+
+	/**
+	 * @param customerID
+	 * @return
+	 */
+	public String createPayee(UUID customerID) {
+		String response = ""; // the system response to the user's request
+		String prompt = "Add a new payee: \n";
+		prompt += "Enter the payee name: \n";
+		boolean duplicateName;
+		String payeeName = comms.getUserString(prompt);
+		// Check if the payee already exists duplicateName =
+		// accountService.alreadyExists(payeeID, payeeName);
+		// while (duplicateName);
+
+		prompt = "Enter payee's account number: \n";
+		String payeeAccountNumber = comms.getUserString(prompt);
+
+		prompt = "Enter payee's BIC: \n";
+		String payeeBIC = comms.getUserString(prompt);
+
+		prompt = "Add " + payeeName + " as a new payee?\nEnter 'y' for Yes or 'n' for No: \n";
+		boolean userConfirm = comms.confirm(prompt);
+
+		if (userConfirm) {
+			Customer customer = getCustomer(customerID);
+			Payee newPayee = new Payee(customer.getCustomerID(), payeeName, payeeAccountNumber,
+					payeeBIC);
+
+			customer.addPayee(newPayee); // adds new payee to the customer
+
+			response = "SUCCESS: The payee " + payeeName + " has been added.\nReturning to Main Menu.";
+		} else {
+			response = "Payee addition was cancelled.\nReturning to the Main Menu.";
 		}
-		return s;
+		return response;
 	}
 
 }
