@@ -2,30 +2,43 @@ package se2.groupb.server.Payee;
 
 import java.util.UUID;
 
+import se2.groupb.server.repository.PayeeRepositoryImpl;
+
 public class PayeeServiceImpl implements PayeeService {
 
-    @Override
-    public boolean addNewPayee(PayeeDTO payeeDTO) {
-        // TODO Auto-generated method stub
-        return false;
+    // fields
+    private final PayeeRepositoryImpl payeeRepository;
+
+    // constructor
+    public PayeeServiceImpl(PayeeRepositoryImpl payeeRepository) {
+        this.payeeRepository = payeeRepository;
     }
 
+    // methods
     @Override
-    public Payee getPayeeByDTO(PayeeDTO payeeDTO) {
-        // TODO Auto-generated method stub
-        return null;
+    public boolean addNewPayee(UUID customerID, PayeeDTO payeeDTO) {
+
+        // early break
+        if (payeeDTO == null) {
+            return false;
+        }
+
+        String payeeAccountNumber = payeeDTO.getPayeeAccountNumber();
+        String payeeBIC = payeeDTO.getPayeeBIC();
+        String payeeName = payeeDTO.getPayeeName();
+
+        // add new payee
+        Payee newPayee = new Payee(customerID, payeeName, payeeAccountNumber, payeeBIC);
+        if (payeeRepository.save(newPayee)) {
+            return true;
+        }
+        return false;
+
     }
 
     @Override
     public Payee getPayeeByID(UUID payeeID) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Payee getPayeeByName(String payeeName) {
-        // TODO Auto-generated method stub
-        return null;
+        return payeeRepository.findByID(payeeID);
     }
 
 }
