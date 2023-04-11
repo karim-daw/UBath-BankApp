@@ -67,7 +67,15 @@ public class TransactionServiceImpl implements TransactionService {
         Account sourceAccount = accountRepository.findByID(fromAccountID);
 
         Payee payee = payeeRepository.findByID(toPayeeID);
-        Transaction moveTransaction = new Transaction(fromAccountID, toPayeeID, amount, reference);
+        String payeeAccountNumber = payee.getPayeeAccountNumber();
+        Account payeeAccount = accountRepository.findByAccountNumber(payeeAccountNumber);
+        boolean isNewBankAccount = true;
+        if (payeeAccount == null) {
+        	isNewBankAccount = false;
+        }
+        
+        Transaction moveTransaction = new Transaction(fromAccountID, toPayeeID, amount,reference);
+
 
         // check if source account has enough funds
         boolean insufficient = sourceAccount.hasInsufficientFunds(amount);
@@ -81,17 +89,13 @@ public class TransactionServiceImpl implements TransactionService {
         sourceAccount.debit(amount);
         sourceAccount.addTransaction(moveTransaction);
 
-        // add money to the target account by the amount
-
-        // get account number form payee
-        String payeeAccountNumber = payee.getPayeeAccountNumber();
-
-        Account payeeNewBankAccount = accountRepository.findByAccountNumber(payeeAccountNumber);
-        if (payeeNewBankAccount != null) {
-            payeeNewBankAccount.credit(amount);
-            payeeNewBankAccount.addTransaction(moveTransaction);
+        // If the Payee's Account is a New Bank Account then add the credit to their account:
+        if (isNewBankAccount) {
+        	payeeAccount.credit(amount);
+        	payeeAccount.addTransaction(moveTransaction);
+        	
         }
-        // do nothing to the account holder, its outsIDE newbank
+       
 
         // save transaction to transaction store
         boolean success = transactionRepository.save(moveTransaction);

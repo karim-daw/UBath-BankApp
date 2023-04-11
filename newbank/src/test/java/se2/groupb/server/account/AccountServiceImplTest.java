@@ -13,18 +13,20 @@ import org.mockito.Mockito;
 
 import se2.groupb.server.NewBank;
 import se2.groupb.server.repository.AccountRepositoryImpl;
+import se2.groupb.server.repository.CustomerRepositoryImpl;
 
 public class AccountServiceImplTest {
 
     private NewBank bank;
     private AccountRepositoryImpl accountRepository;
+    private CustomerRepositoryImpl customerRepository;
     private AccountService accountService;
 
     @Before
     public void setUp() {
         bank = NewBank.getBank(); // static instance of the bank
         accountRepository = Mockito.mock(AccountRepositoryImpl.class);
-        accountService = new AccountServiceImpl(accountRepository);
+        accountService = new AccountServiceImpl(accountRepository, customerRepository);
     }
 
     @Test
@@ -87,7 +89,7 @@ public class AccountServiceImplTest {
         Account account = Mockito.spy(new Account(accountID, "Checking", "Karim Doe", new BigDecimal("100.00")));
         Mockito.when(accountRepository.findByID(accountID)).thenReturn(account);
         Mockito.doThrow(new RuntimeException("withdrawal failed")).when(account)
-                .withdraw(Mockito.any(BigDecimal.class));
+                .debit(Mockito.any(BigDecimal.class));
 
         boolean result = accountService.debit(accountID, BigDecimal.valueOf(50));
         assertFalse(result);

@@ -53,6 +53,7 @@ public class NewBank {
 		
 		Payee bhagy_payee1 = new Payee(bhagy.getCustomerID(), "Jean Doe", "012345", "OTHBAN");
 		Payee bhagy_payee2 = new Payee(bhagy.getCustomerID(), "Robert Ham", "678910", "OTHBAN");
+		
 		bhagy.addPayee(bhagy_payee1);
 		bhagy.addPayee(bhagy_payee2);
 		
@@ -81,6 +82,9 @@ public class NewBank {
 				christina_acct1.getAccountID(), BigDecimal.valueOf(10000), BigDecimal.valueOf(10), 1, "Years", 12, "Good");
 		christina.addLoanOffer(christina_offer1);
 		
+		Payee bhagy_payee3 = new Payee(bhagy.getCustomerID(), "Christina", christina_acct1.getAccountNumber(), "NEWBGB21");
+		bhagy.addPayee(bhagy_payee3);
+		getPayees().put(bhagy_payee3.getPayeeID().toString(), bhagy_payee3);
 		
 		//Add Christina's Customer, Accounts and Payees to Database:
 		getCustomers().put(christina.getCustomerID().toString(), christina);
