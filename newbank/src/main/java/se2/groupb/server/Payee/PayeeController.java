@@ -46,11 +46,7 @@ public class PayeeController {
         String response = ""; // the system response to the user's request
         String prompt = "Add a new payee: \n";
         prompt = "Enter the payee name: \n";
-        boolean duplicateName;
         String payeeName = comms.getUserString(prompt);
-        // Check if the payee already exists duplicateName =
-        // accountService.alreadyExists(payeeID, payeeName);
-        // while (duplicateName);
 
         prompt = "Enter payee's account number: \n";
         String payeeAccountNumber = comms.getUserString(prompt);
