@@ -15,4 +15,8 @@ public interface PayeeService {
      * @return
      */
     public boolean addNewPayee(UUID customerID, PayeeDTO payeeDTO);
+
+    public String displayPayees(UUID customerID);
+
+    public String createPayee(UUID customerID);
 }
