@@ -1,327 +1,135 @@
 package se2.groupb.server;
 
-
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Collections;
-import java.util.Arrays;
+import java.util.UUID;
+
+import se2.groupb.server.Payee.Payee;
+import se2.groupb.server.account.Account;
+import se2.groupb.server.customer.Customer;
+import se2.groupb.server.loan.Loan;
+import se2.groupb.server.loanOffer.LoanOffer;
+import se2.groupb.server.transaction.Transaction;
 
 
 public class NewBank {
+
+	public static final String BIC = "NEWBGB21";
+	private static final NewBank bank = new NewBank(); // every instance of NewBank has the same bank info
+
 	
-	private static final NewBank bank = new NewBank(); //every instance of NewBank has the same bank info
-	private HashMap<String, Customer> customers;
-	public static final List<String> validAcctList = 
-		    Collections.unmodifiableList(Arrays.asList("Main","Savings","Checking"));
+	private HashMap<String, Customer> customers; //temp customer data store
+	private HashMap<String, Account> accounts; //temp account data store
+	private HashMap<String, Transaction> transactions;
+	private HashMap<String, Payee> payees;
+	private HashMap<String, LoanOffer> loanMarket; //temp loan offer data store
+	private HashMap<String, Loan> loans; //temp loan offer data store
 	
-	//Constructor
+	// Constructor
 	private NewBank() {
+		// create temp data store
 		customers = new HashMap<>();
+		accounts = new HashMap<>();
+		transactions = new HashMap<>();
+		payees = new HashMap<>();
+		loans = new HashMap<>();
+		loanMarket = new HashMap<>();
+		
+		// adding data for debugging
 		addTestData();
 	}
-		
-	public HashMap<String, Customer> getCustomers() {
-		return customers;
-	}
-	
+
 	/**
 	 * debugging helper function that adds dummy data to a hashmap
 	 */
 	private void addTestData() {
-		Customer bhagy = new Customer();
-		bhagy.addAccount(new Account("Main", 1000.0));
-		bhagy.setPassword("password");
-		getCustomers().put("Bhagy", bhagy);
+		// password: "password" = "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+		Customer bhagy = new Customer("Bhagy", "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8");
+		
+		Account bhagy_acct1 = new Account(bhagy.getCustomerID(), "Current", "Main", BigDecimal.valueOf(20000));
+		Account bhagy_acct2 = new Account(bhagy.getCustomerID(), "Savings", "Car", BigDecimal.valueOf(30000));
+		bhagy.addAccount(bhagy_acct1);
+		bhagy.addAccount(bhagy_acct2);
+		
+		Payee bhagy_payee1 = new Payee(bhagy.getCustomerID(), "Jean Doe", "012345", "OTHBAN");
+		Payee bhagy_payee2 = new Payee(bhagy.getCustomerID(), "Robert Ham", "678910", "OTHBAN");
+		
+		bhagy.addPayee(bhagy_payee1);
+		bhagy.addPayee(bhagy_payee2);
+		
+		LoanOffer bhagy_offer1 = new LoanOffer(bhagy.getCustomerID(), bhagy.getUsername(), "Offer1",bhagy_acct1.getAccountID(), 
+				BigDecimal.valueOf(10000), BigDecimal.valueOf(15), 1, "Years", 12, "Good");
+		LoanOffer bhagy_offer2 = new LoanOffer(bhagy.getCustomerID(), bhagy.getUsername(), "Offer2",bhagy_acct2.getAccountID(), 
+				BigDecimal.valueOf(20000), BigDecimal.valueOf(10), 2, "Years", 24, "Good");
+		bhagy.addLoanOffer(bhagy_offer1);
+		bhagy.addLoanOffer(bhagy_offer2);
+		
+		//Add Bhagy's Customer, Accounts and Payees to Database:
+		getCustomers().put(bhagy.getCustomerID().toString(), bhagy);
+		getAccounts().put(bhagy_acct1.getAccountID().toString(), bhagy_acct1);
+		getAccounts().put(bhagy_acct2.getAccountID().toString(), bhagy_acct2);
+		getPayees().put(bhagy_payee1.getPayeeID().toString(), bhagy_payee1);
+		getPayees().put(bhagy_payee2.getPayeeID().toString(), bhagy_payee2);
+		getLoanMarket().put(bhagy_offer1.getLoanOfferID().toString(), bhagy_offer1);
+		getLoanMarket().put(bhagy_offer2.getLoanOfferID().toString(), bhagy_offer2);
+		
+		// password: "1234" = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"
+		Customer christina = new Customer("Christina",
+				"03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4");
+		Account christina_acct1 = new Account(christina.getCustomerID(), "Savings", "House", BigDecimal.valueOf(50000));
+		christina.addAccount(christina_acct1);
+		LoanOffer christina_offer1 = new LoanOffer(christina.getCustomerID(), christina.getUsername(), "Offer1",
+				christina_acct1.getAccountID(), BigDecimal.valueOf(10000), BigDecimal.valueOf(10), 1, "Years", 12, "Good");
+		christina.addLoanOffer(christina_offer1);
+		
+		Payee bhagy_payee3 = new Payee(bhagy.getCustomerID(), "Christina", christina_acct1.getAccountNumber(), "NEWBGB21");
+		bhagy.addPayee(bhagy_payee3);
+		getPayees().put(bhagy_payee3.getPayeeID().toString(), bhagy_payee3);
+		
+		//Add Christina's Customer, Accounts and Payees to Database:
+		getCustomers().put(christina.getCustomerID().toString(), christina);
+		getAccounts().put(christina_acct1.getAccountID().toString(), christina_acct1);
+		getLoanMarket().put(christina_offer1.getLoanOfferID().toString(), christina_offer1);
+		
+		// password: "1111" = "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c"
+		Customer john = new Customer("John", "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c");
+		Account john_acct1 = new Account(john.getCustomerID(), "Current", "Main", BigDecimal.valueOf(250));
+		john.addAccount(john_acct1);
+		getCustomers().put(john.getCustomerID().toString(), john);
+		getAccounts().put(john_acct1.getAccountID().toString(), john_acct1);
+		
+	}
 
-		Customer christina = new Customer();
-		christina.addAccount(new Account("Savings", 1500.0));
-		christina.setPassword("1234");
-		getCustomers().put("Christina", christina);
+	public HashMap<String, Customer> getCustomers() {
+		return customers;
+	}
 
-		Customer john = new Customer();
-		john.addAccount(new Account("Checking", 250.0));
-		getCustomers().put("John", john);
-		christina.setPassword("4321");
+	public HashMap<String, Account> getAccounts() {
+		return accounts;
+	}
+	
+	public HashMap<String, Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public HashMap<String, Payee> getPayees() {
+		return payees;
+	}
+	public HashMap<String, LoanOffer> getLoanMarket() {
+		return loanMarket;
+	}
+	
+	public HashMap<String, Loan> getLoans() {
+		return loans;
 	}
 
 	public static NewBank getBank() {
 		return bank;
 	}
-
-	
-	public synchronized CustomerID checkLogInDetails(String username, String password) {
-		// Check if the username input by the user exists in the bank's system
-
-		if (customers.containsKey(username)) {
-			// If username exists then check their password
-			Customer customer = customers.get(username);
-			// If the password input equals the password on system then create new
-			// CustomerID
-			if (customer.getPassword().equals(password)) {
-				customer.setloggedInStatus(true);
-				return new CustomerID(username);
-			} else {
-				customer.setloggedInStatus(false);
-				return null;
-			}
-		} else {
-			return null;
-		}
-
-	}	
-					
-	/**
-	 * Creates a new account for a given customer
-	 * 
-	 * NEWACCOUNT <Name>
-	 * e.g. NEWACCOUNT Savings
-	 * Returns SUCCESS or FAIL
-	 * 
-	 * @param customer
-	 * @param requestInputs
-	 * @param openingBalance
-	 * @return string regarding success or failure of createtAccount request
-	 */
 	
 	/*
-	private String createAccount(Customer customer, String accountType, double openingBalance) {
-		//adds account to bank's data store
-		return "SUCCESS"; //or FAIL
-	}
-	
-	*/
-	
-	/**
-	 * Logs out the current customer
-	 * 
-	 * @param customer
-	 */
-
-	public String logOut(CustomerID customer) {
-		customers.get(customer.getKey()).setloggedInStatus(false);
-		return "LOG OUT SUCCESSFUL";
-
-	}
-
-	/*
-	 * this method takes care of the PAY feature indicated below, gven and customer
-	 * (pay2er) and a requested payee, this will transfer money from these accounts
-	 * and update balances accordingly
-	 * PAY <Person/Company> <Ammount>
-	 * e.g. PAY John 100
-	 * Returns SUCCESS or FAIL
-	 * 
-	 * @param customer
-	 * 
-	 * @param requestArray
-	 * 
-	 * @return string that is SUCCESS or FAIL if transfer succeeded
-	 */
-	public String transferMoney(CustomerID customerID, String[] requestArray) {
-
-		if (requestArray.length < 3) {
-			return "FAIL, incomplete PAY Request";
-		}
-
-		// Check if the customer exists in the hashmap.
-		String customerName = customerID.getKey();
-		String payeeName = requestArray[1];
-
-		Customer customer = customers.get(customerName);
-		System.out.println(payeeName);
-
-		if (payeeName.equals(customerName)) {
-			return "FAIL, you are trying to pay yourself";
-		}
-
-		if (!customers.containsKey(payeeName)) {
-			return "FAIL, payee not a member of NewBank";
-		}
-
-		double transferAmount;
-		try {
-			transferAmount = Double.parseDouble(requestArray[2]);
-		} catch (NumberFormatException e) {
-			return "FAIL"; // return fail if input is not figures instead of an error
-		}
-
-		if (transferAmount < 0) {
-			return "FAIL";
-		}
-
-		ArrayList<Account> payerAccounts = customer.getAccounts(); // payers accounts
-
-		// first account in accounts list will be default for now for payer
-		Account payerFirstAccount = payerAccounts.get(0);
-
-		if (isOverDraft(payerFirstAccount, transferAmount)) {
-			return "FAIL, insufficient funds for PAY amount";
-		}
-		payerFirstAccount.updateBalance(-transferAmount);
-
-		// handle update on payee account
-		CustomerID payeeCustomerID = new CustomerID(payeeName);
-		Customer payeeCustomer = customers.get(payeeCustomerID.getKey());
-
-		// get payee account as customer
-		ArrayList<Account> payeeAccounts = payeeCustomer.getAccounts();
-		Account payeeFirstAccount = payeeAccounts.get(0); // first account
-
-		// update balance
-		payeeFirstAccount.updateBalance(transferAmount);
-
-		return "SUCCESS";
-
-	}
-
-	public boolean isOverDraft(Account account, double deduction) {
-
-		double balance = account.getBalance();
-		if (deduction > balance) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * method takes care of the MOVE protocol
-	 * 
-	 * MOVE <Amount> <From> <To>
-	 * e.g. MOVE 100 Main Savings
-	 * Returns SUCCESS or FAIL
-	 * 
-	 * @param customerID
-	 * @param requestArray
-	 * @return SUCCESS string or FAIL string
-	 */
-	/*
-	public String moveMoney(CustomerID customerID, String[] requestInputs) {
-
-		// Check if request is incomplete
-		int inputLength = requestInputs.length;
-		if (inputLength < 4) {
-			return "FAIL: Invalid MOVE request";
-		}
-
-		// Check if the customer exists in the hashmap.
-		String customerName = customerID.getKey();
-		Customer customer = customers.get(customerName);
-
-		// Check if transfer amount is a number
-		double transferAmount;
-		try {
-			transferAmount = Double.parseDouble(requestInputs[1]);
-		} catch (NumberFormatException e) {
-			return "FAIL"; // return fail if input is not figures instead of an error
-		}
-
-		// Check if transfer amount is negative
-		if (transferAmount < 0) {
-			return "FAIL";
-		}
-
-		// Get the accounts from the customer
-		System.out.println("Select source account.");
-		Account sourceAccount = customer.getAccountByName(requestInputs[2]);
-		if (sourceAccount.equals(null)) {
-			return "FAIL, source account does not exist";
-		}
-
-		// check if account has overdraft
-		if (isOverDraft(sourceAccount, transferAmount)) {
-			return "FAIL, insufficient funds in the source account.";
-		}
-
-		// update balance of source account
-		sourceAccount.updateBalance(-transferAmount);
-
-		// get destination account
-		System.out.println("Select destination account.");
-		Account destinationAccount = customer.getAccountByName(requestInputs[3]);
-		if (destinationAccount == null) {
-			return "FAIL, destination account does not exist";
-		}
-
-		// update balance of destination account
-		destinationAccount.updateBalance(transferAmount);
-		return "SUCCESS";
-
+	public void displayCustomers() {
+		System.out.println(getCustomers().keySet());
 	}
 	*/
-
-	/**
-	 * method that changes the password
-	 * old password need to be enter
-	 * then a new password, twice
-	 * 
-	 * @param customer
-	 * @param requestInputs
-	 * @return
-	 */
-
-	 public String changePassword(CustomerID customer, String[] requestInputs){
-		//check if the command is correct
-		//return infinite loop of null, why ? 
-		int inputLength = requestInputs.length;
-		if (inputLength < 4) {
-			return "FAIL. Please enter your old password and twice your new password after the command.";
-		}
-
-		String oldPassword = requestInputs[1];
-		String newPassword = requestInputs[2];
-		String confirmNewPassword = requestInputs[3];
-		Customer c = customers.get(customer.getKey());
-
-		//check if the old password is correct
-		if (!c.getPassword().equals(oldPassword)){
-			return "FAIL. The old password is incorrect.";			
-		}
-
-		//check if the two new password inputs match. 
-		if (!newPassword.equals(confirmNewPassword)){
-			return "FAIL. Password confirmation does not match.";
-		}
-
-		else {
-			c.setPassword(newPassword);
-			return "SUCCESS new password is: " + c.getPassword();
-		}	
-	 }
-
-
-	/**
-	 * Registers a new customer to hashmap, performs validaiton to see if customer
-	 * key is already in the hashmap
-	 * 
-	 * @param username
-	 * @param password
-	 * @return true is user successfull registered, false if username already exists
-	 */
-	public synchronized CustomerID registerCustomer(String username, String password) {
-
-		Customer newCustomer = null;
-
-		if (!customers.containsKey(username)) {
-			newCustomer = new Customer();
-			newCustomer.addAccount(new Account("Main", 0.0));
-			newCustomer.setPassword(password);
-			getCustomers().put(username, newCustomer);
-			CustomerID customerID = new CustomerID(username);
-			return customerID;
-		}
-		return null;
-
-	}
-
-	// TO DO
-	/**
-	 * validates password entered during new user registration
-	 * 
-	 * @param password
-	 * @return
-	 */
-	public boolean isPasswordValid(String password) {
-		return false;
-	}
 }
