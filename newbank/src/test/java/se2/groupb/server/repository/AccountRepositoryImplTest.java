@@ -2,6 +2,7 @@ package se2.groupb.server.repository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
@@ -72,10 +73,10 @@ public class AccountRepositoryImplTest {
     @Test
     public void testSaveWithDuplicateCustomerID() {
         // Test saving two accounts with the same ID
-        UUID sameUUID = UUID.randomUUID();
+        UUID CustomerID = UUID.randomUUID();
 
-        Account account1 = new Account(sameUUID, "Checking", "Test Account 1");
-        Account account2 = new Account(sameUUID, "Savings", "Test Account 2");
+        Account account1 = new Account(CustomerID, "Checking", "Test Account 1");
+        Account account2 = new Account(CustomerID, "Savings", "Test Account 2");
         assertTrue(accountRepository.save(account1));
         assertTrue(accountRepository.save(account2));
     }
@@ -101,6 +102,41 @@ public class AccountRepositoryImplTest {
         assertTrue(accountRepository.save(account2));
         assertEquals(account1, accountRepository.findByID(account1.getAccountID()));
         assertEquals(account2, accountRepository.findByID(account2.getAccountID()));
+    }
+
+    @Test
+    public void testFindByAccountNumber() {
+        // Arrange
+        Account account1 = new Account(UUID.randomUUID(), "Checking", "Test Account 1");
+        accountRepository.save(account1);
+
+        String accountNumber1 = account1.getAccountNumber();
+        Account foundAccount = accountRepository.findByAccountNumber(accountNumber1);
+        assertTrue(account1.getAccountID().equals(foundAccount.getAccountID()));
+
+    }
+
+    @Test
+    public void testFindByAccountNumberReturnsNullWhenNotFound() {
+        // Arrange
+        Account account1 = new Account(UUID.randomUUID(), "Checking", "Test Account 1");
+        accountRepository.save(account1);
+
+        // Act
+        Account foundAccount = accountRepository.findByAccountNumber("4444");
+
+        // Assert
+        assertNull(foundAccount);
+    }
+
+    @Test
+    public void testFindByAccountNumberReturnsNullWhenAccountNumberIsNull() {
+
+        // Act
+        Account result = accountRepository.findByAccountNumber(null);
+
+        // Assert
+        assertNull(result);
     }
 
 }
