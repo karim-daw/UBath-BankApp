@@ -251,7 +251,7 @@ public class TransactionController {
 			case "2":{ //Pay a new Payee: create a new payee and then do transfer
 				Payee payee = payeeController.createPayee(customerID);
 				if (payee == null) {
-					comms.printSystemMessage("Problem creating new Payee. Request cancelled.\n");
+					comms.printSystemMessage("Returning to Main Menu.\n");
 				}
 				return payee;
 			}

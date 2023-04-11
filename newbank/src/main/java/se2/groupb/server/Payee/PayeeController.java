@@ -48,7 +48,6 @@ public class PayeeController {
     public Payee createPayee(UUID customerID) {
 		//Payee Constructor: Payee(UUID customerID, String payeeName, String payeeAccountNumber, String payeeBIC)
     	Customer customer = customerService.getCustomerByID(customerID);
-		String response = ""; // the system response to the user's request
 		String prompt="";
 		String payeeName = null;
 		boolean duplicateName = false;
@@ -76,15 +75,15 @@ public class PayeeController {
 			boolean savedToDB = payeeRepository.save(newPayee);
 			if (savedToDB) {
 				customer.addPayee(newPayee); // adds new payee to the customer
-				comms.printSystemMessage("SUCCESS: The payee " + payeeName + " has been added.\nReturning to Main Menu."); 
+				comms.printSystemMessage("SUCCESS: The payee " + payeeName + " has been added.\n"); 
 				return newPayee;
 			}
 			else {
-				comms.printSystemMessage("FAIL: The payee " + payeeName + " has not been added.\nReturning to Main Menu.");
+				comms.printSystemMessage("FAIL: The payee " + payeeName + " has not been added.\n");
 				return null;
 			}
 		} else {
-			comms.printSystemMessage("Payee addition was cancelled.\nReturning to the Main Menu.");
+			comms.printSystemMessage("Payee addition was cancelled.\n");
 			return null;
 		}
 	}
