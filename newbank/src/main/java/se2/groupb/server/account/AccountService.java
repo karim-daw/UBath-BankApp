@@ -1,6 +1,8 @@
 package se2.groupb.server.account;
 
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.UUID;
 
 //Business Logic: makes changes to Domain, sends results to Controller
 public interface AccountService {
@@ -16,14 +18,7 @@ public interface AccountService {
          * @param accountDto
          * @return string regarding success or failure of createtAccount request
          */
-        Account createAccount(UUID customerID, AccountDTO accountDto);
-
-        /*
-         * a method that is responsibal for transfering money between two accounts for
-         * the same customer
-         * 
-         * 
-         */
+        public Account createAccount(UUID customerID, AccountDTO accountDto);
 
         /**
          * 
@@ -46,13 +41,15 @@ public interface AccountService {
         public boolean hasAccount(UUID customerID, String accountType, String accountName);
 
         /**
-         * adds money to account
+         * adds money to account via the account number. This method will only return
+         * true if the accountNumber of the payee is a member of NewBank, if not itll be
+         * false
          * 
-         * @param accountID
+         * @param accountNumber
          * @param amount
          * @return
          */
-        // boolean credit(UUID accountID, BigDecimal amount);
+        public boolean credit(String accountNumber, BigDecimal amount);
 
         /**
          * subtracts money from account
@@ -61,8 +58,6 @@ public interface AccountService {
          * @param amount
          * @return
          */
-        // boolean debit(UUID accountID, BigDecimal amount);
-
-        // boolean exceedsOverdraft() ;
+        public boolean debit(UUID accountID, BigDecimal amount);
 
 }
