@@ -270,7 +270,7 @@ public class Customer {
 	public String accountMapToString(Map<String, Account> map) {
 		String s = "";
 		for (Map.Entry<String, Account> item : map.entrySet()) {
-			s += item.getKey() + " = " + item.getValue().toString() + "\n";
+			s += item.getKey() + " =\n " + item.getValue().toString() + "\n";
 		}
 		return s;
 	}
@@ -362,6 +362,20 @@ public class Customer {
 
 	public ArrayList<Payee> getPayees() {
 		return payees;
+	}
+	
+	/**
+	 * 
+	 * @param payeeName
+	 * @return
+	 */
+	public boolean duplicatePayee(String payeeName) {
+		for (Payee payee : payees) {
+			if (payee.getPayeeName().equals(payeeName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**

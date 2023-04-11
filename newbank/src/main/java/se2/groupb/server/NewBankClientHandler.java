@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.*;
 import se2.groupb.server.customer.*;
 import se2.groupb.server.account.*;
-import se2.groupb.server.Payee.Payee;
+import se2.groupb.server.Payee.*;
 import se2.groupb.server.transaction.*;
 import se2.groupb.server.loan.*;
 import se2.groupb.server.loanOffer.*;
@@ -88,11 +88,11 @@ public class NewBankClientHandler extends Thread {
 	private final BufferedReader in;
 	private final PrintWriter out;
 	public final UserInput comms;
-	private Payee payees;
 	
 	//Controllers:
 	private CustomerController customerController;
 	private AccountController accountController;
+	private PayeeController payeeController;
 	private TransactionController transactionController;
 	private LoanController loanController;
 	private LoanOfferController loanOfferController;
@@ -102,6 +102,7 @@ public class NewBankClientHandler extends Thread {
 	//private AccountServiceImpl accountService;
 	private CustomerService customerService;
 	private AccountService accountService;
+	private PayeeService payeeService;
 	private TransactionService transactionService;
 	private LoanServiceImpl loanService;
 	private LoanOfferServiceImpl loanOfferService;
@@ -109,6 +110,7 @@ public class NewBankClientHandler extends Thread {
 	//Repos:
 	private CustomerRepositoryImpl customerRepository;
 	private AccountRepositoryImpl accountRepository;
+	private PayeeRepositoryImpl payeeRepository;
 	private TransactionRepositoryImpl transactionRepository;
 	private LoanRepositoryImpl loanRepository;
 	private LoanOfferRepositoryImpl loanOfferRepository;
@@ -124,6 +126,8 @@ public class NewBankClientHandler extends Thread {
 		// Initialise repos
 		customerRepository = new CustomerRepositoryImpl(bank.getCustomers());
 		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
+		payeeRepository  = new PayeeRepositoryImpl(bank.getPayees());
+		
 		transactionRepository = new TransactionRepositoryImpl(bank.getTransactions());
 		loanRepository = new LoanRepositoryImpl(bank.getLoans());
 		loanOfferRepository = new LoanOfferRepositoryImpl(bank.getLoanMarket());
@@ -131,15 +135,17 @@ public class NewBankClientHandler extends Thread {
 		//Initialise services
 		customerService = new CustomerServiceImpl(customerRepository);
 		accountService = new AccountServiceImpl(accountRepository,customerRepository);
-		transactionService = new TransactionServiceImpl(accountRepository, transactionRepository, customerRepository);
+		payeeService = new PayeeServiceImpl(payeeRepository);
+		transactionService = new TransactionServiceImpl(accountRepository, payeeRepository,transactionRepository,
+				customerRepository);
 		loanService = new LoanServiceImpl(customerRepository,loanRepository);
 		loanOfferService = new LoanOfferServiceImpl(customerRepository,accountRepository,loanOfferRepository);
 		
 		//Initialise controllers:
 		customerController = new CustomerController(customerService, accountService, comms);
 		accountController = new AccountController(accountService, customerService, comms);
-		transactionController = new TransactionController(customerService,customerController,accountService, 
-				transactionService, payees,comms);
+		payeeController = new PayeeController(payeeRepository,payeeService,customerService,comms);
+		transactionController = new TransactionController(customerService, transactionService,payeeController,comms);
 		loanController = new LoanController(accountController, customerService, accountService,loanService,comms);
 		loanOfferController = new LoanOfferController(customerController, accountController, loanController,
 				loanOfferService,comms);

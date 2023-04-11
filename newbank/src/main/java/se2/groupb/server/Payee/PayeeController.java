@@ -5,14 +5,17 @@ import java.util.UUID;
 import se2.groupb.server.UserInput;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerService;
+import se2.groupb.server.repository.PayeeRepositoryImpl;
 
 public class PayeeController {
-
+    private final PayeeRepositoryImpl payeeRepository;
     private final PayeeService payeeService;
     private final CustomerService customerService;
     private UserInput comms;
 
-    public PayeeController(PayeeService payeeService, CustomerService customerService, UserInput comms) {
+    public PayeeController(PayeeRepositoryImpl payeeRepository,PayeeService payeeService, CustomerService customerService,
+    		UserInput comms) {
+    	this.payeeRepository = payeeRepository;
         this.payeeService = payeeService;
         this.customerService = customerService;
         this.comms = comms;
@@ -42,37 +45,48 @@ public class PayeeController {
      * @param customerID
      * @return
      */
-    public String createPayee(UUID customerID) {
-        String response = ""; // the system response to the user's request
-        String prompt = "Add a new payee: \n";
-        prompt = "Enter the payee name: \n";
-        //boolean duplicateName;
-        String payeeName = comms.getUserString(prompt);
-        // Check if the payee already exists duplicateName =
-        // accountService.alreadyExists(payeeID, payeeName);
-        // while (duplicateName);
+    public Payee createPayee(UUID customerID) {
+		//Payee Constructor: Payee(UUID customerID, String payeeName, String payeeAccountNumber, String payeeBIC)
+    	Customer customer = customerService.getCustomerByID(customerID);
+		String response = ""; // the system response to the user's request
+		String prompt="";
+		String payeeName = null;
+		boolean duplicateName = false;
+		do {
+			prompt = "Add a new payee: \n";
+			prompt += "Enter the payee name: \n";
+			payeeName = comms.getUserString(prompt);
+			duplicateName = customer.duplicatePayee(payeeName);
+			if (duplicateName) {
+				comms.printSystemMessage("You already have an Payee with that name.");
+			}
+		} while (duplicateName);
+		
+		prompt = "Enter payee's account number: \n";
+		String payeeAccountNumber = comms.getUserString(prompt);
 
-        prompt = "Enter payee's account number: \n";
-        String payeeAccountNumber = comms.getUserString(prompt);
+		prompt = "Enter payee's BIC: \n";
+		String payeeBIC = comms.getUserString(prompt);
 
-        prompt = "Enter payee's BIC: \n";
-        String payeeBIC = comms.getUserString(prompt);
-
-        prompt = "Add " + payeeName + " as a new payee?\nEnter 'y' for Yes or 'n' for No: \n";
-        boolean userConfirm = comms.confirm(prompt);
-
-        if (userConfirm) {
-            Customer customer = customerService.getCustomerByID(customerID);
-            Payee newPayee = new Payee(customer.getCustomerID(), payeeName, payeeAccountNumber,
-                    payeeBIC);
-
-            customer.addPayee(newPayee); // adds new payee to the customer
-
-            response = "SUCCESS: The payee " + payeeName + " has been added.\nReturning to Main Menu.";
-        } else {
-            response = "Payee addition was cancelled.\nReturning to the Main Menu.";
-        }
-        return response;
-    }
+		prompt = "Add " + payeeName + " as a new payee?\nEnter 'y' for Yes or 'n' for No: \n";
+		boolean userConfirm = comms.confirm(prompt);
+		if (userConfirm) {
+			Payee newPayee = new Payee(customer.getCustomerID(), payeeName, payeeAccountNumber,payeeBIC);
+			//Add Payee to the database:
+			boolean savedToDB = payeeRepository.save(newPayee);
+			if (savedToDB) {
+				customer.addPayee(newPayee); // adds new payee to the customer
+				comms.printSystemMessage("SUCCESS: The payee " + payeeName + " has been added.\nReturning to Main Menu."); 
+				return newPayee;
+			}
+			else {
+				comms.printSystemMessage("FAIL: The payee " + payeeName + " has not been added.\nReturning to Main Menu.");
+				return null;
+			}
+		} else {
+			comms.printSystemMessage("Payee addition was cancelled.\nReturning to the Main Menu.");
+			return null;
+		}
+	}
 
 }

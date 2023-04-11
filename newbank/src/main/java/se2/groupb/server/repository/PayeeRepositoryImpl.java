@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.Payee.PayeeDTO;
+import se2.groupb.server.customer.Customer;
 
 public class PayeeRepositoryImpl implements EntityRepository<Payee, PayeeDTO> {
 
@@ -20,7 +21,8 @@ public class PayeeRepositoryImpl implements EntityRepository<Payee, PayeeDTO> {
     public HashMap<String, Payee> getThePayees() {
         return thePayees;
     }
-
+    
+    
     @Override
     public Payee findByDTO(PayeeDTO payeeDTO) {
         // return thePayees.get(payeeID.toString());

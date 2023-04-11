@@ -1,16 +1,13 @@
 package se2.groupb.server.transaction;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 
 import se2.groupb.server.UserInput;
 import se2.groupb.server.Payee.Payee;
+import se2.groupb.server.Payee.PayeeController;
 import se2.groupb.server.account.Account;
 import se2.groupb.server.account.AccountService;
 import se2.groupb.server.account.AccountController;
@@ -21,11 +18,11 @@ import se2.groupb.server.customer.CustomerService;
 public class TransactionController {
 
     private final CustomerService customerService;
-    private final CustomerController customerController;
-    private final AccountService accountService;
-    private final AccountController accountController;
+    //private final CustomerController customerController;
+    private final PayeeController payeeController;
+    //private final AccountService accountService;
+    //private final AccountController accountController;
     private final TransactionService transactionService;
-    private final Payee payees;
     private UserInput comms;
     
     private static final String payeesMenu = "\n" +
@@ -55,17 +52,22 @@ public class TransactionController {
     
     private static final int noPayeesMenuChoices = 2;
     
+    /* Previous Constructor
     public TransactionController(CustomerService customerService, CustomerController customerController, 
     		AccountController accountController, AccountService accountService,
-            TransactionService transactionService, Payee payees, UserInput comms) {
+            TransactionService transactionService, PayeeController payeeController, Payee payees, UserInput comms)
+	*/
+    
+    public TransactionController(CustomerService customerService, TransactionService transactionService, 
+    		PayeeController payeeController,UserInput comms) {
     	
         this.customerService = customerService;
-        this.customerController = customerController;
-        this.accountController = accountController;
-        this.accountService = accountService;
         this.transactionService = transactionService;
-        this.payees = payees;
+        this.payeeController = payeeController;
         this.comms = comms;
+		//this.customerController = customerController;
+		//this.accountController = accountController;
+		//this.accountService = accountService;
     }
 
     /**
@@ -142,8 +144,6 @@ public class TransactionController {
     }
     
     
-    
-
     private BigDecimal getTransferAmount(BigDecimal limit) {
         String prompt = "Transfer amount must be positive and not exceed the Source Account's balance.\nEnter an amount: ";
         return comms.getAmount(prompt, limit);
@@ -175,8 +175,6 @@ public class TransactionController {
      */
     public String transferMoney(UUID customerID) {
         Customer customer = customerService.getCustomerByID(customerID);
-        List<Account> customerAccounts = customer.getAccounts();
-        int noOfAccts = customerAccounts.size();
         
         // The Customer's Source Accounts as an ordered numbered Map:
         Map<String, Account> sourceAccts = customer.sourceAcctsMap();
@@ -185,17 +183,51 @@ public class TransactionController {
             return "No valid Source Accounts found.\nRequest denied.\nReturning to Main Menu.";
         }
         
-      //Display all potential Source Accounts to the customer:
+        //Display all potential Source Accounts to the customer:
         String prompt = "Select a Source Account from: \n" + customer.accountMapToString(sourceAccts) +
         		"Enter your choice: \n";
         //Get user's choice of Source Account:
  		String userInput = comms.getUserMenuChoice(prompt, noOfSourceAccts); //gets user's choice
  		Account sourceAccount = sourceAccts.get(userInput);
+ 		String sourceAcctName = sourceAccount.getAccountName();
         UUID sourceAcctID = sourceAccount.getAccountID();
+        
+        //Select a Payee
         
  		//Payees Map
  		Map<String, Payee> payees = customer.payeesMap();
- 		int noOfPayees = payees.size();
+ 		Payee payee = selectPayee(customerID, payees);
+ 		if (payee==null) {
+ 			return "Returning to Main Menu.";
+ 		}
+		UUID payeeID = payee.getPayeeID();
+        String payeeName = payee.getPayeeName();
+		
+		//Get the user's input Amount:
+		BigDecimal transferAmount = getTransferAmount(sourceAccount.getBalance());
+        
+        //Get the user's reference for the transaction:
+        String transferReference = getTransferReference();
+        
+        
+        //Seek confirmation from user before proceeding:
+        if (!confirmTransaction(transferAmount, sourceAcctName, payeeName)) {
+            return "Transfer was cancelled.\nReturning to the Main Menu.";
+        }
+        
+        // Execute Transaction:
+        boolean isTransferSuccess = transactionService.executePay(sourceAcctID, payeeID, transferAmount,transferReference);
+
+        if (isTransferSuccess) {
+            return "Transfer Success.";
+        } else {
+            return "Transfer Failure.";
+        }
+    }
+ 		
+    private Payee selectPayee(UUID customerID, Map<String, Payee> payees) {
+    	String prompt="";
+    	int noOfPayees = payees.size();
  		String mainRequest = comms.getUserMenuChoice(payeesMenu, payeesMenuChoices);
  		
  		//If the customer chose to pay an existing Payee but they have none:
@@ -208,53 +240,42 @@ public class TransactionController {
 			mainRequest = subRequestInt.toString();
 		}
 		
-		
 		switch (mainRequest) {
-		
-			case "1": // Pay an existing Payee
-				prompt = "Select a Payee from: \n" + customer.payeeMapToString(payees) +
-        		"Enter your choice: \n";
-				userInput = comms.getUserMenuChoice(prompt, noOfPayees); //gets user's choice
+			case "1":{ // Pay an existing Payee
+				prompt = "Select a Payee from: \n" + payeeMapToString(payees) +
+				"Enter your choice: \n";
+				String userInput = comms.getUserMenuChoice(prompt, noOfPayees); //gets user's choice
 		 		Payee payee = payees.get(userInput);
-		 		UUID payeeID = payee.getPayeeID();
-		        String payeeName = sourceAccount.getAccountName();
-		        String payeeAccount = payee.getPayeeAccountNumber();
-		        String payeeBIC = payee.getPayeeBIC();
-		        
-		        //Get the user's input Amount:
-		        BigDecimal transferAmount = getTransferAmount(sourceAccount.getBalance());
-		        
-		        //Get the user's reference for the transaction:
-		        String transferReference = getTransferReference();
-		        
-		        // Create Transaction: sourceAccountID, targetAccountID, payee, ammount, description
-		        Transaction newTransaction = new Transaction(sourceAcctID,payeeID,transferAmount,transferReference);
-		        
-		        //Seek confirmation:
-		        //Add transaction to Customer's account:
-		        sourceAccount.addTransaction(newTransaction);
-		        
-		        //Add transaction to database:
-		        
-		    
-			case "2": //Pay a new Payee: create a new payee and then do transfer
-				customerController.createPayee(customerID);
-				
-				
-			case "3"://Cancel PAY request and return to Main Menu
-				return "PAY request cancelled. Returning to Main Menu.";
+		 		return payee;
+			}
+			case "2":{ //Pay a new Payee: create a new payee and then do transfer
+				Payee payee = payeeController.createPayee(customerID);
+				if (payee == null) {
+					comms.printSystemMessage("Problem creating new Payee. Request cancelled.\n");
+				}
+				return payee;
+			}
+			case "3":{ //Cancel PAY request and return to Main Menu
+				comms.printSystemMessage("PAY request cancelled.\n");
+				return null;
+			}
 		}
- 		
+		return null;
     }
- 		
- 		
- 		
- 		
- 		
- 		
- 		
- 	    
- // MOVE Function: Karim's version:
+ 	
+    
+    /**Helper function for turning a Map to a string
+	 * @return a string of the Payee map
+	 */
+	public String payeeMapToString(Map<String, Payee> map) {
+		String s = "";
+		for (Map.Entry<String, Payee> item : map.entrySet()) {
+			s += item.getKey() + " = " + item.getValue().toString() + "\n";
+		}
+		return s;
+	}
+	
+ // MOVE Function: Previous version (Karim):
     /* 
     public String moveMoney(UUID customerID) {
         Customer customer = customerService.getCustomerByID(customerID);
@@ -310,8 +331,7 @@ public class TransactionController {
      * @param accounts
      * @return
      */
-    
-    //Map<String, String> loanDurations = new TreeMap<String,String>();
+    /*
     private String selectAccount(String prompt, Map<String, String> accounts) {
     	//e.g. selectAccount("Select source account:", sourceAccts);
     	
@@ -330,7 +350,9 @@ public class TransactionController {
             return null;
         }
     }
-    
+    */
+	
+	/*
     private static String extractWord(String input) {
         String[] lines = input.split("\n");
         int start = 0;
@@ -349,7 +371,8 @@ public class TransactionController {
         }
         return null;
     }
-    
+    */
+	
     /*
     public String transferMoney(UUID customerID) {
     	

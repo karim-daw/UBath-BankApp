@@ -186,15 +186,22 @@ public class CustomerController {
 	 * @return
 	 */
 	public String createPayee(UUID customerID) {
+		//Payee Constructor: Payee(UUID customerID, String payeeName, String payeeAccountNumber, String payeeBIC)
+		Customer customer = getCustomer(customerID);
 		String response = ""; // the system response to the user's request
-		String prompt = "Add a new payee: \n";
-		prompt += "Enter the payee name: \n";
-		boolean duplicateName;
-		String payeeName = comms.getUserString(prompt);
-		// Check if the payee already exists duplicateName =
-		// accountService.alreadyExists(payeeID, payeeName);
-		// while (duplicateName);
-
+		String prompt="";
+		String payeeName = null;
+		boolean duplicateName = false;
+		do {
+			prompt = "Add a new payee: \n";
+			prompt += "Enter the payee name: \n";
+			payeeName = comms.getUserString(prompt);
+			duplicateName = customer.duplicatePayee(payeeName);
+			if (duplicateName) {
+				comms.printSystemMessage("You already have an Payee with that name.");
+			}
+		} while (duplicateName);
+		
 		prompt = "Enter payee's account number: \n";
 		String payeeAccountNumber = comms.getUserString(prompt);
 
@@ -205,12 +212,11 @@ public class CustomerController {
 		boolean userConfirm = comms.confirm(prompt);
 
 		if (userConfirm) {
-			Customer customer = getCustomer(customerID);
 			Payee newPayee = new Payee(customer.getCustomerID(), payeeName, payeeAccountNumber,
 					payeeBIC);
-
 			customer.addPayee(newPayee); // adds new payee to the customer
-
+			//Add Payee to the database:
+			
 			response = "SUCCESS: The payee " + payeeName + " has been added.\nReturning to Main Menu.";
 		} else {
 			response = "Payee addition was cancelled.\nReturning to the Main Menu.";
