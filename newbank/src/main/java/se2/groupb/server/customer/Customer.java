@@ -363,7 +363,34 @@ public class Customer {
 	public ArrayList<Payee> getPayees() {
 		return payees;
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Map<String, Payee> payeesMap() {
+		Map<String, Payee> map = new TreeMap<>();
+		int i = 0;
+		for (Payee payee : payees) {
+			i++;
+			String key = Integer.toString(i);
+			map.put(key, payee);
+		}
+		return map;
+	}
+	
+	/**
+	 * @return a string of the Payee map
+	 */
+	public String payeeMapToString(Map<String, Payee> map) {
+		String s = "";
+		for (Map.Entry<String, Payee> item : map.entrySet()) {
+			s += item.getKey() + " = " + item.getValue().toString() + "\n";
+		}
+		return s;
+	}
+	
+	
 	/**
 	 * @return a string of a payee
 	 */
