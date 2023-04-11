@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import se2.groupb.server.UserInput;
 import se2.groupb.server.Payee.Payee;
-import se2.groupb.server.Payee.PayeeController;
 import se2.groupb.server.Payee.PayeeService;
 import se2.groupb.server.account.Account;
 import se2.groupb.server.account.AccountService;
@@ -24,19 +23,23 @@ public class TransactionController {
     private PayeeService payeeService;
     private UserInput comms;
 
-    // transactionController = new TransactionController(customerService,
-    // accountService, transactionService, comms);
-    public TransactionController(CustomerService customerService, AccountService accountService,
-            TransactionService transactionService, UserInput comms) {
+    public TransactionController(
+            CustomerService customerService,
+            AccountService accountService,
+            TransactionService transactionService,
+            UserInput comms) {
         this.customerService = customerService;
         this.accountService = accountService;
         this.transactionService = transactionService;
         this.comms = comms;
     }
 
-    public TransactionController(CustomerService customerService,
+    public TransactionController(
+            CustomerService customerService,
             AccountService accountService,
-            TransactionService transactionService, PayeeService payeeService, UserInput comms) {
+            TransactionService transactionService,
+            PayeeService payeeService,
+            UserInput comms) {
         this.customerService = customerService;
         this.accountService = accountService;
         this.transactionService = transactionService;
