@@ -14,17 +14,8 @@ public interface PayeeService {
      * @param payeeDTO
      * @return
      */
-    public Payee getPayeeByDTO(PayeeDTO payeeDTO);
+    public boolean addNewPayee(UUID customerID, PayeeDTO payeeDTO);
 
-    /**
-     * @param payeeName
-     * @return
-     */
-    public Payee getPayeeByName(String payeeName);
+    public String displayPayees(UUID customerID);
 
-    /**
-     * @param payeeDTO
-     * @return
-     */
-    public boolean addNewPayee(PayeeDTO payeeDTO);
 }

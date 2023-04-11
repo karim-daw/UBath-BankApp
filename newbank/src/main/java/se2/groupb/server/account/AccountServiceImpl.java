@@ -1,6 +1,9 @@
 package se2.groupb.server.account;
 
 import java.math.BigDecimal;
+
+//import se2.groupb.server.repository.AccountRepository;
+//import se2.groupb.server.repository.CustomerRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,12 +22,10 @@ public class AccountServiceImpl implements AccountService {
 	public AccountServiceImpl(AccountRepositoryImpl accountRepository,CustomerRepositoryImpl customerRepository) {
 		this.accountRepository = accountRepository;
 		this.customerRepository = customerRepository;
-
 	}
 
 	// methods
 
-	
 	/**
 	 * Returns Customer's UUID from their Account UUID
 	 * @param accountID
@@ -33,10 +34,12 @@ public class AccountServiceImpl implements AccountService {
 	public UUID getCustomer(UUID accountID) {
 		return accountRepository.findByID(accountID).getCustomerID();
 	}
-	
+
 	/**
 	 * The Customer's Accounts list
 	 * Account list filtered
+	 * get a list of Account objects by Customer ID
+	 * 
 	 * @param customerID
 	 * @return
 	 */
@@ -46,15 +49,10 @@ public class AccountServiceImpl implements AccountService {
 
 	}
 	
-	public int noOfAccts(UUID customerID) {
-		if (getAccounts(customerID)== null) {
-			return 0;
-		}
-		return getAccounts(customerID).size(); 
-	}
 	
 	/**
 	 * The Customer's Accounts list filtered by Account Type
+	 * get a list of Account objects by Customer ID and Account Type
 	 * @param customerID
 	 * @param accountType
 	 * @return
@@ -152,9 +150,10 @@ public class AccountServiceImpl implements AccountService {
         }
     }
     
-    
 	// get the number of accounts of a specific Account Type for the Customer ID
 	/**
+	 * get the number of accounts of a specific Account Type for the Customer ID
+	 * 
 	 * @param customerID
 	 * @param accountType
 	 * @return
@@ -243,6 +242,66 @@ public class AccountServiceImpl implements AccountService {
 			return newAccount;
 		}
 		return null;
+	}
+
+	/**
+	 * adds money to account via the account number. This method will only return
+	 * true if the accountNumber of the payee is a member of NewBank, if not itll be
+	 * false
+	 * 
+	 * @param accountNumber
+	 * @param amount
+	 * @return
+	 */
+	@Override
+	public boolean credit(String accountNumber, BigDecimal amount) {
+		// Check if account number is in the system
+		if (accountNumber == null || accountNumber.isEmpty()) {
+			System.err.println("credit method received invalid account number");
+			return false;
+		}
+		if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+			System.err.println("credit method received invalid amount");
+			return false;
+		}
+		Account foundAccount = accountRepository.findByAccountNumber(accountNumber);
+		if (foundAccount == null) {
+			System.err.println("credit method could not find account");
+			return false;
+		}
+		try {
+			foundAccount.credit(amount);
+		} catch (Exception e) {
+			System.err.println("deposit failed, returning false");
+			return false;
+		}
+		boolean success = accountRepository.update(foundAccount);
+		if (success) {
+			return true;
+		} else {
+			System.err.println("account was found but updating the repo didnt work");
+			return false;
+		}
+	}
+
+	@Override
+	public boolean debit(UUID accountID, BigDecimal amount) {
+		if (accountID == null || amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+			System.err.println("debit method received invalid inputs");
+			return false;
+		}
+		Account account = accountRepository.findByID(accountID);
+		BigDecimal balance = account.getBalance();
+		if (balance.compareTo(amount) < 0) {
+			return false;
+		}
+		try {
+			account.debit(amount);
+		} catch (Exception e) {
+			System.err.println("withdraw failed, returning false");
+			return false;
+		}
+		return accountRepository.update(account);
 	}
 
 }

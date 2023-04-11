@@ -15,8 +15,6 @@ import se2.groupb.server.loanOffer.*;
 import se2.groupb.server.repository.*;
 
 
-
-
 public class NewBankClientHandler extends Thread {
 
 	// statics
@@ -142,7 +140,7 @@ public class NewBankClientHandler extends Thread {
 		loanOfferService = new LoanOfferServiceImpl(customerRepository,accountRepository,loanOfferRepository);
 		
 		//Initialise controllers:
-		customerController = new CustomerController(customerService, accountService, comms);
+		customerController = new CustomerController(customerService, comms);
 		accountController = new AccountController(accountService, customerService, comms);
 		payeeController = new PayeeController(payeeRepository,payeeService,customerService,comms);
 		transactionController = new TransactionController(customerService, transactionService,payeeController,comms);

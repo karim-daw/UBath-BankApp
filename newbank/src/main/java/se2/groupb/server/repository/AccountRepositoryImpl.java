@@ -38,6 +38,31 @@ public class AccountRepositoryImpl implements EntityRepository<Account, AccountD
     }
 
     /**
+     * Finds an account by account number.
+     *
+     * @param accountNumber the account number to look for
+     * @return the account with the given account number, or null if not found or
+     *         accountNumber is null
+     */
+    public Account findByAccountNumber(String accountNumber) {
+        if (accountNumber == null) {
+            System.err.println("Error: Account number cannot be null.");
+            return null;
+        }
+
+        try {
+            return theAccounts.values().stream()
+                    .filter(account -> account.getAccountNumber().equals(accountNumber))
+                    .findFirst()
+                    .orElseThrow(
+                            () -> new Exception("Error: Account with account number " + accountNumber + " not found."));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    /**
      * @param newAccount
      * @return true if account is added successfully, false if account is not found,
      *         if there is an error or if all parameters are null
