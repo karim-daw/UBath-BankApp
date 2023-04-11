@@ -15,6 +15,7 @@ import se2.groupb.server.repository.AccountRepository;
 import se2.groupb.server.UserInput;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerService;
+import se2.groupb.server.transaction.TransactionService;
 
 // Presentation layer: Takes user inputs and displays system response
 public class AccountController {
@@ -22,11 +23,20 @@ public class AccountController {
     // fields
     private final AccountService accountService;
     private final CustomerService customerService;
+    private TransactionService transactionService;
     public UserInput comms;
 
     // constructor
     public AccountController(AccountService accountService, CustomerService customerService, UserInput comms) {
         this.accountService = accountService; // business logic
+        this.customerService = customerService; // business logic
+        this.comms = comms;
+    }
+
+    public AccountController(AccountService accountService, CustomerService customerService,
+            TransactionService transactionService, UserInput comms) {
+        this.accountService = accountService; // business logic
+        this.transactionService = transactionService; // business logic
         this.customerService = customerService; // business logic
         this.comms = comms;
     }
@@ -109,45 +119,60 @@ public class AccountController {
     }
 
     // methods
-    
-    /**
-	 * displays the customers accounts as a list
-	 * 
-	 * @param customerDTO
-	 * @return
-	 */
-	public String displayAccounts(UUID customerID) {
-		return accountService.displayAccounts(customerID);
-	}
 
-    
+    /**
+     * displays the customers accounts as a list
+     * 
+     * @param customerDTO
+     * @return
+     */
+    public String displayAccounts(UUID customerID) {
+        return accountService.displayAccounts(customerID);
+    }
+
     /**
      * Gets Account number input from user and validates it
+     * 
      * @param customerID
      * @param accountDescription : Source or Destination
      * @return Account
      */
-    public Account getAccountInput(UUID customerID){
-		String prompt;
-		String accountNumber;
-		boolean hasAccount;
-		//this ensures account exists
-		do {
-			prompt = "Enter your Account number: \n";
-			accountNumber = comms.getUserString(prompt);
-			
-			hasAccount = accountService.hasAccountNumber(customerID, accountNumber);
-			if (!hasAccount) {
-				comms.printSystemMessage("Account not found. Please try again.");
-			}
-		} while (!hasAccount);
-		
-		return accountService.getAccountByNumber(customerID, accountNumber);
-	}
-    
-    
-    
-    
+    public Account getAccountInput(UUID customerID) {
+        String prompt;
+        String accountNumber;
+        boolean hasAccount;
+        // this ensures account exists
+        do {
+            prompt = "Enter your Account number: \n";
+            accountNumber = comms.getUserString(prompt);
+
+            hasAccount = accountService.hasAccountNumber(customerID, accountNumber);
+            if (!hasAccount) {
+                comms.printSystemMessage("Account not found. Please try again.");
+            }
+        } while (!hasAccount);
+
+        return accountService.getAccountByNumber(customerID, accountNumber);
+    }
+
+    public String displayTransactions(UUID customerID) {
+        String prompt;
+
+        UUID accountID = null;
+        do {
+            displayAccounts(customerID);
+            prompt = "Enter the account you want to see the transactions for: \n";
+            int accountChoiceNumber = comms.getUserIntegerInput(prompt);
+
+            hasAccount = accountService.hasAccountNumber(customerID, accountNumber);
+            if (!hasAccount) {
+                comms.printSystemMessage("Account not found. Please try again.");
+            }
+        } while (!hasAccount);
+
+        return transactionService.displayAccountTransactions(accountID);
+    }
+
     /*
      * public void creditAmount(AccountDTO accountDTO, double amount) {
      * 
