@@ -46,9 +46,9 @@ public class NewBank {
 		getAccounts().put(bhagy_acct2.getAccountID().toString(), bhagy_acct2);
 		bhagy.addAccount(bhagy_acct1);
 		bhagy.addAccount(bhagy_acct2);
-		Payee bhagy_payee1 = new Payee(UUID.randomUUID(), bhagy.getCustomerID(), "Jean Doe", "012345", "OTHBAN");
+		Payee bhagy_payee1 = new Payee(bhagy.getCustomerID(), "Jean Doe", "012345", "OTHBAN");
 		bhagy.addPayee(bhagy_payee1);
-		Payee bhagy_payee2 = new Payee(UUID.randomUUID(), bhagy.getCustomerID(), "Robert Ham", "678910", "OTHBAN");
+		Payee bhagy_payee2 = new Payee(bhagy.getCustomerID(), "Robert Ham", "678910", "OTHBAN");
 		bhagy.addPayee(bhagy_payee2);
 
 		// password: "1234"
