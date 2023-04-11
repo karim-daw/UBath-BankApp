@@ -1,9 +1,10 @@
 package se2.groupb.server.repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
-
 import se2.groupb.server.loanOffer.LoanOffer;
 import se2.groupb.server.loanOffer.LoanOfferDTO;
 
@@ -19,7 +20,7 @@ public class LoanOfferRepositoryImpl implements EntityRepository<LoanOffer, Loan
         this.theLoanOffers = loanOffers;
     }
     
-    
+   
     //Methods:
     /**
      * @param loanOfferID
@@ -31,21 +32,36 @@ public class LoanOfferRepositoryImpl implements EntityRepository<LoanOffer, Loan
     }
     
     /**
-     * Displays all the Loan Offers in the MarketPlace
-     * @return String
+     * Returns all the Loan Offers in the MarketPlace as a List
+     * 
+     * @return ArrayList<LoanOffer>
      */
-    public String displayAllLoanOffers() {
-        if (theLoanOffers.size()==0) {
-            return "The Market has no Loan Offers.";
-        } else {
-        	String str = LoanOffer.loanOfferHeadings + "\n";
-        	for (Map.Entry<String, LoanOffer> offer : theLoanOffers.entrySet()) {
-				str += offer.getValue().toString() + "\n";
-			}
-    		return str;
-        }
+    /*
+    public ArrayList<LoanOffer> getAllLoanOffers() {
+    	ArrayList<LoanOffer> list = new ArrayList<>();
+    	for (Map.Entry<String, LoanOffer> offer : theLoanOffers.entrySet()) {
+    		list.add(offer.getValue());
+    	}
+    	return list;
     }
+    */
     
+	/**
+     * Returns all the Loan Offers in the MarketPlace as a numbered Map
+     * 
+     * @return Map<String,LoanOffer>
+     */
+    public Map<String,LoanOffer> getAllLoanOffersMap() {
+    	Map<String, LoanOffer> offersMap = new TreeMap<>();
+    	int index =0;
+    	for (Map.Entry<String, LoanOffer> offer : theLoanOffers.entrySet()) {
+    		index++;
+    		offersMap.put(String.valueOf(index), offer.getValue());
+    		
+    	}
+    	return offersMap;
+    }
+        	
     /**
      * saves Loan Offer to Database
      * 
@@ -79,18 +95,6 @@ public class LoanOfferRepositoryImpl implements EntityRepository<LoanOffer, Loan
         }
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
      * 
      * @param loanOfferDto
@@ -110,6 +114,4 @@ public class LoanOfferRepositoryImpl implements EntityRepository<LoanOffer, Loan
     	return null;
     }
 
-    
-  
 }

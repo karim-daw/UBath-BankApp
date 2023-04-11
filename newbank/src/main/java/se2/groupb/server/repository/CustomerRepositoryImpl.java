@@ -2,12 +2,15 @@ package se2.groupb.server.repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import se2.groupb.server.account.Account;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerDTO;
 import se2.groupb.server.loanOffer.LoanOffer;
+import se2.groupb.server.loan.Loan;
 
 public class CustomerRepositoryImpl implements EntityRepository<Customer, CustomerDTO> {
 
@@ -153,6 +156,25 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
     
     
   //Methods that return lists of Loan Offers for the Customer filtered by various criteria:
+    
+    
+    /**
+     * Returns the Customer's Loan Offers as a numbered Map
+     * 
+     * @return Map<String,LoanOffer>
+     */
+    public Map<String,LoanOffer> findLoanOffersMap (UUID customerID) {
+    	Customer customer = findByID(customerID);
+    	Map<String, LoanOffer> offersMap = new TreeMap<>();
+    	
+    	int index =0;
+    	for (LoanOffer offer : customer.getLoanOffers()) {
+    		index++;
+    		offersMap.put(String.valueOf(index), offer);
+    	}
+    	return offersMap;
+    }
+    
     /**
      * Returns a list of the customer's Loan Offers
      * @param customerID
@@ -163,7 +185,12 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
     	return customer.getLoanOffers();
     }
     
-    
+    /**
+     * Finds the Loan Offer by Name in the Customer's list of offers
+     * @param customerID
+     * @param offerName
+     * @return
+     */
     public LoanOffer findLoanOfferByName(UUID customerID,String offerName) {
     	for (LoanOffer offer : findLoanOffers(customerID)) {
             if (offer.getOfferName().equals(offerName)) {
@@ -171,5 +198,17 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
             }
         }
     	return null;
+    }
+    
+    public Map<String,Loan> findLoansMap(UUID customerID){
+    	Customer customer = findByID(customerID);
+    	Map<String, Loan> loansMap = new TreeMap<>();
+    	
+    	int index =0;
+    	for (Loan loan : customer.getLoans()) {
+    		index++;
+    		loansMap.put(String.valueOf(index), loan);
+    	}
+    	return loansMap;
     }
 }

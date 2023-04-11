@@ -10,7 +10,7 @@ import se2.groupb.server.customer.*;
 import se2.groupb.server.account.*;
 import se2.groupb.server.repository.*;
 import se2.groupb.server.transaction.*;
-//import se2.groupb.server.loan.*;
+import se2.groupb.server.loan.*;
 import se2.groupb.server.loanOffer.*;
 
 public class NewBankClientHandler extends Thread {
@@ -71,11 +71,12 @@ public class NewBankClientHandler extends Thread {
 			"||      1. View Your Loan Offers                  ||\n" +
 			"||      2. View All Loan Offers                   ||\n" +
 			"||      3. Create New Loan Offer                  ||\n" +
-			"||      4. Return                                 ||\n" +
-			"||      5.                                        ||\n" +
+			"||      4. Accept Loan Offer                      ||\n" +
+			"||      5. View Loans                             ||\n" +
+			"||      6. Return                                 ||\n" +
 			"====================================================\n" +
 			"\nEnter Selection:";
-	private static final int loanMarketMenuChoices = 4;
+	private static final int loanMarketMenuChoices = 6;
 	
 
 	// fields
@@ -88,18 +89,18 @@ public class NewBankClientHandler extends Thread {
 	private CustomerController customerController;
 	private AccountController accountController;
 	private TransactionController transactionController;
-	//private LoanController loanController;
+	private LoanController loanController;
 	private LoanOfferController loanOfferController;
 	
 	private CustomerServiceImpl customerService;
 	private AccountServiceImpl accountService;
 	private TransactionService transactionService;
-	//private LoanServiceImpl loanService;
+	private LoanServiceImpl loanService;
 	private LoanOfferServiceImpl loanOfferService;
 	
 	private CustomerRepositoryImpl customerRepository;
 	private AccountRepositoryImpl accountRepository;
-	//private LoanRepositoryImpl loanRepository;
+	private LoanRepositoryImpl loanRepository;
 	private LoanOfferRepositoryImpl loanOfferRepository;
 	
 	// constructor
@@ -115,21 +116,22 @@ public class NewBankClientHandler extends Thread {
 		// Initialise repos
 		customerRepository = new CustomerRepositoryImpl(bank.getCustomers());
 		accountRepository = new AccountRepositoryImpl(bank.getAccounts());
-		//loanRepository = new LoanRepositoryImpl(bank.getLoans());
+		loanRepository = new LoanRepositoryImpl(bank.getLoans());
 		loanOfferRepository = new LoanOfferRepositoryImpl(bank.getLoanMarket());
 		
 		//Initialise services
 		customerService = new CustomerServiceImpl(customerRepository);
 		accountService = new AccountServiceImpl(accountRepository,customerRepository);
-		//loanService = new LoanServiceImpl(customerRepository,accountRepository,loanRepository);
+		loanService = new LoanServiceImpl(customerRepository,loanRepository);
 		loanOfferService = new LoanOfferServiceImpl(customerRepository,accountRepository,loanOfferRepository);
 		
 		customerController = new CustomerController(customerService, accountService, comms);
 		accountController = new AccountController(accountService, comms);
 		transactionController = new TransactionController(customerService, accountService, transactionService, comms);
-		//loanController = new LoanController(accountController, customerService, accountService,loanService,comms);
-		loanOfferController = new LoanOfferController(customerController, accountController, loanOfferService,comms);
+		loanController = new LoanController(accountController, customerService, accountService,loanService,comms);
 		
+		loanOfferController = new LoanOfferController(customerController, accountController, loanController,
+				loanOfferService,comms);
 	}
 	
 	public AccountServiceImpl getAccountService() {
@@ -172,10 +174,10 @@ public class NewBankClientHandler extends Thread {
 					else if (mainRequest.equals("2")) { // 2= Loan Market Menu
 						do {
 							comms.printSystemMessage("Request from: " + customer.getUsername());
-							loanRequest = comms.getUserMenuChoice(loanMarketMenu, loanMarketMenuChoices); //return = 4
+							loanRequest = comms.getUserMenuChoice(loanMarketMenu, loanMarketMenuChoices); //return = 6
 							response = processLoanMarketRequest(customerID, loanRequest);
 							comms.printSystemMessage(response);
-						}while (!loanRequest.equals("4"));
+						}while (!loanRequest.equals("6"));
 					}
 					else { //logout
 						customerController.userLogout(customerID);
@@ -206,9 +208,6 @@ public class NewBankClientHandler extends Thread {
 			case "1":
 			case "SHOWMYACCOUNTS":
 				return accountController.displayAccounts(customerID);
-				
-				//return customer.accountsToString();
-				//return customerRepository.findByID(customerID).accountsToString();
 			case "2":
 				return "Select account to show Transactions";
 			case "3":
@@ -244,6 +243,10 @@ public class NewBankClientHandler extends Thread {
 			case "3":
 				return loanOfferController.newLoanOffer(customerID);
 			case "4":
+				return loanOfferController.acceptLoanOffer(customerID);
+			case "5":
+				return loanController.displayLoans(customerID);
+			case "6":
 				return "Returning you to Main Menu";
 			default:
 				return "FAIL";

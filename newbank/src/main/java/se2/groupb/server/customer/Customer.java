@@ -28,7 +28,7 @@ public class Customer {
 	
 	public static Map<String, String> creditScores;
 	static{
-		creditScores = new TreeMap<String,String>();
+		creditScores = new TreeMap<>();
 		creditScores.put("1","Poor");
 		creditScores.put("2","Fair");
 		creditScores.put("3","Good");
@@ -42,7 +42,7 @@ public class Customer {
 		this.username = username;
 		this.password = password;
 		this.loggedInStatus = false;
-		this.creditScore = 2; //default credit score
+		this.creditScore = 3; //default credit score
 		accounts = new ArrayList<>();
 		loanOffers = new ArrayList<>();
 		loans = new ArrayList<>();
@@ -54,7 +54,7 @@ public class Customer {
 		this.username = customerDto.getUsername();
 		this.password = customerDto.getPassword();
 		this.loggedInStatus = false;
-		this.creditScore = 2; //default credit score
+		this.creditScore = 3; //default credit score
 		accounts = new ArrayList<>();
 		loanOffers = new ArrayList<>();
 		loans = new ArrayList<>();

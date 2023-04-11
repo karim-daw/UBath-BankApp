@@ -9,8 +9,9 @@ public class LoanOfferDTO {
 	
 	private final UUID lenderID; //lender creates the loan: derived from lenderAccountID
 	private final String lenderName;
-	private final String lenderAccount; // account to debit loan principal from and credit loan repayment to
 	private String offerName;
+	private final UUID lenderAccountID; // account to debit loan principal from and credit loan repayment to
+	private final String lenderAccountNumber;
 	private BigDecimal principalAmount; //the original amount
 	private BigDecimal interestRate;
 	private Integer duration;
@@ -19,13 +20,15 @@ public class LoanOfferDTO {
 	private String minCreditScore;
 	
 	//Constructor
-	public LoanOfferDTO(UUID lenderID, String lenderName,String offerName,String accountNumber, BigDecimal amount, BigDecimal interestRate, Integer duration,
-			String durationType, Integer installments,String minCreditScore) {
+	public LoanOfferDTO(UUID lenderID, String lenderName,String offerName,UUID lenderAccountID, String lenderAccountNumber, 
+			BigDecimal amount, BigDecimal interestRate, Integer duration, String durationType, Integer installments,
+			String minCreditScore) {
 		
 		this.lenderID = lenderID;
 		this.lenderName = lenderName;
 		this.offerName = offerName;
-		this.lenderAccount = accountNumber;
+		this.lenderAccountID = lenderAccountID;
+		this.lenderAccountNumber = lenderAccountNumber;
 		this.principalAmount = amount;
 		this.interestRate = interestRate;
 		this.duration = duration;
@@ -47,8 +50,12 @@ public class LoanOfferDTO {
 		return offerName;
 	}
 	
-	public String getLenderAccount() {
-		return lenderAccount;
+	public UUID getLenderAccountID() {
+		return lenderAccountID;
+	}
+	
+	public String lenderAccountNumber() {
+		return lenderAccountNumber;
 	}
 	
 	public BigDecimal getPrincipalAmount() {
@@ -76,11 +83,16 @@ public class LoanOfferDTO {
 		return minCreditScore;
 	}
 	
+	public String getLenderAccountName() {
+		
+		return "";
+	}
+	
 	@Override
 	public String toString() {
 		String str = "Name: " + offerName + "\n" +
 				"Lender: " + lenderName + "\n" +
-				"Account: " + lenderAccount + "\n" +
+				"Account: " + lenderAccountNumber + "\n" +
 				"Principal Amount: " + principalAmount + "\n" + 
 				"Interest Rate: " + interestRate + "\n" +
 				"Duration: " + duration + " " + durationType + "\n" +

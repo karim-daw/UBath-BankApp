@@ -43,13 +43,13 @@ public class AccountController {
      * @param accountDescription : Source or Destination
      * @return Account
      */
-    public Account getAccountInput(UUID customerID, String accountDescription){
+    public Account getAccountInput(UUID customerID){
 		String prompt;
 		String accountNumber;
 		boolean hasAccount;
 		//this ensures account exists
 		do {
-			prompt = "Enter a " + accountDescription + " Account number: \n";
+			prompt = "Enter your Account number: \n";
 			accountNumber = comms.getUserString(prompt);
 			
 			hasAccount = accountService.hasAccountNumber(customerID, accountNumber);

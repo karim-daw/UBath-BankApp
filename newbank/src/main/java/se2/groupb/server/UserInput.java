@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class UserInput {
 
@@ -197,5 +198,4 @@ public class UserInput {
 			return false;
 		}
 	}
-	
 }

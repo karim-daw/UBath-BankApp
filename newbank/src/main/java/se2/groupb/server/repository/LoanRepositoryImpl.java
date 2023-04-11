@@ -2,13 +2,8 @@ package se2.groupb.server.repository;
 
 import java.util.HashMap;
 import java.util.UUID;
-
-//import se2.groupb.server.account.Account;
-//import se2.groupb.server.customer.Customer;
 import se2.groupb.server.loan.Loan;
 import se2.groupb.server.loan.LoanDTO;
-//import se2.groupb.server.loanOffer.LoanOffer;
-//import se2.groupb.server.loanOffer.LoanOfferDTO;
 
 public class LoanRepositoryImpl implements EntityRepository<Loan, LoanDTO>{
 

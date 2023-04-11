@@ -1,6 +1,8 @@
 package se2.groupb.server.loanOffer;
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.TreeMap;
 //import java.util.ArrayList;
 import java.util.UUID;
 
@@ -14,21 +16,33 @@ public class LoanOfferController {
 	//initialise the various services required
 	private final CustomerController customerController;
 	private final AccountController accountController;
+	private final LoanController loanController;
 	private final LoanOfferServiceImpl loanOfferService;
 	private UserInput comms;
 
 	// Constructor
 	public LoanOfferController(CustomerController customerController, AccountController accountController, 
-			LoanOfferServiceImpl loanOfferService, UserInput comms) {
+			LoanController loanController, LoanOfferServiceImpl loanOfferService, UserInput comms) {
 		
 		this.customerController = customerController;
 		this.accountController = accountController;
+		this.loanController = loanController;
 		this.loanOfferService = loanOfferService;
 		this.comms = comms;
 	}
 	
 	/**
-	 * displays the Customer's Loan Offers as a list
+	 * String containing all loan offers
+	 * 
+	 * @return display string
+	 */
+ 	public String displayLoanOfferMarket() {
+ 		return loanOfferService.displayLoanOfferMarket();
+	}
+ 	
+ 	
+	/**
+	 * displays only the Customer's Loan Offers
 	 * 
 	 * @param customerID
 	 * @return
@@ -37,9 +51,6 @@ public class LoanOfferController {
 		return loanOfferService.displayLoanOffersByCustomer(customerID);
 	}
 	
-	public String displayLoanOfferMarket() {
-		return loanOfferService.displayLoanOfferMarket();
-	}
 	
     // create a new loan offer and add it to the market
 	public String newLoanOffer(UUID customerID) {
@@ -62,13 +73,15 @@ public class LoanOfferController {
 			}
 		} while (duplicateName);
 		
-		// 3. Customer must specify a source account by its account number:
+		// 3. Customer must specify an account number:
 		comms.printSystemMessage(accountController.displayAccounts(customerID)); //displays the customer's accounts
-		Account sourceAccount = accountController.getAccountInput(customerID, "Source");
+		Account lenderAccount = accountController.getAccountInput(customerID);
+		String lenderAccountNumber = lenderAccount.getAccountName();
+		UUID lenderAccountID = lenderAccount.getAccountID();
 		
 		
 		// 4. Customer must specify a principal amount which must not exceed the account's balance:
-		BigDecimal accountBalance = sourceAccount.getBalance();
+		BigDecimal accountBalance = lenderAccount.getBalance();
 		prompt = "Principal amount must not exceed " + accountBalance.toString()+ " \nEnter an amount: \n";
 		BigDecimal principalAmount = comms.getAmount(prompt,accountBalance);
 		if (principalAmount.compareTo(new BigDecimal("-1"))==0){
@@ -101,11 +114,12 @@ public class LoanOfferController {
 		// 9. Customer must specify the minimum credit score: 
 		prompt = "Enter the minimum credit score. Choose from the following:\n" + comms.mapToString(Customer.creditScores)+
 				"Enter your choice: \n";
-		userInput = comms.getUserMenuChoice(prompt, Customer.creditScores.size());
-		String creditScore = Customer.creditScores.get(userInput);
+		//String creditScore = Customer.creditScores.get(userInput);
+		String creditScore = comms.getUserMenuChoice(prompt, Customer.creditScores.size());
+		
 		
 		// 10. Customer must confirm before proceeding:
-		LoanOfferDTO loanOfferDto = new LoanOfferDTO(customerID,lenderName,offerName,sourceAccount.getAccountNumber(),
+		LoanOfferDTO loanOfferDto = new LoanOfferDTO(customerID,lenderName,offerName,lenderAccountID, lenderAccountNumber,
 				principalAmount,interestRate,duration,durationType,installmentsNumber,creditScore);
 		prompt= "Create a new loan offer with:\n" +
 				loanOfferDto.toString() + 
@@ -127,23 +141,92 @@ public class LoanOfferController {
 		return response;
 	}
 		
-	
+	public LoanOffer selectLoanOffer(UUID customerID) {
+		int noOfChoices = loanOfferService.getAcceptableOffers(customerID).size(); //Map<String,LoanOffer> getAllLoanOffers()
+		if (noOfChoices>0) {
+			comms.printSystemMessage("LOAN MARKET OFFERS:");
+			comms.printSystemMessage(displayLoanOfferMarket());
+			String prompt = "Enter the offer's number: ";
+			String userInput = comms.getUserMenuChoice(prompt, noOfChoices);
+			return loanOfferService.getAllLoanOffers().get(userInput);
+		}
+		else {
+			return null;
+		}
+	}
 	
 	
 	public String acceptLoanOffer(UUID customerID) {
-		// Customer must:
-		// 1) Meet the minimum credit score
-		// 2) Specify a destination account: by account number
-		
-		// System must:
-		// 1) remove the loan offer from market
-		// 2) convert loan offer to loan object and add it to borrower's and lender's loan list
-		// 3) create the credit and debit transactions for the principal transfer
-		// 4) generate an automated payment schedule based on the start date, the duration, the number of installments
-		//    and the interest rate
-		
-		String response ="The loan amount has been credited to your specified account.\n" +
-				"The loan repayment schedule has been generated";
-		return response;
+		// 1. Customer selects a Loan Offer:
+		String response = "";
+		LoanOffer offer = selectLoanOffer(customerID);
+		if (offer == null) {
+			// 1. Check if the Loan Market has offers.
+			return "There are no acceptable Loan Offers in the Market.\nReturning you to the Loan Menu.";
+		}
+		else {
+			// 2. Check if the borrower meets the selected offer's minimum credit score:
+			Customer borrower = customerController.getCustomer(customerID);
+			String borrowerName = borrower.getUsername();
+			Integer minCreditScore = Integer.valueOf(offer.getMinCreditScore());
+			if (borrower.getCreditScore() < minCreditScore) {
+				return "Your credit score is too low.\nReturning you to the Loan Menu.";
+			}
+			else {
+				// 3. Borrower must specify destination account for the principal transfer by account number:
+				comms.printSystemMessage(accountController.displayAccounts(customerID)); //displays the customer's accounts
+				Account borrowerAccount = accountController.getAccountInput(customerID);
+				UUID borrowerAccountID = borrowerAccount.getAccountID();
+			
+				// 2) System asks borrower to confirm they want to accept the offer:
+				String prompt= "Accept the loan offer with:\n" + offer.toString() + 
+						"\nEnter 'y' to confirm or 'n' to cancel: \n";
+				boolean userConfirm = comms.confirm(prompt);
+				
+				if (userConfirm) {	
+					// 3) Create new Loan object and add it to both Lender and Borrower:
+					LoanDTO loanDto = new LoanDTO(customerID,borrowerName,borrowerAccountID,offer);
+					Loan newLoan = new Loan(loanDto);
+					Customer lender = customerController.getCustomer(offer.getLenderID());
+					
+					//Add new Loan to the Loan Database by calling loanService:
+					boolean newLoanAdded = loanController.addNewLoan(customerID,newLoan);
+					if (newLoanAdded) {
+						borrower.addLoan(newLoan); // add new loan to borrower
+						lender.addLoan(newLoan); // add new loan to lender
+						response =  "New loan has been added to your loans list.\n";
+						response +=  "New loan has been added to the Loans database.\n";
+						
+						//Now that new load has been successfully added, remove the loan offer from database
+						boolean removedOffer = loanOfferService.removeOfferFromMarket(offer);
+						if (removedOffer) {
+							response += "The offer has been succesfully removed from the Market.";
+						}
+						else {
+							response += "Offer not found.";
+						}
+					}
+					else {
+						response +=  "Could not add loan to the Database.\n";
+					}
+					
+					
+				}
+				else {
+					response = "Loan offer creation was cancelled.\nReturning to the Main Menu.";
+				}
+				
+				// 3) create the credit and debit transactions for the principal transfer
+				response += "The loan principal has been credited to your specified account.\n";
+				
+				// 4) generate an automated repayment schedule:
+				response += "\"The loan repayment schedule has been generated.\n";
+				
+				return response; 
+						
+			}
+		}
 	}
+	
+	
 }
