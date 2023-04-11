@@ -257,7 +257,7 @@ public class TransactionController {
             userInput = comms.getUserString(prompt);
             int userInputInt = comms.convertStringToInt(userInput);
             if (userInputInt == 0) {
-                payeeService.createPayee(customerID);
+                payeeService.addNewPayee(customerID);
                 return "Payee added";
             }
             // comparing the input with the index of the table.
@@ -331,14 +331,14 @@ public class TransactionController {
 
         }
 
-        // If payee doesn't exist, add a payee, call the createPayee
+        // If payee doesn't exist, add a payee, call the addNewPayee
         // If the payee exists! proceed
         if (userInput.equals("2")) {
             return payeeService.displayPayees(customerID);
         }
 
         if (userInput.equals("3")) {
-            return payeeService.createPayee(customerID);
+            return payeeService.addNewPayee(customerID);
         }
         return "FAIL";
 
