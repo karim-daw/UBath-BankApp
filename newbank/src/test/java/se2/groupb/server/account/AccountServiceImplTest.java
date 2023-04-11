@@ -72,8 +72,9 @@ public class AccountServiceImplTest {
 
     @Test
     public void testDebitWithInsufficientBalance() {
-        UUID accountID = UUID.randomUUID();
-        Account account = new Account(accountID, "Checking", "Karim Doe", new BigDecimal("100.00"));
+        UUID customerID = UUID.randomUUID();
+        Account account = new Account(customerID, "Checking", "Karim Doe", new BigDecimal("100.00"));
+        UUID accountID = account.getAccountID();
         Mockito.when(accountRepository.findByID(accountID)).thenReturn(account);
 
         boolean result = accountService.debit(accountID, BigDecimal.valueOf(150));
@@ -83,8 +84,10 @@ public class AccountServiceImplTest {
 
     @Test
     public void testDebitWithWithdrawalException() {
-        UUID accountID = UUID.randomUUID();
-        Account account = Mockito.spy(new Account(accountID, "Checking", "Karim Doe", new BigDecimal("100.00")));
+        UUID customerID = UUID.randomUUID();
+        Account account = Mockito.spy(new Account(customerID, "Checking", "Karim Doe", new BigDecimal("100.00")));
+        UUID accountID = account.getAccountID();
+
         Mockito.when(accountRepository.findByID(accountID)).thenReturn(account);
         Mockito.doThrow(new RuntimeException("withdrawal failed")).when(account)
                 .withdraw(Mockito.any(BigDecimal.class));
@@ -92,6 +95,38 @@ public class AccountServiceImplTest {
         boolean result = accountService.debit(accountID, BigDecimal.valueOf(50));
         assertFalse(result);
         assertEquals(0, BigDecimal.valueOf(100).compareTo(account.getBalance()));
+    }
+
+    @Test
+    public void testCreditValidAccount() {
+        // Create a new account with initial balance of 100
+        Account account = new Account(UUID.randomUUID(), "Current", "John Smith", BigDecimal.valueOf(100));
+        String accountNumber = account.getAccountNumber();
+        UUID accountID = account.getAccountID();
+
+        Mockito.when(accountRepository.findByID(accountID)).thenReturn(account);
+        Mockito.when(accountRepository.save(Mockito.any(Account.class))).thenReturn(true);
+        Mockito.when(accountRepository.update(Mockito.any(Account.class))).thenReturn(true);
+        Mockito.when(accountRepository.findByAccountNumber(accountNumber)).thenReturn(account);
+
+        // Credit the account with 50
+        boolean success = accountService.credit(accountNumber, BigDecimal.valueOf(50));
+
+        // Check that the credit was successful
+        assertTrue(success);
+
+        // Check that the account balance has been updated
+        Account updatedAccount = accountRepository.findByAccountNumber(accountNumber);
+        assertEquals(BigDecimal.valueOf(150), updatedAccount.getBalance());
+    }
+
+    @Test
+    public void testCreditInvalidAccount() {
+        // Try to credit an account that doesn't exist
+        boolean success = accountService.credit("99999999", BigDecimal.valueOf(50));
+
+        // Check that the credit failed
+        assertFalse(success);
     }
 
 }
