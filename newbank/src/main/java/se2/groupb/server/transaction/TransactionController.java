@@ -31,12 +31,9 @@ public class TransactionController {
         this.comms = comms;
     }
 
-    public TransactionController(CustomerService customerService, AccountService accountService,
-            TransactionService transactionService, PayeeService payeeService, UserInput comms) {
-
-    public TransactionController(CustomerService customerService, CustomerController customerController,
+    public TransactionController(CustomerService customerService,
             AccountService accountService,
-            TransactionService transactionService, Payee payees, UserInput comms) {
+            TransactionService transactionService, PayeeService payeeService, UserInput comms) {
         this.customerService = customerService;
         this.accountService = accountService;
         this.transactionService = transactionService;
