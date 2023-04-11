@@ -88,8 +88,8 @@ public class NewBankClientHandler extends Thread {
 
 		transactionRepository = new TransactionRepositoryImpl(bank.getTransactions());
 		transactionService = new TransactionServiceImpl(accountRepository, transactionRepository, customerRepository);
-		transactionController = new TransactionController(customerService, accountService, transactionService, payees,
-				comms);
+		transactionController = new TransactionController(customerService,customerController,accountService, 
+				transactionService, payees,comms);
 	}
 
 	public void run() {

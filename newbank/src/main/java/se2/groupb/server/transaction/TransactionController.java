@@ -18,14 +18,16 @@ import se2.groupb.server.customer.CustomerService;
 public class TransactionController {
 
     private final CustomerService customerService;
+    private final CustomerController customerController;
     private final AccountService accountService;
     private final TransactionService transactionService;
     private final Payee payees;
     private UserInput comms;
 
-    public TransactionController(CustomerService customerService, AccountService accountService,
+    public TransactionController(CustomerService customerService, CustomerController customerController, AccountService accountService,
             TransactionService transactionService, Payee payees, UserInput comms) {
         this.customerService = customerService;
+        this.customerController = customerController;
         this.accountService = accountService;
         this.transactionService = transactionService;
         this.payees = payees;

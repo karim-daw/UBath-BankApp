@@ -10,7 +10,8 @@ public class Payee {
     private final String payeeName;
     private final String payeeAccountNumber;
     private final String payeeBIC;
-
+    
+    
     public Payee(UUID customerID, String payeeName, String payeeAccountNumber, String payeeBIC) {
         this.payeeID = UUID.randomUUID();
         this.customerID = customerID;
