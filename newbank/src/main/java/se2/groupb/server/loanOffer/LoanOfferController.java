@@ -73,7 +73,7 @@ public class LoanOfferController {
 			}
 		} while (duplicateName);
 		
-		// 3. Customer must specify an account number:
+		// 3. Customer must specify a source account number:
 		comms.printSystemMessage(accountController.displayAccounts(customerID)); //displays the customer's accounts
 		Account lenderAccount = accountController.getAccountInput(customerID);
 		String lenderAccountNumber = lenderAccount.getAccountName();

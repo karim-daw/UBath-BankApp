@@ -71,6 +71,17 @@ public interface AccountService {
          * @return true if customer has account number, else false
          */
     	public boolean hasAccountNumber(UUID customerID, String accountNumber);
+    	
+    	/**
+    	 * 
+    	 * @param customerID
+    	 * @param accountNumber
+    	 * @return
+    	 */
+    	public boolean isOverdrawn(UUID customerID, String accountNumber);
+    	
+    	public int noOfAccts(UUID customerID);
+    	
         
         /**
          * adds money to account

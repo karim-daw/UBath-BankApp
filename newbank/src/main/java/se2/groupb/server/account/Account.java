@@ -110,7 +110,7 @@ public class Account {
 	 * 
 	 * @param amount
 	 */
-	public void deposit(BigDecimal amount) {
+	public void credit(BigDecimal amount) {
 		// BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
 		BigDecimal balance = getBalance();
 
@@ -123,7 +123,7 @@ public class Account {
 	 * 
 	 * @param amount
 	 */
-	public void withdraw(BigDecimal amount) {
+	public void debit(BigDecimal amount) {
 		BigDecimal balance = getBalance();
 		// BigDecimal amountAsBigDecimal = BigDecimal.valueOf(amount);
 		BigDecimal newBalance = balance.subtract(amount);
@@ -198,7 +198,8 @@ public class Account {
 	public void setOverdraftLimit(BigDecimal newOverdraftLimit) {
 		this.overdraftLimit = newOverdraftLimit;
 	}
-
+	
+	
 	// overrides default toString() method for Account objects
 	@Override
 	public String toString() {

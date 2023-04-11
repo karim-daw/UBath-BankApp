@@ -63,7 +63,7 @@ public class Customer {
 		loans = new ArrayList<>();
 	}
 
-	// methods
+	// Customer methods
 
 	// customer id
 	public UUID getCustomerID() {
@@ -123,24 +123,11 @@ public class Customer {
 		this.creditScore = score;
 	}
 	
+	
+	//Account Methods:
+	
 	public ArrayList<Account> getAccounts() {
 		return accounts;
-	}
-	
-	/**
-	 * Gets the Customer's loan offers
-	 * @return
-	 */
-	public ArrayList<LoanOffer> getLoanOffers() {
-		return loanOffers;
-	}
-	
-	/**
-	 * Gets the Customer's loans
-	 * @return
-	 */
-	public ArrayList<Loan> getLoans() {
-		return loans;
 	}
 	
 	/**
@@ -166,19 +153,6 @@ public class Customer {
 		String s = "";
 		for (Account a : accounts) {
 			s += a.toString();
-		}
-		return s;
-	}
-	
-	
-	/**
-	 * Returns a string of customer's loans list for display
-	 * @return a string
-	 */
-	public String loansToString() {
-		String s = "";
-		for (Loan l : loans) {
-			s += l.toString();
 		}
 		return s;
 	}
@@ -217,25 +191,6 @@ public class Customer {
 	public void addAccount(Account account) {
 		accounts.add(account);
 	}
-	
-	/**
-	 * adds Loan Offer to the Customer's list of offers
-	 * 
-	 * @param account
-	 */
-	public void addLoanOffer(LoanOffer offer) {
-		loanOffers.add(offer);
-	}
-	
-	/**
-	 * adds Loan to the Customer's list of loans
-	 * 
-	 * @param account
-	 */
-	public void addLoan(Loan loan) {
-		loans.add(loan);
-	}
-	
 	
 	/**
 	 * @param accountName
@@ -277,36 +232,110 @@ public class Customer {
 	 * @return a map containing numbered Accounts & Balances
 	 */
 
-	public HashMap<String, String> sourceAcctsMap() {
-		HashMap<String, String> map = new HashMap<String, String>();
+	public Map<String, Account> sourceAcctsMap() {
+		Map<String, Account> map = new TreeMap<>();
 		int i = 0;
 		for (Account a : accounts) {
 			if (!(a.isOverDrawn())) {
 				i++;
 				String key = Integer.toString(i);
-				map.put(key, a.toString());
+				map.put(key, a);
 			}
 		}
 		return map;
 	}
-
+	
 	/**
-	 * map of options for new account names
+	 * map of options for destination accounts
 	 * 
-	 * @return a map containing numbered Account Names
+	 * @return a map containing numbered Accounts
 	 */
-	public HashMap<String, String> destinationAcctsMap(String sourceAccountName) {
-		HashMap<String, String> map = new HashMap<String, String>();
+	public Map<String, Account> destinationAcctsMap(UUID accountID) {
+		Map<String, Account> map = new TreeMap<>();
 		int i = 0;
-		for (Account a : accounts) {
-			if (!(a.getAccountName().equals(sourceAccountName))) {
+		for (Map.Entry<String, Account> entry : sourceAcctsMap().entrySet()) {
+			if (!entry.getValue().getAccountID().equals(accountID)) {
 				i++;
 				String key = Integer.toString(i);
-				map.put(key, a.toString());
+				map.put(key, entry.getValue());
 			}
 		}
 		return map;
 	}
+	
+	
+	/**
+	 * @return a string of the new account options map
+	 */
+	public String accountMapToString(Map<String, Account> map) {
+		String s = "";
+		for (Map.Entry<String, Account> item : map.entrySet()) {
+			s += item.getKey() + " = " + item.getValue().toString() + "\n";
+		}
+		return s;
+	}
+	
+	
+	
+	
+	
+	
+	//Loan Offer Methods:
+	
+	/**
+	 * Gets the Customer's loan offers
+	 * @return
+	 */
+	public ArrayList<LoanOffer> getLoanOffers() {
+		return loanOffers;
+	}
+	
+	/**
+	 * adds Loan Offer to the Customer's list of offers
+	 * 
+	 * @param account
+	 */
+	public void addLoanOffer(LoanOffer offer) {
+		loanOffers.add(offer);
+	}
+	
+	
+	
+	
+	// Loan Methods:
+	/**
+	 * Gets the Customer's loans
+	 * @return
+	 */
+	public ArrayList<Loan> getLoans() {
+		return loans;
+	}
+	
+	/**
+	 * adds Loan to the Customer's list of loans
+	 * 
+	 * @param account
+	 */
+	public void addLoan(Loan loan) {
+		loans.add(loan);
+	}
+	
+	/**
+	 * Returns a string of customer's loans list for display
+	 * @return a string
+	 */
+	public String loansToString() {
+		String s = "";
+		for (Loan l : loans) {
+			s += l.toString();
+		}
+		return s;
+	}
+	
+	
+	
+	
+	
 
 	/**
 	 * @return a string of the new account options map
@@ -323,7 +352,9 @@ public class Customer {
 	public String toString() {
 		return customerID.toString() + " " +username;
 	}
-
+	
+	
+	// Payee Methods
 	/*
 	 * @return payees
 	 * TODO Set the list in alphabetical order
@@ -381,15 +412,11 @@ public class Customer {
 	}
 
 	/**
-	 * @return a string of an account
-	 */
-
-	/**
-	 * checks if the desired account name already exists in the customers list of
+	 * checks if the desired payee name already exists in the customers list of
 	 * accounts
 	 * 
 	 * @param payeeName
-	 * @return true false if account name exists in customers accounts
+	 * @return true false if payee name exists in customers accounts
 	 */
 	public boolean alreadyExists(String payeeName) {
 		for (Payee payee : payees) {

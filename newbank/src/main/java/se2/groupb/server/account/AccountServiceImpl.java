@@ -46,6 +46,13 @@ public class AccountServiceImpl implements AccountService {
 
 	}
 	
+	public int noOfAccts(UUID customerID) {
+		if (getAccounts(customerID)== null) {
+			return 0;
+		}
+		return getAccounts(customerID).size(); 
+	}
+	
 	/**
 	 * The Customer's Accounts list filtered by Account Type
 	 * @param customerID
@@ -101,6 +108,14 @@ public class AccountServiceImpl implements AccountService {
     	}
     	return true;
 	}
+	
+	public boolean isOverdrawn(UUID customerID, String accountNumber) {
+		if (hasAccountNumber(customerID,accountNumber)){
+			return getAccountByNumber(customerID,accountNumber).isOverDrawn();
+    	}
+    	return true;
+	}
+	
 	
 	/**
 	 * Return the Account Balance if Customer has Account with the specified Account Number

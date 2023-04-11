@@ -153,7 +153,7 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
     }
     
     
-    //Methods that return lists of Accounts for the Customer filtered by various criteria:
+    //Methods on the Customer's Accounts:
     
     /**
      * Returns a list of the customer's accounts
@@ -162,7 +162,6 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
      */
     public ArrayList<Account> findAccounts(UUID customerID) {
     	Customer customer = findByID(customerID);
-    	//System.out.println(customer.getAccounts().toString());
     	return customer.getAccounts();
     }
     
@@ -196,6 +195,7 @@ public class CustomerRepositoryImpl implements EntityRepository<Customer, Custom
         }
     	return null;
     }
+    
     
     
   //Methods that return lists of Loan Offers for the Customer filtered by various criteria:

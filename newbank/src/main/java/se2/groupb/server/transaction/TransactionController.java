@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import se2.groupb.server.UserInput;
 import se2.groupb.server.Payee.Payee;
 import se2.groupb.server.account.Account;
 import se2.groupb.server.account.AccountService;
+import se2.groupb.server.account.AccountController;
 import se2.groupb.server.customer.Customer;
 import se2.groupb.server.customer.CustomerController;
 import se2.groupb.server.customer.CustomerService;
@@ -20,14 +22,18 @@ public class TransactionController {
     private final CustomerService customerService;
     private final CustomerController customerController;
     private final AccountService accountService;
+    private final AccountController accountController;
     private final TransactionService transactionService;
     private final Payee payees;
     private UserInput comms;
 
-    public TransactionController(CustomerService customerService, CustomerController customerController, AccountService accountService,
+    public TransactionController(CustomerService customerService, CustomerController customerController, 
+    		AccountController accountController, AccountService accountService,
             TransactionService transactionService, Payee payees, UserInput comms) {
+    	
         this.customerService = customerService;
         this.customerController = customerController;
+        this.accountController = accountController;
         this.accountService = accountService;
         this.transactionService = transactionService;
         this.payees = payees;
@@ -44,6 +50,71 @@ public class TransactionController {
      * @param requestArray
      * @return SUCCESS string or FAIL string
      */
+    /**
+     * The method takes care of the MOVE protocol.
+     * MOVE <Amount> <From> <To>
+     * e.g. MOVE 100 Main Savings
+     * Returns SUCCESS or FAIL
+     * 
+     * @param customerID
+     * @param requestArray
+     * @return SUCCESS string or FAIL string
+     */
+    
+    // MOVE Function: Tatiana's version:
+    public String moveMoney(UUID customerID) {
+        Customer customer = customerService.getCustomerByID(customerID);
+        List<Account> customerAccounts = customer.getAccounts();
+        int noOfAccts = customerAccounts.size();
+        Map<String, Account> sourceAccts = customer.sourceAcctsMap(); // The Customer's Source Accounts as an ordered numbered Map:
+        int noOfSourceAccts = sourceAccts.size();
+        if (noOfSourceAccts < 1 || noOfAccts < 2) {
+            return "You need two or more accounts.\nRequest denied.\nReturning to Main Menu.";
+        }
+        
+        //Display all potential Source Accounts to the customer:
+        String prompt = "Select a Source Account from: \n" + customer.accountMapToString(sourceAccts) +
+        		"Enter your choice: \n";
+        //Get user's choice of Source Account:
+ 		String userInput = comms.getUserMenuChoice(prompt, noOfSourceAccts); //gets user's choice
+ 		Account sourceAccount = sourceAccts.get(userInput);
+        String sourceAcctName = sourceAccount.getAccountName();
+        
+ 		//Destination Accounts Map excludes the Source Account
+ 		Map<String, Account> destAccts = customer.destinationAcctsMap(sourceAccount.getAccountID());
+ 		int noOfDestAccts = destAccts.size();
+        if (noOfDestAccts < 1) {
+            return "No destination account available.\nReturning to Main Menu.";
+        }
+        
+        //Display all potential Source Accounts to the customer:
+ 		prompt = "Select a Destination Account from: \n" + customer.accountMapToString(destAccts) + 
+ 				"Enter your choice: \n";
+ 		
+ 		//Get user's choice of Destination Account:
+ 		userInput = comms.getUserMenuChoice(prompt, noOfDestAccts); //gets user's choice
+ 		Account destinationAccount = destAccts.get(userInput);
+ 		String destAcctName = destinationAccount.getAccountName();
+ 				
+ 		//Get the user's input Amount:
+        BigDecimal transferAmount = getTransferAmount(sourceAccount.getBalance());
+
+        if (!confirmTransaction(transferAmount, sourceAcctName, destAcctName)) {
+            return "Move transaction was cancelled.\nReturning to the Main Menu.";
+        }
+
+        boolean isSuccessfullyMoved = transactionService.executeMove(sourceAccount.getAccountID(),
+                destinationAccount.getAccountID(), transferAmount);
+
+        if (isSuccessfullyMoved) {
+            return "Move Transaction Success.";
+        } else {
+            return "Move Transaction Failure.";
+        }
+    }
+    
+    // MOVE Function: Karim's version:
+    /* 
     public String moveMoney(UUID customerID) {
         Customer customer = customerService.getCustomerByID(customerID);
 
@@ -56,12 +127,13 @@ public class TransactionController {
             return "You need two or more accounts.\nRequest denied.\nReturning to Main Menu.";
         }
 
-        // need to show user the possible source accounts
+        // Display all possible source accounts:
         String sourceAccountList = customer.mapToString(sourceAccts);
         comms.printSystemMessage(sourceAccountList);
 
-        // THere is a problem with the below code, valid name isnt being returned
+        // THere is a problem with the below code, valid name isn't being returned
         String sourceAcctName = selectAccount("Select source account:", sourceAccts);
+        
 
         Account sourceAccount = customer.getAccountByName(sourceAcctName);
 
@@ -84,18 +156,25 @@ public class TransactionController {
                 destinationAccount.getAccountID(), transferAmount);
 
         if (isSuccessfullyMoved) {
-            return "Move transaction was successful.";
+            return "Move Transaction Success.";
         } else {
-            return "Something went wrong with the move";
+            return "Move Transaction Failure.";
         }
     }
-
+	*/
+    
+    
     /**
      * @param prompt
      * @param accounts
      * @return
      */
+    
+    //Map<String, String> loanDurations = new TreeMap<String,String>();
+		
     private String selectAccount(String prompt, Map<String, String> accounts) {
+    	//e.g. selectAccount("Select source account:", sourceAccts);
+    	
         String selectionNumber = comms.getUserMenuChoice(prompt, accounts.size());
         String accountBalanceString = accounts.get(selectionNumber);
         System.out.println(accountBalanceString);
@@ -111,6 +190,7 @@ public class TransactionController {
             return null;
         }
     }
+    
 
     private BigDecimal getTransferAmount(BigDecimal limit) {
         String prompt = "Transfer amount must be positive and not exceed the Source Account's balance.\nEnter an amount: ";

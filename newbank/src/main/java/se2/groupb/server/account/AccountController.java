@@ -147,6 +147,54 @@ public class AccountController {
 	}
     
     
+    public Account getAccountInput(UUID customerID, String description){
+		String prompt;
+		String accountNumber;
+		boolean isValidChoice = false;
+		boolean hasAccount = false;
+		boolean isOverdrawn = true;
+		
+		switch (description) {
+			case "Source":
+				//Source accounts must not be overdrawn
+				isValidChoice = (hasAccount && (!isOverdrawn));
+			case "Destination":
+				//Destination accounts must exclude the source account
+			case "All":
+				//All accounts
+				
+		}
+		if (description == "Source") {
+			
+		}
+		else {
+			isValidChoice = hasAccount;
+		}
+		
+		
+		//this ensures account exists
+		do {
+			comms.printSystemMessage(displayAccounts(customerID,description)); 
+			prompt = "Enter a Source Account number: \n";
+			accountNumber = comms.getUserString(prompt);
+			hasAccount = accountService.hasAccountNumber(customerID, accountNumber);
+			isOverdrawn = accountService.isOverdrawn(customerID, accountNumber);
+			if (!hasAccount) {
+				comms.printSystemMessage("Account not found. Please try again.");
+			}
+			if (isOverdrawn) {
+				comms.printSystemMessage("Account is overdrawn. Please try again.");
+			}
+			
+		} while (!isValidChoice);
+		
+		return accountService.getAccountByNumber(customerID, accountNumber);
+	}
+    
+    
+    
+    
+    
     /*
      * public void creditAmount(AccountDTO accountDTO, double amount) {
      * 
