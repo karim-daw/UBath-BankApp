@@ -25,25 +25,26 @@ public class Customer {
 	private ArrayList<LoanOffer> loanOffers;
 	private ArrayList<Loan> loans;
 
-	//public static final Map<String, String> creditScoresOld = Map.of("1", "Poor", "2", "Fair", "3", "Good", "4", "Very Good", "5", "Excellent");
-	
+	// public static final Map<String, String> creditScoresOld = Map.of("1", "Poor",
+	// "2", "Fair", "3", "Good", "4", "Very Good", "5", "Excellent");
+
 	public static Map<String, String> creditScores;
-	static{
+	static {
 		creditScores = new TreeMap<>();
-		creditScores.put("1","Poor");
-		creditScores.put("2","Fair");
-		creditScores.put("3","Good");
-		creditScores.put("4","Very Good");
-		creditScores.put("5","Excellent");
+		creditScores.put("1", "Poor");
+		creditScores.put("2", "Fair");
+		creditScores.put("3", "Good");
+		creditScores.put("4", "Very Good");
+		creditScores.put("5", "Excellent");
 	}
-	    
+
 	// constructor 1
 	public Customer(String username, String password) {
 		this.customerID = UUID.randomUUID();
 		this.username = username;
 		this.password = password;
 		this.loggedInStatus = false;
-		this.creditScore = 3; //default credit score
+		this.creditScore = 3; // default credit score
 		accounts = new ArrayList<>();
 		payees = new ArrayList<>();
 		loanOffers = new ArrayList<>();
@@ -56,7 +57,7 @@ public class Customer {
 		this.username = customerDto.getUsername();
 		this.password = customerDto.getPassword();
 		this.loggedInStatus = false;
-		this.creditScore = 3; //default credit score
+		this.creditScore = 3; // default credit score
 		accounts = new ArrayList<>();
 		payees = new ArrayList<>();
 		loanOffers = new ArrayList<>();
@@ -106,9 +107,10 @@ public class Customer {
 	public void setloggedInStatus(boolean status) {
 		this.loggedInStatus = status;
 	}
-	
+
 	/**
 	 * Gets the customer's credit score
+	 * 
 	 * @return Integer
 	 */
 	public Integer getCreditScore() {
@@ -117,21 +119,22 @@ public class Customer {
 
 	/**
 	 * Changes the Customer's credit score
+	 * 
 	 * @param score
 	 */
 	public void setCreditScore(Integer score) {
 		this.creditScore = score;
 	}
-	
-	
-	//Account Methods:
-	
+
+	// Account Methods:
+
 	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
-	
+
 	/**
 	 * Returns the Customer's accounts filtered by Account Type: Current, Savings
+	 * 
 	 * @param accountType
 	 * @return list of Account
 	 */
@@ -147,6 +150,7 @@ public class Customer {
 
 	/**
 	 * Returns a string of customer's accounts list for display
+	 * 
 	 * @return a String
 	 */
 	public String accountsToString() {
@@ -156,7 +160,7 @@ public class Customer {
 		}
 		return s;
 	}
-	
+
 	/**
 	 * display the accounts content into a list
 	 * 
@@ -191,7 +195,7 @@ public class Customer {
 	public void addAccount(Account account) {
 		accounts.add(account);
 	}
-	
+
 	/**
 	 * @param accountName
 	 * @return
@@ -227,6 +231,24 @@ public class Customer {
 	}
 
 	/**
+	 * map of source accounts: & their balances
+	 * 
+	 * @return a map containing numbered Accounts & Balances
+	 */
+
+	public Map<String, Account> allAcctsMap() {
+		Map<String, Account> map = new TreeMap<>();
+		int i = 0;
+		for (Account a : accounts) {
+			i++;
+			String key = Integer.toString(i);
+			map.put(key, a);
+
+		}
+		return map;
+	}
+
+	/**
 	 * map of source accounts: non-overdrawn accounts & their balances
 	 * 
 	 * @return a map containing numbered Accounts & Balances
@@ -244,7 +266,7 @@ public class Customer {
 		}
 		return map;
 	}
-	
+
 	/**
 	 * map of options for destination accounts
 	 * 
@@ -262,8 +284,7 @@ public class Customer {
 		}
 		return map;
 	}
-	
-	
+
 	/**
 	 * @return a string of the new account options map
 	 */
@@ -274,22 +295,18 @@ public class Customer {
 		}
 		return s;
 	}
-	
-	
-	
-	
-	
-	
-	//Loan Offer Methods:
-	
+
+	// Loan Offer Methods:
+
 	/**
 	 * Gets the Customer's loan offers
+	 * 
 	 * @return
 	 */
 	public ArrayList<LoanOffer> getLoanOffers() {
 		return loanOffers;
 	}
-	
+
 	/**
 	 * adds Loan Offer to the Customer's list of offers
 	 * 
@@ -298,19 +315,17 @@ public class Customer {
 	public void addLoanOffer(LoanOffer offer) {
 		loanOffers.add(offer);
 	}
-	
-	
-	
-	
+
 	// Loan Methods:
 	/**
 	 * Gets the Customer's loans
+	 * 
 	 * @return
 	 */
 	public ArrayList<Loan> getLoans() {
 		return loans;
 	}
-	
+
 	/**
 	 * adds Loan to the Customer's list of loans
 	 * 
@@ -319,9 +334,10 @@ public class Customer {
 	public void addLoan(Loan loan) {
 		loans.add(loan);
 	}
-	
+
 	/**
 	 * Returns a string of customer's loans list for display
+	 * 
 	 * @return a string
 	 */
 	public String loansToString() {
@@ -331,11 +347,6 @@ public class Customer {
 		}
 		return s;
 	}
-	
-	
-	
-	
-	
 
 	/**
 	 * @return a string of the new account options map
@@ -347,13 +358,12 @@ public class Customer {
 		}
 		return s;
 	}
-	
+
 	@Override
 	public String toString() {
-		return customerID.toString() + " " +username;
+		return customerID.toString() + " " + username;
 	}
-	
-	
+
 	// Payee Methods
 	/*
 	 * @return payees
@@ -363,7 +373,7 @@ public class Customer {
 	public ArrayList<Payee> getPayees() {
 		return payees;
 	}
-	
+
 	/**
 	 * 
 	 * @param payeeName
@@ -377,7 +387,7 @@ public class Customer {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -392,7 +402,7 @@ public class Customer {
 		}
 		return map;
 	}
-	
+
 	/**
 	 * @return a string of the Payee map
 	 */
@@ -403,8 +413,7 @@ public class Customer {
 		}
 		return s;
 	}
-	
-	
+
 	/**
 	 * @return a string of a payee
 	 */
