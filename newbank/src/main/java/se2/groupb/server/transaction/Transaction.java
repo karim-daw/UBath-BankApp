@@ -56,7 +56,6 @@ public class Transaction {
         this.reference = reference;
     }
 
-
     public Date getDate() {
         return date;
     }
@@ -89,11 +88,18 @@ public class Transaction {
         return targetName;
     }
 
+    // @Override
+    // public String toString() {
+    // return "Transaction [sourceAccountID=" + sourceAccountID + ",
+    // targetAccountID=" + targetAccountID
+    // + ", transactionID=" + transactionID + ", ammount=" + ammount + ", date=" +
+    // date + ", reference="
+    // + reference + "]";
+    // }
     @Override
     public String toString() {
-        return "Transaction [sourceAccountID=" + sourceAccountID + ", targetAccountID=" + targetAccountID
-                + ", transactionID=" + transactionID + ", ammount=" + ammount + ", date=" + date + ", reference="
-                + reference + "]";
+        return "Transaction [sourceName=" + sourceName + ", targetName=" + targetName + ", transactionID="
+                + transactionID + ", ammount=" + ammount + ", date=" + date + ", reference=" + reference + "]\n";
     }
 
 }
