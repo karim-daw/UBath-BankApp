@@ -191,6 +191,19 @@ public class Account {
 		return transactions;
 	}
 
+	/**
+	 * Returns a string of account's transactions list for display
+	 * 
+	 * @return a String
+	 */
+	public String transactionToString() {
+		String s = "";
+		for (Transaction t : transactions) {
+			s += t.toString();
+		}
+		return s;
+	}
+
 	public BigDecimal getOverdraftLimit() {
 		return this.overdraftLimit;
 	}
@@ -198,8 +211,7 @@ public class Account {
 	public void setOverdraftLimit(BigDecimal newOverdraftLimit) {
 		this.overdraftLimit = newOverdraftLimit;
 	}
-	
-	
+
 	// overrides default toString() method for Account objects
 	@Override
 	public String toString() {
@@ -207,10 +219,11 @@ public class Account {
 		BigDecimal balance = currentBalance.setScale(2, RoundingMode.FLOOR);
 		int number = balance.toString().length(); // the number of characters in the balance
 
-		String displayAccount = displayChars('=', 52) + "\n" 
+		String displayAccount = displayChars('=', 52) + "\n"
 				+ accountName + "(" + accountType + ")\n"
-				+ accountBIC + displayChars(' ', 3) + accountNumber + "\n" + displayChars(' ', 52 - number) + balance + "\n"
-				+ displayChars('=', 52)+"\n";
+				+ accountBIC + displayChars(' ', 3) + accountNumber + "\n" + displayChars(' ', 52 - number) + balance
+				+ "\n"
+				+ displayChars('=', 52) + "\n";
 		return displayAccount;
 	}
 
