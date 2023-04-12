@@ -2,6 +2,7 @@ package se2.groupb.server.account;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /*
@@ -158,19 +159,28 @@ public class AccountController {
     public String displayTransactions(UUID customerID) {
         String prompt;
 
-        UUID accountID = null;
-        do {
-            displayAccounts(customerID);
-            prompt = "Enter the account you want to see the transactions for: \n";
-            int accountChoiceNumber = comms.getUserIntegerInput(prompt);
+        Customer customer = customerService.getCustomerByID(customerID);
 
-            hasAccount = accountService.hasAccountNumber(customerID, accountNumber);
-            if (!hasAccount) {
-                comms.printSystemMessage("Account not found. Please try again.");
-            }
-        } while (!hasAccount);
+        Map<String, Account> allAccounts = customer.allAcctsMap();
+        int noOfAllAccounts = allAccounts.size();
+        if (noOfAllAccounts == 0) {
+            return "No valid Accounts found.\nRequest denied.\nReturning to Main Menu.";
+        }
 
-        return transactionService.displayAccountTransactions(accountID);
+        // Display all potential Source Accounts to the customer:
+        prompt = "Select an Account from: \n" + customer.accountMapToString(allAccounts) +
+                "Enter your choice: \n";
+        // Get user's choice of Source Account:
+        String userInput = comms.getUserMenuChoice(prompt, noOfAllAccounts); // gets user's choice
+        Account chosenAccount = allAccounts.get(userInput);
+
+        int numTransactions = chosenAccount.getTransactions().size();
+        if (numTransactions < 1) {
+            return "Chosen account does not have any transactions yet...\nReturning to maini menu.";
+        }
+
+        return chosenAccount.transactionToString();
+
     }
 
     /*
